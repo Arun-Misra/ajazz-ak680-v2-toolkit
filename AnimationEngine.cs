@@ -137,10 +137,15 @@ public sealed class AnimationEngine
             Report("Failed to enter custom mode");
             return;
         }
-        // One-time clear so the previous pattern's colours do not linger.
+        // One-time clear so the previous pattern's colours do not linger. This must
+        // use the same command path as the frame loop, otherwise a click burst that
+        // starts the engine in mode 100 would clear the wrong LED buffer.
         var clear = new List<LedColor>(128);
         for (int i = 0; i < 128; i++) clear.Add(new LedColor { LedId = i });
-        await _device.SendCustomFrameAsync(clear);
+        if (UseMusicPath)
+            _device.SendMusicFrameAsync(clear.Where(c => OrderedLeds.Contains(c.LedId)).ToArray());
+        else
+            _device.SendCustomFrameAsync(clear);
         if (gen != _generation) return;
 
         _pattern = pattern;
