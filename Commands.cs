@@ -323,7 +323,7 @@ public class DksConfig
 public class MacroEntry
 {
     public int MacroId { get; set; }
-    public List<MacroAction> Actions { get; } = new();
+    public List<MacroAction> Actions { get; set; } = new();
 }
 public class MacroAction
 {

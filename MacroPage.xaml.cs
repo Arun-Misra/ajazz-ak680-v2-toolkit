@@ -85,12 +85,33 @@ public partial class MacroPage : Page
     private void Import_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new OpenFileDialog { Filter = "Macro JSON (*.json)|*.json" };
-        if (dlg.ShowDialog() == true) Status.Text = $"Imported {Path.GetFileName(dlg.FileName)}";
+        if (dlg.ShowDialog() != true) return;
+        try
+        {
+            var json = File.ReadAllText(dlg.FileName);
+            var loaded = System.Text.Json.JsonSerializer.Deserialize<List<MacroEntry>>(json);
+            if (loaded == null) { Status.Text = "Invalid macro file"; return; }
+            _macros.Clear();
+            _macros.AddRange(loaded);
+            MacroCombo.Items.Clear();
+            foreach (var m in _macros) MacroCombo.Items.Add($"Macro {m.MacroId + 1}");
+            if (MacroCombo.Items.Count > 0) MacroCombo.SelectedIndex = 0;
+            Status.Text = $"Imported {_macros.Count} macro(s) from {Path.GetFileName(dlg.FileName)}";
+        }
+        catch (Exception ex) { Status.Text = "Import failed: " + ex.Message; }
     }
 
     private void Export_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new SaveFileDialog { Filter = "Macro JSON (*.json)|*.json", FileName = "macro.json" };
-        if (dlg.ShowDialog() == true) Status.Text = $"Exported to {dlg.FileName}";
+        if (dlg.ShowDialog() != true) return;
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(_macros,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(dlg.FileName, json);
+            Status.Text = $"Exported {_macros.Count} macro(s) to {Path.GetFileName(dlg.FileName)}";
+        }
+        catch (Exception ex) { Status.Text = "Export failed: " + ex.Message; }
     }
 }
