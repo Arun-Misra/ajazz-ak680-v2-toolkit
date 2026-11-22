@@ -84,7 +84,20 @@
                         <ComboBoxItem Content="4K Return Rate"/>
                         <ComboBoxItem Content="8K Return Rate"/>
                     </ComboBox>
-                    <Button Style="{StaticResource AccentButton}" Content="Apply settings" Margin="0,16,0,0" HorizontalAlignment="Left" Click="Apply_Click"/>
+                    <TextBlock Text="Dead Zone" FontWeight="Bold" Margin="0,16,0,4"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextMuted}" Margin="0,0,0,6"
+                               Text="Minimum travel ignored at the top and bottom of a key press."/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="Top" Width="36" VerticalAlignment="Center"/>
+                        <Slider x:Name="TopDeadZone" Minimum="0" Maximum="30" Value="5" Width="180" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="DeadZone_ValueChanged"/>
+                        <TextBlock x:Name="TopDeadZoneLabel" Text="0.05 mm" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="Bottom" Width="36" VerticalAlignment="Center"/>
+                        <Slider x:Name="BottomDeadZone" Minimum="0" Maximum="30" Value="5" Width="180" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="DeadZone_ValueChanged"/>
+                        <TextBlock x:Name="BottomDeadZoneLabel" Text="0.05 mm" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Style="{StaticResource AccentButton}" Content="Apply settings" Margin="0,12,0,0" HorizontalAlignment="Left" Click="Apply_Click"/>
                     <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green"/>
                 </StackPanel>
             </Border>

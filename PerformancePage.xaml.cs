@@ -50,6 +50,13 @@ public partial class PerformancePage : Page
             : $"{count} key(s) selected — trigger {TriggerDistance.Value / 10.0:0.0} mm — axis {_axisType}";
     }
 
+    private void DeadZone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (TopDeadZoneLabel is null || BottomDeadZoneLabel is null) return;
+        TopDeadZoneLabel.Text = $"{TopDeadZone.Value / 100.0:0.00} mm";
+        BottomDeadZoneLabel.Text = $"{BottomDeadZone.Value / 100.0:0.00} mm";
+    }
+
     private void TriggerDistance_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (TriggerLabel is null) return;
@@ -129,8 +136,8 @@ public partial class PerformancePage : Page
             StabilityMode = (byte)(Stability.IsChecked == true ? 1 : 0),
             AutoCalibration = (byte)(Adaptive.IsChecked == true ? 1 : 0),
             ReportRate = (byte)(new byte[] { 2, 4, 6 })[Math.Min(ReturnRate.SelectedIndex, 2)],
-            TopDeadZone = mode == 3 ? 0 : 0.05,
-            BottomDeadZone = mode == 3 ? 0 : 0.05
+            TopDeadZone = mode == 3 ? 0 : TopDeadZone.Value / 100.0,
+            BottomDeadZone = mode == 3 ? 0 : BottomDeadZone.Value / 100.0
         };
         if (!_device.IsConnected && !_device.Connect()) { Status.Text = "No device connected"; return; }
         bool ok = await _device.SetGameModeAsync(preset);
@@ -144,7 +151,9 @@ public partial class PerformancePage : Page
         {
             StabilityMode = (byte)(Stability.IsChecked == true ? 1 : 0),
             AutoCalibration = (byte)(Adaptive.IsChecked == true ? 1 : 0),
-            ReportRate = (byte)(new byte[] { 2, 4, 6 })[Math.Min(ReturnRate.SelectedIndex, 2)]
+            ReportRate = (byte)(new byte[] { 2, 4, 6 })[Math.Min(ReturnRate.SelectedIndex, 2)],
+            TopDeadZone = TopDeadZone.Value / 100.0,
+            BottomDeadZone = BottomDeadZone.Value / 100.0
         };
         bool ok = await _device.SetGameModeAsync(mode);
         Status.Text = ok ? "Settings applied" : "Failed to apply settings";
