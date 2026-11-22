@@ -1,0 +1,113 @@
+<Page x:Class="AjazzManager.LightingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:AjazzManager"
+      Title="Lighting Settings" Background="{StaticResource PageBg}">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <local:KeyboardView x:Name="Preview" Height="230" Margin="0,0,0,10" KeyClicked="Preview_KeyClicked"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Lighting Effects" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                    <ListBox x:Name="EffectsList" BorderThickness="0" SelectionChanged="EffectsList_SelectionChanged"/>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <CheckBox x:Name="RawCheck" Content="Experimental raw mode (unsupported)" Checked="Setting_Changed" Unchecked="Setting_Changed"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock Text="Mode byte:" Width="70" VerticalAlignment="Center"/>
+                            <TextBox x:Name="RawModeBox" Text="23" Width="60" TextChanged="RawMode_TextChanged"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="Lighting Edit" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <CheckBox x:Name="EnabledCheck" Content="Enabled" IsChecked="True" Checked="Setting_Changed" Unchecked="Setting_Changed"/>
+                    </StackPanel>
+                    <TextBlock Text="Color mode" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <RadioButton x:Name="MonoRadio" Content="monochrome" IsChecked="True" Margin="0,0,12,0" Checked="Setting_Changed"/>
+                        <RadioButton x:Name="RgbRadio" Content="RGB" Checked="Setting_Changed"/>
+                    </StackPanel>
+                    <TextBlock Text="Lighting Brightness" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <DockPanel Margin="0,0,0,12">
+                        <Slider x:Name="Brightness" Minimum="1" Maximum="6" Value="5" TickFrequency="1" IsSnapToTickEnabled="True" Width="190" ValueChanged="Setting_Changed"/>
+                        <TextBlock x:Name="BrightnessLabel" Text="5" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <StackPanel x:Name="SpeedPanel">
+                        <TextBlock Text="Speed" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <DockPanel Margin="0,0,0,12">
+                            <Slider x:Name="Speed" Minimum="1" Maximum="6" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Width="190" ValueChanged="Setting_Changed"/>
+                            <TextBlock x:Name="SpeedLabel" Text="3" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </StackPanel>
+                    <StackPanel x:Name="DirectionPanel" Visibility="Collapsed" Margin="0,0,0,12">
+                        <TextBlock Text="Direction" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="DirectionCombo" Width="160" SelectedIndex="0" SelectionChanged="Setting_Changed">
+                            <ComboBoxItem Content="0 - Left" Tag="0"/>
+                            <ComboBoxItem Content="1 - Right" Tag="1"/>
+                            <ComboBoxItem Content="2 - Down" Tag="2"/>
+                            <ComboBoxItem Content="3 - Up" Tag="3"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel x:Name="EffectModePanel" Visibility="Collapsed" Margin="0,0,0,12">
+                        <TextBlock Text="Effect mode" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="EffectModeCombo" Width="160" SelectedIndex="0" SelectionChanged="Setting_Changed">
+                            <ComboBoxItem Content="Heart" Tag="0"/><ComboBoxItem Content="Background" Tag="1"/>
+                            <ComboBoxItem Content="Both" Tag="2"/><ComboBoxItem Content="Constant" Tag="3"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <TextBlock Text="Musical Rhythm" FontWeight="Bold" Margin="0,18,0,4"/>
+                    <TextBlock Text="Native plugin is not available in this app." Foreground="{StaticResource TextMuted}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Color settings" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="HEX:" Width="40" VerticalAlignment="Center"/>
+                        <TextBox x:Name="HexBox" Text="#00FFFF" Width="120" TextChanged="HexBox_TextChanged"/>
+                        <Border x:Name="ColorPreview" Width="26" Height="26" Background="#00FFFF" Margin="8,0,0,0" CornerRadius="4"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="RGB:" Width="40" VerticalAlignment="Center"/>
+                        <TextBox x:Name="RBox" Text="0" Width="52" TextChanged="RgbBox_TextChanged"/>
+                        <TextBox x:Name="GBox" Text="255" Width="52" Margin="4,0" TextChanged="RgbBox_TextChanged"/>
+                        <TextBox x:Name="BBox" Text="255" Width="52" TextChanged="RgbBox_TextChanged"/>
+                    </StackPanel>
+                    <StackPanel x:Name="SecondaryPanel" Visibility="Collapsed" Margin="0,0,0,8">
+                        <TextBlock Text="Secondary color" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="HEX:" Width="40" VerticalAlignment="Center"/>
+                            <TextBox x:Name="HexSecondary" Text="#FFFFFF" Width="120" TextChanged="HexSecondary_TextChanged"/>
+                            <Border x:Name="SecondaryPreview" Width="26" Height="26" Background="#FFFFFF" Margin="8,0,0,0" CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <WrapPanel x:Name="Swatches" Margin="0,6,0,10"/>
+                    <StackPanel x:Name="CustomHint" Visibility="Collapsed" Margin="0,0,0,10">
+                        <TextBlock Text="Custom (per-key): click a key on the keyboard above to paint it with the current color." Foreground="{StaticResource TextMuted}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource AccentButton}" Content="Apply to keyboard" Click="Apply_Click"/>
+                        <CheckBox x:Name="LiveCheck" Content="Live update" IsChecked="True" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
