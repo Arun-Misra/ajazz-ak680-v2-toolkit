@@ -1,6 +1,6 @@
-# AJAZZ AK680 V2 Toolkit — unofficial Windows driver software
+# AJAZZ AK680 V2 Toolkit — custom RGB animations + analog gamepad control
 
-**Short answer:** AJAZZ AK680 V2 Toolkit is an unofficial desktop control app for the **AJAZZ AK680 V2** 68-key Hall-effect keyboard. It replaces the AJAZZ web driver with a native Windows app for **RGB lighting, per-key colours, custom animations, macros, key remapping, performance settings, profiles, device diagnostics, and analog gamepad input**.
+**Short answer:** AJAZZ AK680 V2 Toolkit is an unofficial Windows app for the **AJAZZ AK680 V2** Hall-effect keyboard. Its two headline features are **host-generated custom RGB animations with 17 click-reactive effects** and **analog gamepad emulation driven by real magnetic key travel**. It also replaces the AJAZZ web driver for lighting, macros, key remapping, performance settings, profiles, and diagnostics.
 
 - **App name:** AK680 V2 Toolkit
 - **Repository / package name:** `ajazz-ak680-v2-toolkit`
@@ -10,68 +10,55 @@
 
 ---
 
-## What is AJAZZ AK680 V2 Toolkit?
+## ⭐ Headline feature 1: custom RGB animations for AK680 V2
 
-AJAZZ AK680 V2 Toolkit is a native Windows application built specifically for the **AJAZZ AK680 V2 Hall-effect keyboard**. It gives you desktop control over the features normally found in the AJAZZ web driver, plus extra tools the web driver does not provide, such as host-generated custom animations, a Device Inspector, and analog gamepad emulation using the keyboard's magnetic switch travel.
+The official web driver gives you a fixed set of lighting effects. This app adds a full **custom animation engine** that generates frames on the PC and streams them to the keyboard through its firmware-rendered LED path, so motion stays smooth instead of stepping.
 
-This project is **only for the AJAZZ AK680 V2**. It is not for AK680 V1, AK680 Pro, AK820, or other AJAZZ keyboard models.
+- **20 animation patterns**: Rainbow Wave, Breathing, Chase, Ripple, Sparkle, Matrix Rain, Fire, Checkerboard, Kitt Scanner, Aurora, Color Fade, Click Reactive, Plasma, Diagonal Wave, Spiral, Meteor, Color Wipe, Breathing Rainbow, Equalizer, and Typing Trail
+- **17 click effects**: Ripple, Flash, Spread, Sparkle Burst, Prism Bloom, Liquid Bloom, Nova, Comet, Thunder, Pulse, Wave, Cross, Echo, Rainbow, Full Flash, Heartbeat, and Spiral
+- **Thunder ⚡** fires jagged bolts from all four keyboard edges into the pressed key
+- **Prism Bloom**, **Liquid Bloom**, **Nova**, and **Comet** add richer one-shot lighting than the stock driver
+- Adjustable **frame rate** and **animation speed**
+- Physical-key detection through a global Windows keyboard hook
+- On-screen keyboard preview for firing effects with the mouse
+- Smooth firmware output path for continuous animation
 
----
-
-## Why use this instead of the AJAZZ web driver?
-
-If you are searching for **AJAZZ AK680 V2 driver software**, **AK680 V2 control software**, or an **AK680 V2 web driver alternative**, this app provides:
-
-- A native Windows UI instead of a browser page
-- Direct Windows HID access, with no browser WebHID picker
-- Smooth custom RGB animations rendered through the keyboard's firmware LED path
-- Click-reactive effects, including Ripple, Thunder, Prism Bloom, Nova, and Comet
-- Analog gamepad output based on real Hall-effect key travel
-- Full device readback for diagnostics and troubleshooting
-- Local macro/profile management and import/export
+If you are searching for **AK680 V2 custom animations**, **AK680 V2 RGB software**, or **AK680 V2 lighting effects**, this is the core feature of the app.
 
 ---
 
-## Main features
+## ⭐ Headline feature 2: Hall-effect analog gamepad emulation
+
+The AJAZZ AK680 V2 uses magnetic switches, so each key has a measurable travel depth. The **Hall Gamepad** feature samples that travel and turns the keyboard into a virtual Xbox 360 controller.
+
+- **W/A/S/D map to the left analog stick**
+- Stick intensity follows **real key depth from 0–3.4 mm**, not just on/off key presses
+- Gentle presses produce small analog values; deeper presses push the stick further
+- Guided **full-travel calibration** for each mapped key
+- Uses the keyboard's 1 kHz Hall telemetry stream
+- Requires the **ViGEmBus** driver for virtual controller output
+- Useful for games that support analog controller input
+
+This is the feature that makes the AK680 V2's Hall-effect hardware useful beyond normal keyboard input: **AK680 V2 analog gamepad**, **AK680 V2 Hall effect controller**, and **AK680 V2 gamepad emulation**.
+
+---
+
+## What else the app does
 
 ### AJAZZ AK680 V2 RGB lighting control
 
 - 20 built-in lighting effects: modes 1–19 plus Custom (128)
 - Per-key RGB colour picker with an on-screen keyboard
 - Adjustable brightness, speed, direction, and colour mode
-- Live update so changes appear immediately on the keyboard
+- Live update so changes appear immediately
 - Optional raw mode value for testing undocumented effect bytes
-
-### AK680 V2 custom animations
-
-The animation engine generates frames on the PC and streams them to the keyboard, allowing effects beyond the built-in firmware modes.
-
-- 20 animation patterns: Rainbow Wave, Breathing, Chase, Ripple, Sparkle, Matrix Rain, Fire, Checkerboard, Kitt Scanner, Aurora, Color Fade, Click Reactive, Plasma, Diagonal Wave, Spiral, Meteor, Color Wipe, Breathing Rainbow, Equalizer, and Typing Trail
-- Adjustable frame rate and animation speed
-- 17 click effects: Ripple, Flash, Spread, Sparkle Burst, Prism Bloom, Liquid Bloom, Nova, Comet, Thunder, Pulse, Wave, Cross, Echo, Rainbow, Full Flash, Heartbeat, and Spiral
-- Physical-key detection through a global Windows keyboard hook
-- On-screen keyboard preview for firing effects with the mouse
-- Smooth firmware-rendered output path for continuous animation
 
 ### Hall-effect and performance settings
 
-The AK680 V2 uses magnetic switches. This app exposes Hall-effect configuration such as:
-
 - Actuation point and trigger travel
-- Dead zone
-- Axis / switch type settings
+- Dead zone and axis / switch type settings
 - Polling rate options: 1000 Hz, 4000 Hz, and 8000 Hz
 - Game mode, sleep time, key delay, NKRO, stability mode, auto calibration, and single-key wakeup
-
-### AK680 V2 analog gamepad emulation
-
-The **Hall Gamepad** feature reads each key's physical travel from the keyboard's Hall sensors and maps it to a virtual Xbox 360 controller.
-
-- W/A/S/D map to the left analog stick
-- Stick intensity follows real key depth from 0–3.4 mm
-- Guided full-travel calibration per key
-- Requires the ViGEmBus virtual gamepad driver
-- Useful for games that support analog controller input
 
 ### Key remapping, macros, and advanced keys
 
@@ -82,20 +69,22 @@ The **Hall Gamepad** feature reads each key's physical travel from the keyboard'
 
 ### Device Inspector and diagnostics
 
-The Device Inspector reads all supported state blocks from the keyboard and decodes them into readable tables:
-
-- Device information and firmware version
-- Game/system settings
-- LED effect state
-- Key bindings
-- Custom LED colours
-- Trigger points
-- Rapid Trigger settings
-- DKS slots
-- Macro offsets
+- Decoded device info, firmware version, game/system settings, LED effect state, key bindings, custom colours, trigger points, Rapid Trigger settings, DKS slots, and macro offsets
 - Raw reply dumps and a saved text report
+- **Key Map Debug** page shows each key's label and LED id and can light a single LED for mapping verification
 
-The **Key Map Debug** page shows each key's label and LED id and can light a single LED for mapping verification.
+---
+
+## Why use this instead of the AJAZZ web driver?
+
+If you are searching for **AJAZZ AK680 V2 driver software**, **AK680 V2 control software**, or an **AK680 V2 web driver alternative**, this app provides:
+
+- Smooth custom RGB animations and click effects
+- Analog gamepad emulation from Hall-effect travel
+- Native Windows UI instead of a browser page
+- Direct Windows HID access, with no browser WebHID picker
+- Device Inspector and full diagnostic readback
+- Local macro/profile management and import/export
 
 ---
 
@@ -113,8 +102,6 @@ Close the AJAZZ web driver or browser tab before launching the app. Windows gene
 
 ## Build and run
 
-From the project directory:
-
 ```powershell
 dotnet build
 dotnet run
@@ -126,7 +113,7 @@ Or launch the built executable directly:
 bin\Debug\net10.0-windows\AK680V2Toolkit.exe
 ```
 
-The app connects automatically at startup and shows the connected device in the sidebar. If the keyboard is disconnected or still held by another app, click **Refresh device** after freeing it.
+The app connects automatically at startup and shows the connected keyboard in the sidebar. If the keyboard is disconnected or still held by another app, click **Refresh device** after freeing it.
 
 ---
 
@@ -137,8 +124,8 @@ The app connects automatically at startup and shows the connected device in the 
 | Application shell | `App.xaml.cs`, `MainWindow.xaml`, `MainWindow.xaml.cs` |
 | HID transport and protocol | `NativeHid.cs`, `DeviceService.cs`, `Protocol.cs`, `Commands.cs` |
 | Lighting UI | `LightingPage.xaml`, `LightingPage.xaml.cs` |
-| Animation engine | `AnimationEngine.cs`, `AnimationsPage.xaml`, `AnimationsPage.xaml.cs` |
-| Hall telemetry and gamepad | `HallStream.cs`, `VirtualGamepad.cs`, `GamepadPage.xaml`, `GamepadPage.xaml.cs` |
+| **Custom animation engine** | `AnimationEngine.cs`, `AnimationsPage.xaml`, `AnimationsPage.xaml.cs` |
+| **Hall telemetry and gamepad** | `HallStream.cs`, `VirtualGamepad.cs`, `GamepadPage.xaml`, `GamepadPage.xaml.cs` |
 | Device configuration | `CustomKeysPage`, `MacroPage`, `PerformancePage`, `AdvancedKeysPage`, `SettingsPage`, `ProfilesPage` |
 | Diagnostics | `InspectorPage.xaml`, `InspectorPage.xaml.cs`, `DebugPage.xaml`, `DebugPage.xaml.cs` |
 | Keyboard mapping | `KeyboardHook.cs`, `KeyMap.cs`, `KeyboardView.xaml` |
@@ -155,9 +142,17 @@ No. AJAZZ AK680 V2 Toolkit is an independent desktop project and is not affiliat
 
 No. It is built specifically for the **AJAZZ AK680 V2**. The key map, LED ids, and commands are model-specific.
 
+### What makes the custom animations different from built-in lighting modes?
+
+Built-in modes are fixed firmware effects. The custom animation engine generates its own frames on the PC, supports click-reactive effects, and can be tuned with frame rate and speed controls.
+
+### How does analog gamepad input work?
+
+The AK680 V2's magnetic switches report how far each key is pressed. The app samples that travel, calibrates rest and bottom-out values, and maps W/A/S/D to analog stick axes through a ViGEmBus virtual Xbox controller.
+
 ### Can it replace the AJAZZ web driver?
 
-For most desktop use, yes: lighting, key remapping, macros, advanced keys, settings, and profiles are available in the app. The Hall Gamepad and custom animation features are additional tools not provided by the official web driver.
+For most desktop use, yes. Lighting, key remapping, macros, advanced keys, settings, and profiles are available in the app. Custom animations and analog gamepad input are extra features beyond the official web driver.
 
 ### Does it need internet access?
 
@@ -175,7 +170,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 
 ## Keywords
 
-AJAZZ AK680 V2, AK680 V2, AK680 V2 driver, AJAZZ AK680 V2 driver, AK680 V2 software, AK680 V2 control software, AK680 V2 web driver alternative, AK680 V2 RGB, AK680 V2 lighting software, AK680 V2 Hall effect, AK680 V2 magnetic switch, AK680 V2 macro software, AK680 V2 key remap, AK680 V2 custom animations, AK680 V2 gamepad, AK680 V2 analog input, AK680 V2 profile manager, AK680 V2 device inspector.
+AK680 V2 custom animations, AK680 V2 RGB software, AK680 V2 lighting effects, AK680 V2 click effects, AK680 V2 gamepad emulation, AK680 V2 analog gamepad, AK680 V2 Hall effect controller, AK680 V2 analog input, AJAZZ AK680 V2 driver, AJAZZ AK680 V2 software, AJAZZ AK680 V2 control software, AJAZZ AK680 V2 web driver alternative, AJAZZ AK680 V2 RGB, AJAZZ AK680 V2 Hall effect, AJAZZ AK680 V2 magnetic switch, AJAZZ AK680 V2 macro software, AJAZZ AK680 V2 profile manager, AJAZZ AK680 V2 device inspector.
 
 ---
 
