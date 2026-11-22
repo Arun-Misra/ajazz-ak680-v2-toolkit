@@ -24,6 +24,7 @@
                     <ListBoxItem Content="Profiles" Tag="Profiles"/>
                     <ListBoxItem Content="Animations" Tag="Animations"/>
                     <ListBoxItem Content="Hall Gamepad" Tag="Gamepad"/>
+                    <ListBoxItem Content="Device Inspector" Tag="Inspector"/>
                     <ListBoxItem Content="Key Map Debug" Tag="Debug"/>
                 </ListBox>
                 <Separator Margin="0,16"/>
