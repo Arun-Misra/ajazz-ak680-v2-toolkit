@@ -166,12 +166,4 @@ Windows cannot create an Xbox controller input device from a normal user applica
 
 Because both the browser WebHID driver and this app try to open the same HID interface. Closing the browser tab releases the keyboard.
 
----
-
-## Keywords
-
-AK680 V2 custom animations, AK680 V2 RGB software, AK680 V2 lighting effects, AK680 V2 click effects, AK680 V2 gamepad emulation, AK680 V2 analog gamepad, AK680 V2 Hall effect controller, AK680 V2 analog input, AJAZZ AK680 V2 driver, AJAZZ AK680 V2 software, AJAZZ AK680 V2 control software, AJAZZ AK680 V2 web driver alternative, AJAZZ AK680 V2 RGB, AJAZZ AK680 V2 Hall effect, AJAZZ AK680 V2 magnetic switch, AJAZZ AK680 V2 macro software, AJAZZ AK680 V2 profile manager, AJAZZ AK680 V2 device inspector.
-
----
-
 Author: Arun-Misra
