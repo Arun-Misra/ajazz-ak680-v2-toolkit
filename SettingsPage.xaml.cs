@@ -132,13 +132,26 @@ public partial class SettingsPage : Page
 
             FlashStatus.Text = "Entering boot mode…";
             if (!await _device.EnterBootAsync()) { FlashStatus.Text = "Could not enter boot mode"; return; }
-            await Task.Delay(500);
+
+            FlashStatus.Text = "Waiting for bootloader to re-enumerate…";
+            if (!await _device.ReconnectForOtaAsync())
+            {
+                FlashStatus.Text = "Keyboard did not reappear in boot mode — flash aborted";
+                return;
+            }
 
             FlashStatus.Text = "Sending firmware…";
             var result = await _device.SendFirmwareAsync(fw, p => Dispatcher.BeginInvoke(new Action(() => FlashProgress.Value = p)));
             if (!result.ok)
             {
                 FlashStatus.Text = $"Firmware transfer failed (status {result.status:X2}, detail {result.detail:X2})";
+                return;
+            }
+
+            FlashStatus.Text = "Waiting for keyboard to re-enumerate…";
+            if (!await _device.ReconnectForOtaAsync())
+            {
+                FlashStatus.Text = "Keyboard did not reappear after transfer";
                 return;
             }
 

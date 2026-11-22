@@ -663,6 +663,30 @@ public class DeviceService
         return frames != null && frames.Count > 0 && frames[0].Length > 2 && frames[0][2] == 0;
     }
 
+    /// <summary>
+    /// Drop the current handle and wait for the keyboard to re-enumerate. Used during
+    /// OTA: entering the bootloader and switching partitions both reboot the device,
+    /// so the old HID handle becomes invalid.
+    /// </summary>
+    public async Task<bool> ReconnectForOtaAsync(int timeoutMs = 15000)
+    {
+        Disconnect();
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        while (sw.ElapsedMilliseconds < timeoutMs)
+        {
+            foreach (var d in NativeHidDevice.Enumerate())
+            {
+                // The bootloader may not advertise the AJAZZ product name, so match VID.
+                if (d.VendorId != 0x0C45 || d.OutputReportLength < 32 || d.OutputReportLength > 128) continue;
+                try { d.Open(); Device = d; return true; }
+                catch { d.Dispose(); }
+            }
+            await Task.Delay(200);
+        }
+        LastError = "keyboard did not reappear after reboot";
+        return false;
+    }
+
     public async Task<OtaSystemInfo?> GetOtaSystemInfoAsync(int timeoutMs = 2000)
     {
         if (!IsConnected) return null;

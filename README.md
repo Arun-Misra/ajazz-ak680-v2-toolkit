@@ -58,7 +58,7 @@ This is the feature that makes the AK680 V2's Hall-effect hardware useful beyond
 - Actuation point and trigger travel
 - Dead zone and axis / switch type settings
 - Polling rate options: 1000 Hz, 4000 Hz, and 8000 Hz
-- Game mode, sleep time, key delay, NKRO, stability mode, auto calibration, and single-key wakeup
+- Mode presets (Custom / Office / Beginner / Game), stability mode, and adaptive dynamic calibration
 
 ### Key remapping, macros, and advanced keys
 
@@ -170,11 +170,14 @@ Because both the browser WebHID driver and this app try to open the same HID int
 
 - Custom keys: key remapping, FN-layer remapping, reset
 - Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, native system-audio Music Rhythm
-- Shortcut command / macros: create, edit, save to keyboard, real JSON import/export
-- Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, calibration, keyboard settings
+- Shortcut command / macros: create, edit, **record from physical keys**, save to keyboard, JSON import/export
+- Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, calibration, keyboard settings, configurable top/bottom dead zone
 - Advanced keys: RS, SOCD, DKS, MT and TGL configuration and device writes
-- Profiles: create/delete/import/export, apply onboard slot, save keyboard state to profile
+- Profiles: create/**rename**/**copy**/delete/import/export, apply onboard slot, save keyboard state to profile
+- Settings: Light/Dark/Sync system theme, English/中文/日本語 UI translation, device info read, manual-file OTA firmware flow
 - Key Test: live per-key Hall travel in millimetres
 - Device Inspector: decoded device state and raw replies
+
+Verified against the connected keyboard with readback: key matrix and FN-layer writes, RT/DKS/trigger writes, profile apply acknowledgement, and macro save (index plus action bytes). The trigger-config read command (`GET_TRIGGER_KEY`, 30) is not answered by the current firmware, so writes are confirmed only by acceptance. OTA transfer is implemented but requires a firmware image (none is published) and was not flashed during verification.
 
 Author: Arun-Misra
