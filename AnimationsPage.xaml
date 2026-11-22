@@ -103,6 +103,14 @@
                         <ComboBoxItem Content="Nova"/>
                         <ComboBoxItem Content="Comet"/>
                         <ComboBoxItem Content="Thunder ⚡"/>
+                        <ComboBoxItem Content="Pulse"/>
+                        <ComboBoxItem Content="Wave"/>
+                        <ComboBoxItem Content="Cross"/>
+                        <ComboBoxItem Content="Echo"/>
+                        <ComboBoxItem Content="Rainbow"/>
+                        <ComboBoxItem Content="Full Flash"/>
+                        <ComboBoxItem Content="Heartbeat"/>
+                        <ComboBoxItem Content="Spiral"/>
                     </ComboBox>
                 </StackPanel>
                 <local:KeyboardView Grid.Row="2" x:Name="ClickPreview" Height="300" VerticalAlignment="Top" KeyClicked="ClickPreview_KeyClicked"/>

@@ -23,7 +23,16 @@ public enum ClickEffect
     LiquidBloom,  // soft ink spreading with a bright core
     Nova,         // radial rays + hot core
     Comet,        // directional streak with a fading tail
-    Thunder       // instant lightning converging from the edges onto the key
+    Thunder,      // instant lightning converging from the edges onto the key
+    // Classic one-shot effects
+    Pulse,        // smooth breathing blob
+    Wave,         // single clean expanding ring
+    Cross,        // flare along the pressed row and column
+    Echo,         // two trailing rings
+    Rainbow,      // colour-cycling blob
+    FullFlash,    // whole-keyboard flash
+    Heartbeat,    // double pulse
+    Spiral        // rotating spiral arms
 }
 
 /// <summary>
@@ -277,6 +286,15 @@ public sealed class AnimationEngine
     private static double Ring(double dist, double radius, double width) =>
         Math.Exp(-Math.Pow((dist - radius) / width, 2));
 
+    /// <summary>Smooth rise-and-fall envelope between start and start+duration.</summary>
+    private static double Pulse(double age, double start, double duration)
+    {
+        double u = (age - start) / duration;
+        if (u <= 0 || u >= 1) return 0;
+        double s = Math.Sin(u * Math.PI);
+        return s * s;
+    }
+
     private static double HueOf(Color c)
     {
         double r = c.R / 255.0, g = c.G / 255.0, b = c.B / 255.0;
@@ -361,6 +379,43 @@ public sealed class AnimationEngine
                                   (1 - Smoothstep(0.15, 0.6, age));
                     intensity = Math.Max(ring * rays, core) * fade;
                     c = Mix(b.Color, Colors.White, rays * 0.55 + core * 0.5);
+                    break;
+                }
+                case ClickEffect.Pulse:
+                    intensity = Math.Exp(-dist * dist / 3.2) * Pulse(age, 0, 0.95);
+                    break;
+                case ClickEffect.Wave:
+                    intensity = Ring(dist, age * 5.0, 1.7) *
+                                (1 - Smoothstep(0.5, 1.2, age));
+                    break;
+                case ClickEffect.Cross:
+                    intensity = (dr == 0 || dc == 0)
+                        ? Math.Exp(-cheb / 2.2) * (1 - Smoothstep(0.2, 0.85, age))
+                        : 0;
+                    c = Mix(b.Color, Colors.White, 0.35);
+                    break;
+                case ClickEffect.Echo:
+                    intensity = (Ring(dist, age * 4.5, 1.15) +
+                                 0.65 * Ring(dist, age * 4.5 - 3.2, 1.15)) * fade;
+                    break;
+                case ClickEffect.Rainbow:
+                    intensity = Math.Exp(-dist * dist / 9.0) * fade;
+                    c = HsvToRgb(HueOf(b.Color) + age * 200 + dist * 22, 1, 1);
+                    break;
+                case ClickEffect.FullFlash:
+                    intensity = 1 - Smoothstep(0.04, 0.36, age);
+                    c = Mix(b.Color, Colors.White, 0.55);
+                    break;
+                case ClickEffect.Heartbeat:
+                    intensity = Pulse(age, 0, 0.32) + 0.72 * Pulse(age, 0.34, 0.38);
+                    intensity = Math.Clamp(intensity, 0, 1) * Math.Exp(-dist * dist / 6.0);
+                    break;
+                case ClickEffect.Spiral:
+                {
+                    double angle = Math.Atan2(dr, dc);
+                    intensity = Ring(dist, age * 4.8, 2.0) *
+                                (0.45 + 0.55 * Math.Sin(angle * 2 - age * 9)) * fade;
+                    intensity = Math.Max(0, intensity);
                     break;
                 }
                 case ClickEffect.Thunder:
