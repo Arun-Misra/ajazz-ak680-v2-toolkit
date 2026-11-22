@@ -97,9 +97,11 @@ public sealed class AnimationEngine
     /// <summary>Multiplies pattern time (0.25 = slow, 3 = fast). Live while running.</summary>
     public double Speed { get => _speed; set => _speed = Math.Clamp(value, 0.25, 3.0); }
 
-    /// <summary>Experimental: render through the music plugin's cmd 0x32 path in
-    /// firmware mode 100 instead of the normal custom-LED path (mode 128).</summary>
-    public bool UseMusicPath { get; set; }
+    /// <summary>Render through the firmware's cmd 0x32 path in music mode 100.
+    /// This is the smooth path: the firmware keeps rendering from the streamed data
+    /// instead of stalling on host-paced 0x24 custom-LED frames. Set false to fall
+    /// back to mode 128 for diagnostics.</summary>
+    public bool UseMusicPath { get; set; } = true;
 
     public bool IsRunning => _running;
     public long FramesRendered { get; private set; }
