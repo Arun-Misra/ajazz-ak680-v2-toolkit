@@ -42,6 +42,7 @@ public partial class MainWindow : Window
             "Animations" => new AnimationsPage(),
             "Gamepad" => new GamepadPage(),
             "Inspector" => new InspectorPage(),
+            "KeyTest" => new KeyTestPage(),
             "Debug" => new DebugPage(),
             _ => null
         };
