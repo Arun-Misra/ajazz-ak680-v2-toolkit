@@ -10,9 +10,10 @@
         <SolidColorBrush x:Key="TextMain" Color="#1F2430"/>
         <SolidColorBrush x:Key="TextMuted" Color="#8A90A0"/>
         <SolidColorBrush x:Key="Border" Color="#ECEEF3"/>
+        <SolidColorBrush x:Key="GhostBg" Color="#F3F4F7"/>
 
         <Style TargetType="Border" x:Key="Card">
-            <Setter Property="Background" Value="{StaticResource CardBg}"/>
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="16"/>
         </Style>
@@ -35,10 +36,10 @@
         </Style>
 
         <Style TargetType="Button" x:Key="GhostButton">
-            <Setter Property="Background" Value="#F3F4F7"/>
-            <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+            <Setter Property="Background" Value="{DynamicResource GhostBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Border}"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -54,7 +55,21 @@
         </Style>
 
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Border}"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource TextMain}"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{DynamicResource CardBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMain}"/>
         </Style>
         <Style TargetType="TabItem">
             <Setter Property="FontSize" Value="14"/>

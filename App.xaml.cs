@@ -21,6 +21,7 @@ public partial class App : Application
             // A UI event failure (e.g. HID timeout) should not terminate the app.
             args.Handled = true;
         };
+        ThemeService.Load();
         base.OnStartup(e);
     }
 

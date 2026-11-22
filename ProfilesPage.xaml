@@ -7,7 +7,7 @@
             <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Border Background="White" CornerRadius="8" Padding="12" Margin="0,0,8,0">
+        <Border Background="{DynamicResource CardBg}" CornerRadius="8" Padding="12" Margin="0,0,8,0">
             <StackPanel>
                 <TextBlock Text="Profiles" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
                 <ListBox x:Name="ProfileList" Height="300" Margin="0,0,0,8" SelectionChanged="ProfileList_SelectionChanged"/>
@@ -30,7 +30,7 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-        <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="12">
+        <Border Grid.Column="1" Background="{DynamicResource CardBg}" CornerRadius="8" Padding="12">
             <TextBox x:Name="ContentBox" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontFamily="Consolas"/>
         </Border>
     </Grid>

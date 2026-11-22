@@ -441,6 +441,25 @@ public class DeviceService
     public Task<bool> SetTriggerConfigAsync(TriggerConfig[] t) =>
         SendCommandAsync(Cmd.SetTriggerKey, Commands.BuildTriggerConfig(t), 512, timeoutMs: 2000);
 
+    public async Task<TriggerConfig[]?> GetTriggerConfigAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetTriggerKey, 512, timeoutMs: timeoutMs);
+        if (d == null) return null;
+        var result = new TriggerConfig[128];
+        for (int i = 0; i < 128; i++)
+        {
+            int o = i * 4;
+            result[i] = new TriggerConfig
+            {
+                IsFastTrigger = d[o] == 1,
+                TriggerPoint = d[o + 1],
+                ReleasePoint = d[o + 2],
+                AxisType = d[o + 3]
+            };
+        }
+        return result;
+    }
+
     public Task<bool> SetMagneticAxisRtAsync(RtConfig[] configs, int rtPrecision = 0) =>
         SendCommandAsync(Cmd.SetMagneticAxisRt, Commands.BuildMagneticAxisRt(configs, rtPrecision), 1024, timeoutMs: 2000);
 
@@ -510,6 +529,115 @@ public class DeviceService
     }
 
     /// <summary>OTA_GET_DEVICE_SYSTEM_INFO (128) — read-only firmware identity.</summary>
+    private static ushort Crc16(byte[] data, int start, int end)
+    {
+        ushort crc = 0xFFFF;
+        for (int i = start; i < end; i++)
+        {
+            crc ^= (ushort)(data[i] << 8);
+            for (int b = 0; b < 8; b++)
+                crc = (crc & 0x8000) != 0 ? (ushort)((crc << 1) ^ 0x1021) : (ushort)(crc << 1);
+        }
+        return crc;
+    }
+
+    public async Task<string> GetSerialNumberAsync(int timeoutMs = 2000)
+    {
+        var header = new byte[] { 0xAA, Cmd.OtaGetDeviceSn, 0, 0, 0, 0, 0, 0 };
+        var frames = await SendCommandWithResponseAsync(Cmd.OtaGetDeviceSn, Array.Empty<byte>(), 56,
+            customHeader: header, timeoutMs: timeoutMs);
+        if (frames == null || frames.Count == 0) return "";
+        var d = frames[0];
+        int len = Math.Min(d.Length >= 3 ? d[2] : 0, d.Length - 8);
+        var text = System.Text.Encoding.UTF8.GetString(d, 8, Math.Max(0, len)).TrimEnd('\0');
+        return text;
+    }
+
+    public async Task<bool> VerifyFirmwareAsync(ushort manufacturer, ushort product, int timeoutMs = 2000)
+    {
+        var header = new byte[]
+        {
+            0xAA, Cmd.OtaVerifyFirmwareInfo,
+            (byte)(manufacturer >> 8), (byte)manufacturer,
+            (byte)(product >> 8), (byte)product, 0, 0
+        };
+        var frames = await SendCommandWithResponseAsync(Cmd.OtaVerifyFirmwareInfo, Array.Empty<byte>(), 24,
+            customHeader: header, timeoutMs: timeoutMs);
+        return frames != null && frames.Count > 0 && frames[0].Length > 2 && frames[0][2] == 1;
+    }
+
+    public async Task<bool> EnterBootAsync(int timeoutMs = 2000)
+    {
+        var header = new byte[] { 0xAA, Cmd.OtaDeviceEnterBoot, 0, 0, 0, 0, 0, 0 };
+        var frames = await SendCommandWithResponseAsync(Cmd.OtaDeviceEnterBoot, Array.Empty<byte>(), 24,
+            customHeader: header, timeoutMs: timeoutMs);
+        return frames != null && frames.Count > 0;
+    }
+
+    public async Task<(bool ok, byte status, byte detail)> SendFirmwareAsync(byte[] firmware, Action<int>? progress)
+    {
+        if (!IsConnected) return (false, 255, 255);
+        const int chunk = HidProtocol.ReportSize - 9; // 55 bytes of payload after the 9-byte OTA header
+        int total = firmware.Length;
+        if (total == 0) return (false, 255, 255);
+
+        // Count packets, splitting so no packet crosses a 4096-byte CRC boundary.
+        int packets = 0;
+        for (int off = 0; off < total;)
+        {
+            int c = Math.Min(chunk, total - off);
+            int end = off + c;
+            if (off / 4096 != (end - 1) / 4096) c = ((off / 4096 + 1) * 4096) - off;
+            off += c; packets++;
+        }
+        if (packets > 65535) return (false, 255, 255);
+
+        int sent = 0;
+        for (int seq = 1; seq <= packets; seq++)
+        {
+            int c = Math.Min(chunk, total - sent);
+            int end = sent + c;
+            if (sent / 4096 != (end - 1) / 4096) c = ((sent / 4096 + 1) * 4096) - sent;
+            end = sent + c;
+
+            byte crcHi = 0xFF, crcLo = 0xFF;
+            if (end % 4096 == 0 || end == total)
+            {
+                ushort crc = Crc16(firmware, (end - 1) / 4096 * 4096, end);
+                crcHi = (byte)(crc >> 8); crcLo = (byte)crc;
+            }
+            var header = new byte[]
+            {
+                0xAA, Cmd.OtaSendFirmwareInfo,
+                (byte)(seq >> 8), (byte)seq,
+                (byte)(packets >> 8), (byte)packets,
+                (byte)c, crcHi, crcLo
+            };
+            var slice = new byte[c];
+            Buffer.BlockCopy(firmware, sent, slice, 0, c);
+            var report = HidProtocol.BuildReport(Cmd.OtaSendFirmwareInfo, c, 0, slice,
+                null, header, false);
+            SendReport(0, report);
+            var response = Device!.ReadReport(end == total ? 600 : 2);
+            sent = end;
+            progress?.Invoke(Math.Min(99, (int)((double)seq / packets * 100)));
+            if (end != total && (header[7] != 0xFF || header[8] != 0xFF)) continue;
+            if (response != null && response.Length > 3)
+                return (response[2] == 0, response[2], response[3]);
+        }
+        progress?.Invoke(100);
+        return (true, 0, 0);
+    }
+
+    public async Task<bool> SwitchPartitionAsync(bool app, int timeoutMs = 2000)
+    {
+        byte target = app ? (byte)65 : (byte)66;
+        var header = new byte[] { 0xAA, Cmd.OtaSwitchAppPartition, target, 0, 0, 0, 0, 0 };
+        var frames = await SendCommandWithResponseAsync(Cmd.OtaSwitchAppPartition, Array.Empty<byte>(), 24,
+            customHeader: header, timeoutMs: timeoutMs);
+        return frames != null && frames.Count > 0 && frames[0].Length > 2 && frames[0][2] == 0;
+    }
+
     public async Task<OtaSystemInfo?> GetOtaSystemInfoAsync(int timeoutMs = 2000)
     {
         if (!IsConnected) return null;
