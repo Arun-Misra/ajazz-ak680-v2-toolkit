@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public partial class ProfilesPage : Page
 {

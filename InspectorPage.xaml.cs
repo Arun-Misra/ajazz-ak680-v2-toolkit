@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public partial class InspectorPage : Page
 {

@@ -1,7 +1,7 @@
-<Page x:Class="AjazzManager.AnimationsPage"
+<Page x:Class="AK680V2Toolkit.AnimationsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="clr-namespace:AjazzManager"
+      xmlns:local="clr-namespace:AK680V2Toolkit"
       Title="Animations" Background="{StaticResource PageBg}">
     <Grid Margin="16">
         <Grid.ColumnDefinitions>

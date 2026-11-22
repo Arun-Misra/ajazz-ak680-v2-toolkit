@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public class MacroRow
 {

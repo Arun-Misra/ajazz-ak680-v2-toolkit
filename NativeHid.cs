@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>
 /// Native Win32 HID access: enumeration via SetupAPI, I/O via CreateFile/ReadFile/WriteFile,

@@ -1,4 +1,4 @@
-<Page x:Class="AjazzManager.InspectorPage"
+<Page x:Class="AK680V2Toolkit.InspectorPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Device Inspector" Background="{StaticResource PageBg}">

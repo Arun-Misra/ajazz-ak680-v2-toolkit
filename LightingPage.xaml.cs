@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public partial class LightingPage : Page
 {

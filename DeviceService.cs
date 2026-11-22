@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public class DeviceService
 {

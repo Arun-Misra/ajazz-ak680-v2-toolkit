@@ -1,4 +1,4 @@
-<Page x:Class="AjazzManager.MacroPage"
+<Page x:Class="AK680V2Toolkit.MacroPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Shortcut Command" Background="{StaticResource PageBg}">

@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>
 /// Streams per-key Hall sensor travel from the keyboard at ~1 kHz.

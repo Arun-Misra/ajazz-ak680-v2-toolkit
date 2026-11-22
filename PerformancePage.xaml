@@ -1,7 +1,7 @@
-<Page x:Class="AjazzManager.PerformancePage"
+<Page x:Class="AK680V2Toolkit.PerformancePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="clr-namespace:AjazzManager"
+      xmlns:local="clr-namespace:AK680V2Toolkit"
       Title="Performance" Background="{StaticResource PageBg}">
     <Grid Margin="12">
         <Grid.RowDefinitions>

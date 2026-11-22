@@ -1,7 +1,7 @@
-﻿<Window x:Class="AjazzManager.MainWindow"
+<Window x:Class="AK680V2Toolkit.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="AJAZZ Manager" Height="720" Width="1100"
+        Title="AK680 V2 Toolkit" Height="720" Width="1100"
         Background="#F5F5F5">
     <Grid>
         <Grid.ColumnDefinitions>

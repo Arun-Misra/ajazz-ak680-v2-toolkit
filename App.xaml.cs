@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public partial class App : Application
 {

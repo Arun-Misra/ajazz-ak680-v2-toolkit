@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public class ProfileService
 {
@@ -11,7 +11,7 @@ public class ProfileService
     {
         ProfilesDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "AjazzManager", "profiles");
+            "AK680V2Toolkit", "profiles");
         Directory.CreateDirectory(ProfilesDir);
     }
 

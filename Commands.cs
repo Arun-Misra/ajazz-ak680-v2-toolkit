@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>
 /// Payload builders reverse-engineered from the AJAZZ web driver (REA analyze_javascript_application).

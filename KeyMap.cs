@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>
 /// Shared key layout for the AK680 V2. LED ids are the `value` fields from the

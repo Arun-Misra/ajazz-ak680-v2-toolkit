@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public partial class DebugPage : Page
 {

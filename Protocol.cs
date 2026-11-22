@@ -1,6 +1,6 @@
 using System;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>
 /// Command IDs extracted from the AJAZZ web driver bundle (protocols/default/index.ts -> HX).

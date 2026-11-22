@@ -7,7 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 public enum AnimationPattern
 {

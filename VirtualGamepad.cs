@@ -3,7 +3,7 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace AjazzManager;
+namespace AK680V2Toolkit;
 
 /// <summary>Thin wrapper over the ViGEmBus virtual XInput 360 controller.</summary>
 public sealed class VirtualGamepad : IDisposable
