@@ -1,0 +1,29 @@
+<Page x:Class="AjazzManager.ProfilesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Profiles">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Border Background="White" CornerRadius="8" Padding="12" Margin="0,0,8,0">
+            <StackPanel>
+                <TextBlock Text="Profiles" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                <ListBox x:Name="ProfileList" Height="300" Margin="0,0,0,8" SelectionChanged="ProfileList_SelectionChanged"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBox x:Name="NewName" Width="150" Margin="0,0,4,0"/>
+                    <Button Content="Create" Click="Create_Click" Padding="8,4"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Import" Click="Import_Click" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Export" Click="Export_Click" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Delete" Click="Delete_Click" Padding="8,4"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="12">
+            <TextBox x:Name="ContentBox" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontFamily="Consolas"/>
+        </Border>
+    </Grid>
+</Page>
