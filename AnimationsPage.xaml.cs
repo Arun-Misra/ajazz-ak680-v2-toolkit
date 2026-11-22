@@ -39,8 +39,11 @@ public partial class AnimationsPage : Page
 
     private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        // XAML raises ValueChanged while the slider's Minimum/Maximum are being set,
+        // before the constructor has created the engine and label.
+        if (_engine is null || SpeedLabel is null) return;
         _engine.Speed = SpeedSlider.Value;
-        if (SpeedLabel != null) SpeedLabel.Text = $"{SpeedSlider.Value:0.00}x";
+        SpeedLabel.Text = $"{SpeedSlider.Value:0.00}x";
     }
 
     private void PrimaryHex_TextChanged(object sender, TextChangedEventArgs e)
