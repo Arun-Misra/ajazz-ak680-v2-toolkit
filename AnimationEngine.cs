@@ -245,9 +245,9 @@ public sealed class AnimationEngine
             double dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
             double intensity = b.Effect switch
             {
-                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 6) / 1.2) * (1 - age / 1.6),
-                ClickEffect.Flash => dist <= 1 ? Math.Max(0, 1 - age / 0.55) : 0,
-                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 10)) * (1 - age / 1.4),
+                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 4.5) / 1.8) * (1 - Math.Pow(age / 1.8, 2)),
+                ClickEffect.Flash => dist <= 1 ? Math.Pow(1 - Math.Min(1, age / 0.7), 2) : 0,
+                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 9)) * (1 - Math.Pow(age / 1.7, 2)),
                 ClickEffect.SparkleBurst => (((id * 31 + (int)(t * 40)) % 53) < 5 && dist <= 3) ? (1 - age / 1.1) : 0,
                 _ => 0
             };
@@ -278,8 +278,13 @@ public sealed class AnimationEngine
 
             double rawT = _clock.Elapsed.TotalSeconds;
             double t = rawT * _speed;
-            int start = (int)((t * 90) % 128);
-            int count = Math.Min(Slice, 128 - start);
+
+            // While a click burst is alive, update ALL keys every frame. The 14-key
+            // rotating sweep only refreshes each key ~3x/sec, which makes ripples step.
+            bool burstsActive;
+            lock (_burstLock) burstsActive = _bursts.Count > 0;
+            int start = burstsActive ? 0 : (int)((t * 90) % 128);
+            int count = burstsActive ? 128 : Math.Min(Slice, 128 - start);
             var slice = new List<LedColor>(count);
 
             for (int k = 0; k < count; k++)
@@ -424,7 +429,11 @@ public sealed class AnimationEngine
                 slice.Add(new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B });
             }
 
-            try { _ = _device.SendCustomLedRangeAsync(start, slice); }
+            try
+            {
+                if (burstsActive) _ = _device.SendCustomFrameAsync(slice);
+                else _ = _device.SendCustomLedRangeAsync(start, slice);
+            }
             catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
 
