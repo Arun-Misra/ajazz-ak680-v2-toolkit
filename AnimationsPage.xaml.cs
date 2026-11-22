@@ -19,6 +19,7 @@ public partial class AnimationsPage : Page
         _engine = new AnimationEngine(_device);
         _engine.Status += s => Status.Text = s;
         FpsSlider.ValueChanged += (_, _) => FpsLabel.Text = ((int)FpsSlider.Value).ToString();
+        SpeedSlider.ValueChanged += SpeedSlider_ValueChanged;
 
         _hook.KeyPressed += OnPhysicalKey;
         if (!_hook.Install()) Status.Text = "Keyboard hook unavailable";
@@ -34,6 +35,12 @@ public partial class AnimationsPage : Page
         var effect = (ClickEffect)ClickEffectCombo.SelectedIndex;
         var color = effect == ClickEffect.SparkleBurst ? secondary : primary;
         _engine.TriggerKey(ledId, effect, color);
+    }
+
+    private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        _engine.Speed = SpeedSlider.Value;
+        if (SpeedLabel != null) SpeedLabel.Text = $"{SpeedSlider.Value:0.00}x";
     }
 
     private void PrimaryHex_TextChanged(object sender, TextChangedEventArgs e)

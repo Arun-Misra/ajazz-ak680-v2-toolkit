@@ -29,12 +29,26 @@
                     <ComboBoxItem Content="Aurora"/>
                     <ComboBoxItem Content="Colour Fade"/>
                     <ComboBoxItem Content="Click Reactive"/>
+                    <ComboBoxItem Content="Plasma"/>
+                    <ComboBoxItem Content="Diagonal Wave"/>
+                    <ComboBoxItem Content="Spiral"/>
+                    <ComboBoxItem Content="Meteor"/>
+                    <ComboBoxItem Content="Colour Wipe"/>
+                    <ComboBoxItem Content="Breathing Rainbow"/>
+                    <ComboBoxItem Content="Equalizer"/>
+                    <ComboBoxItem Content="Typing Trail"/>
                 </ComboBox>
 
                 <TextBlock Text="Speed (frames per second)" FontWeight="Bold" Margin="0,16,0,4"/>
                 <DockPanel>
                     <Slider x:Name="FpsSlider" Minimum="1" Maximum="60" Value="30" TickFrequency="1" IsSnapToTickEnabled="True" Width="280"/>
                     <TextBlock x:Name="FpsLabel" Text="30" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                </DockPanel>
+
+                <TextBlock Text="Animation speed" FontWeight="Bold" Margin="0,12,0,4"/>
+                <DockPanel>
+                    <Slider x:Name="SpeedSlider" Minimum="0.25" Maximum="3" Value="1" TickFrequency="0.25" IsSnapToTickEnabled="True" Width="280" ValueChanged="SpeedSlider_ValueChanged"/>
+                    <TextBlock x:Name="SpeedLabel" Text="1.00x" Margin="8,0,0,0" VerticalAlignment="Center"/>
                 </DockPanel>
 
                 <TextBlock Text="Primary colour" FontWeight="Bold" Margin="0,16,0,4"/>

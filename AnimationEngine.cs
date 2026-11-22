@@ -11,7 +11,8 @@ namespace AjazzManager;
 public enum AnimationPattern
 {
     RainbowWave, Breathing, Chase, Ripple, Sparkle,
-    MatrixRain, Fire, Checkerboard, KittScanner, Aurora, ColorFade, ClickReactive
+    MatrixRain, Fire, Checkerboard, KittScanner, Aurora, ColorFade, ClickReactive,
+    Plasma, DiagonalWave, Spiral, Meteor, ColorWipe, BreathingRainbow, Equalizer, TypingTrail
 }
 
 public enum ClickEffect { Ripple, Flash, Spread, SparkleBurst }
@@ -73,6 +74,7 @@ public sealed class AnimationEngine
     private volatile bool _running;
     private int _generation;
     private int _targetFps = 30;
+    private double _speed = 1.0;
     private AnimationPattern _pattern;
     private Color _primary, _secondary;
 
@@ -88,6 +90,9 @@ public sealed class AnimationEngine
 
     [DllImport("winmm.dll")] private static extern uint timeBeginPeriod(uint uPeriod);
     [DllImport("winmm.dll")] private static extern uint timeEndPeriod(uint uPeriod);
+
+    /// <summary>Multiplies pattern time (0.25 = slow, 3 = fast). Live while running.</summary>
+    public double Speed { get => _speed; set => _speed = Math.Clamp(value, 0.25, 3.0); }
 
     public bool IsRunning => _running;
     public event Action<string>? Status;
@@ -167,6 +172,14 @@ public sealed class AnimationEngine
     {
         if (!_running)
             await StartCore(AnimationPattern.ClickReactive, 30, color, color);
+        _lastPress[ledId] = _clock.Elapsed.TotalSeconds;
+        var (pr, pc) = GetRc(ledId);
+        foreach (var other in PosByLed.Keys)
+        {
+            var (r, c) = GetRc(other);
+            if (Math.Max(Math.Abs(r - pr), Math.Abs(c - pc)) <= 1)
+                _lastPress[other] = _clock.Elapsed.TotalSeconds;
+        }
         var burst = new Burst
         {
             Center = ledId,
@@ -206,6 +219,7 @@ public sealed class AnimationEngine
     }
 
     private readonly Stopwatch _clock = Stopwatch.StartNew();
+    private readonly double[] _lastPress = new double[128];
 
     private Color ApplyBursts(int id, double t, Color baseColor)
     {
@@ -262,7 +276,8 @@ public sealed class AnimationEngine
             if (now < next) { Thread.SpinWait(40); continue; }
             next = now + 1000L / _targetFps;
 
-            double t = _clock.Elapsed.TotalSeconds;
+            double rawT = _clock.Elapsed.TotalSeconds;
+            double t = rawT * _speed;
             int start = (int)((t * 90) % 128);
             int count = Math.Min(Slice, 128 - start);
             var slice = new List<LedColor>(count);
@@ -341,11 +356,71 @@ public sealed class AnimationEngine
                     case AnimationPattern.ClickReactive:
                         c = Color.FromRgb(0, 0, 0);
                         break;
+                    case AnimationPattern.Plasma:
+                    {
+                        double v = Math.Sin(col * 0.55 + t * 1.7)
+                                 + Math.Sin(row * 0.75 - t * 1.3)
+                                 + Math.Sin((col + row) * 0.42 + t * 0.9);
+                        c = HsvToRgb(v * 42 + t * 28, 0.9, 0.85);
+                        break;
+                    }
+                    case AnimationPattern.DiagonalWave:
+                    {
+                        double phase = (col + row * 0.8) * 0.7 - t * 5;
+                        c = HsvToRgb((phase * 22) % 360, 1, 0.55 + 0.45 * Math.Sin(phase));
+                        break;
+                    }
+                    case AnimationPattern.Spiral:
+                    {
+                        double dx = col - 7, dy = row - 2;
+                        double radius = Math.Sqrt(dx * dx + dy * dy);
+                        double angle = Math.Atan2(dy, dx);
+                        double v = Math.Sin(radius * 1.6 - angle * 2 - t * 5);
+                        c = HsvToRgb(t * 45 + radius * 25, 0.95, (v + 1) / 2);
+                        break;
+                    }
+                    case AnimationPattern.Meteor:
+                    {
+                        double head = (t * 22 + col * 13) % 22;
+                        double d = row - head;
+                        c = d > 0 && d < 4 ? Mix(_primary, Color.FromRgb(0, 0, 0), d / 4.0)
+                          : d <= 0 && d > -1.2 ? Color.FromRgb(255, 255, 255)
+                          : Color.FromRgb(0, 0, 0);
+                        break;
+                    }
+                    case AnimationPattern.ColorWipe:
+                    {
+                        int pos = (int)((t * 38) % (OrderedLeds.Length + 24)) - 12;
+                        int p = GetPos(id);
+                        c = p <= pos ? HsvToRgb((int)(t * 60), 1, 1) : Color.FromRgb(0, 0, 0);
+                        break;
+                    }
+                    case AnimationPattern.BreathingRainbow:
+                    {
+                        double pulse = (Math.Sin(t * 2.4) + 1) / 2;
+                        c = HsvToRgb(GetPos(id) * 5 + t * 40, 1, 0.15 + 0.85 * pulse);
+                        break;
+                    }
+                    case AnimationPattern.Equalizer:
+                    {
+                        double level = 1 + 3.2 * Math.Abs(Math.Sin(t * 3.1 + col * 0.8)
+                                          * Math.Cos(t * 1.7 - col * 0.35));
+                        c = (4 - row) <= level ? HsvToRgb(120 - (4 - row) * 28, 1, 1)
+                          : Color.FromRgb(0, 0, 0);
+                        break;
+                    }
+                    case AnimationPattern.TypingTrail:
+                    {
+                        double age = rawT - _lastPress[id];
+                        c = age < 1.4 ? Mix(Color.FromRgb(0, 0, 0), _primary, 1 - age / 1.4)
+                          : Color.FromRgb(0, 0, 0);
+                        break;
+                    }
                     default:
                         c = _primary;
                         break;
                 }
-                c = ApplyBursts(id, t, c);
+                c = ApplyBursts(id, rawT, c);
                 slice.Add(new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B });
             }
 
