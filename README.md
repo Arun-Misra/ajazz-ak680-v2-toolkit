@@ -166,4 +166,15 @@ Windows cannot create an Xbox controller input device from a normal user applica
 
 Because both the browser WebHID driver and this app try to open the same HID interface. Closing the browser tab releases the keyboard.
 
+## Web-driver feature parity
+
+- Custom keys: key remapping, FN-layer remapping, reset
+- Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, native system-audio Music Rhythm
+- Shortcut command / macros: create, edit, save to keyboard, real JSON import/export
+- Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, calibration, keyboard settings
+- Advanced keys: RS, SOCD, DKS, MT and TGL configuration and device writes
+- Profiles: create/delete/import/export, apply onboard slot, save keyboard state to profile
+- Key Test: live per-key Hall travel in millimetres
+- Device Inspector: decoded device state and raw replies
+
 Author: Arun-Misra
