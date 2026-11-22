@@ -143,7 +143,7 @@ public sealed class AnimationEngine
         var clear = new List<LedColor>(128);
         for (int i = 0; i < 128; i++) clear.Add(new LedColor { LedId = i });
         if (UseMusicPath)
-            _device.SendMusicFrameAsync(clear.Where(c => OrderedLeds.Contains(c.LedId)).ToArray());
+            _ = _device.SendMusicFrameAsync(clear.Where(c => OrderedLeds.Contains(c.LedId)).ToArray());
         else
             _device.SendCustomFrameAsync(clear);
         if (gen != _generation) return;
