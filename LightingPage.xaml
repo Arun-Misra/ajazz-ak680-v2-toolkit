@@ -71,7 +71,11 @@
                         </ComboBox>
                     </StackPanel>
                     <TextBlock Text="Musical Rhythm" FontWeight="Bold" Margin="0,18,0,4"/>
-                    <TextBlock Text="Native plugin is not available in this app." Foreground="{StaticResource TextMuted}" TextWrapping="Wrap"/>
+                    <TextBlock Text="Drives the keyboard lighting from system audio amplitude." Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="MusicStart" Style="{StaticResource GhostButton}" Content="Start rhythm" Click="MusicStart_Click"/>
+                        <Button x:Name="MusicStop" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="MusicStop_Click" IsEnabled="False"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

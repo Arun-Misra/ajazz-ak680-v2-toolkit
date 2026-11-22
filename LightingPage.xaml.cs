@@ -244,4 +244,41 @@ public partial class LightingPage : Page
     }
 
     private async void Apply_Click(object sender, RoutedEventArgs e) => await ApplyAsync(showStatus: true);
+
+    private AudioMeter? _meter;
+    private AnimationEngine? _musicEngine;
+    private DispatcherTimer? _musicTimer;
+
+    private void MusicStart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_meter != null) return;
+        Color primary;
+        try { primary = (Color)ColorConverter.ConvertFromString(HexBox.Text); }
+        catch { primary = Colors.White; }
+        var secondary = Color.FromRgb(_secondaryR, _secondaryG, _secondaryB);
+
+        _meter = new AudioMeter();
+        _meter.Start();
+        _musicEngine = new AnimationEngine(_device);
+        _musicEngine.Start(AnimationPattern.MusicRhythm, 30, primary, secondary);
+        _musicTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+        _musicTimer.Tick += (_, _) => { if (_musicEngine != null && _meter != null) _musicEngine.AudioLevel = _meter.Level; };
+        _musicTimer.Start();
+        MusicStart.IsEnabled = false;
+        MusicStop.IsEnabled = true;
+        Status.Text = "Music rhythm running — play audio to see the lights react";
+    }
+
+    private void MusicStop_Click(object sender, RoutedEventArgs e)
+    {
+        _musicTimer?.Stop();
+        _musicTimer = null;
+        _musicEngine?.Stop();
+        _musicEngine = null;
+        _meter?.Dispose();
+        _meter = null;
+        MusicStart.IsEnabled = true;
+        MusicStop.IsEnabled = false;
+        Status.Text = "Music rhythm stopped";
+    }
 }

@@ -37,6 +37,7 @@
                     <ComboBoxItem Content="Breathing Rainbow"/>
                     <ComboBoxItem Content="Equalizer"/>
                     <ComboBoxItem Content="Typing Trail"/>
+                    <ComboBoxItem Content="Music Rhythm"/>
                 </ComboBox>
 
                 <TextBlock Text="Speed (frames per second)" FontWeight="Bold" Margin="0,16,0,4"/>

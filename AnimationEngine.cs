@@ -13,7 +13,8 @@ public enum AnimationPattern
 {
     RainbowWave, Breathing, Chase, Ripple, Sparkle,
     MatrixRain, Fire, Checkerboard, KittScanner, Aurora, ColorFade, ClickReactive,
-    Plasma, DiagonalWave, Spiral, Meteor, ColorWipe, BreathingRainbow, Equalizer, TypingTrail
+    Plasma, DiagonalWave, Spiral, Meteor, ColorWipe, BreathingRainbow, Equalizer, TypingTrail,
+    MusicRhythm
 }
 
 public enum ClickEffect
@@ -160,6 +161,9 @@ public sealed class AnimationEngine
     /// instead of stalling on host-paced 0x24 custom-LED frames. Set false to fall
     /// back to mode 128 for diagnostics.</summary>
     public bool UseMusicPath { get; set; } = true;
+
+    /// <summary>Live audio loudness (0..1) used by the MusicRhythm pattern.</summary>
+    public double AudioLevel { get; set; }
 
     public bool IsRunning => _running;
     public long FramesRendered { get; private set; }
@@ -622,6 +626,18 @@ public sealed class AnimationEngine
                         double age = rawT - _lastPress[id];
                         c = age < 1.4 ? Mix(Color.FromRgb(0, 0, 0), _primary, 1 - age / 1.4)
                           : Color.FromRgb(0, 0, 0);
+                        break;
+                    }
+                    case AnimationPattern.MusicRhythm:
+                    {
+                        // Loudness drives a radial wave from the keyboard centre; hue
+                        // shifts with distance and time for a spectrum-like look.
+                        double dr = row - 2.0, dc = col - GridWidth / 2.0;
+                        double dist = Math.Sqrt(dr * dr + dc * dc);
+                        double pulse = Math.Clamp(AudioLevel, 0, 1);
+                        double wave = Math.Exp(-Math.Pow((dist - pulse * 6.0) / 1.6, 2));
+                        double v = Math.Clamp(0.08 + pulse * 0.65 + wave * 0.6, 0, 1);
+                        c = HsvToRgb(GetPos(id) * (360.0 / OrderedLeds.Length) - t * 60 + dist * 18, 0.9, v);
                         break;
                     }
                     default:
