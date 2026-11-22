@@ -424,7 +424,8 @@ public sealed class AnimationEngine
                 slice.Add(new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B });
             }
 
-            _ = _device.SendCustomLedRangeAsync(start, slice);
+            try { _ = _device.SendCustomLedRangeAsync(start, slice); }
+            catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
 
             if (now - lastReport >= 1000)

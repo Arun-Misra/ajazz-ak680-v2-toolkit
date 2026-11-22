@@ -176,28 +176,29 @@ public sealed class NativeHidDevice : IDisposable
     /// </summary>
     public bool WriteReport(byte[] data, int timeoutMs = 2000)
     {
-        if (!IsOpen) throw new InvalidOperationException("Device not open");
+        // Hardware can stall (re-enumeration, profile switch, another app touching the
+        // device). A failed/timeout write must be a normal failure result, never an
+        // exception escaping onto a background animation thread and killing the app.
+        if (!IsOpen || _writeEvent == IntPtr.Zero || _writeOverlappedPtr == IntPtr.Zero) return false;
         unsafe
         {
             fixed (byte* p = data)
             {
-                // FILE_FLAG_OVERLAPPED requires a valid, stable OVERLAPPED for writes.
-                // Wait for completion before leaving the fixed block so the buffer stays pinned.
                 ResetEvent(_writeEvent);
                 InitOverlapped(_writeOverlappedPtr, _writeEvent);
                 if (!WriteFile(_handle!, (IntPtr)p, (uint)data.Length, out _, _writeOverlappedPtr))
                 {
                     int err = Marshal.GetLastWin32Error();
-                    if (err != ERROR_IO_PENDING) throw new Win32Exception(err);
+                    if (err != ERROR_IO_PENDING) return false;
                 }
                 if (WaitForSingleObject(_writeEvent, (uint)timeoutMs) != WAIT_OBJECT_0)
                 {
                     CancelIoEx(_handle!, _writeOverlappedPtr);
                     WaitForSingleObject(_writeEvent, 100);
-                    throw new TimeoutException($"HID write timed out ({timeoutMs} ms)");
+                    return false;
                 }
                 if (!GetOverlappedResult(_handle!, _writeOverlappedPtr, out _, false))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    return false;
             }
         }
         return true;
@@ -209,7 +210,7 @@ public sealed class NativeHidDevice : IDisposable
     /// </summary>
     public void WriteReportFast(byte[] data)
     {
-        if (!IsOpen || _fastBuffers[0] == IntPtr.Zero) throw new InvalidOperationException("Device not open");
+        if (!IsOpen || _fastBuffers[0] == IntPtr.Zero) return;
         int slot = _fastIndex++ % FastWriteSlots;
         int len = Math.Min(data.Length, _fastBuffers[slot] == IntPtr.Zero ? data.Length : Math.Max(1, (int)OutputReportLength));
         Marshal.Copy(data, 0, _fastBuffers[slot], Math.Min(data.Length, len));

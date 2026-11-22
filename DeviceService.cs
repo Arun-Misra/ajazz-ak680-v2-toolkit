@@ -53,23 +53,23 @@ public class DeviceService
     /// Mirrors WebHID device.sendReport(reportId, data). The full report buffer is written
     /// with the native output report length, matching the HID class driver contract.
     /// </summary>
-    public void SendReport(byte reportId, byte[] data)
+    public bool SendReport(byte reportId, byte[] data)
     {
-        if (Device is null || !Device.IsOpen) throw new InvalidOperationException("Not connected");
+        if (Device is null || !Device.IsOpen) return false;
         // Live WebHID evidence: reportId 0, 64-byte payload. Win32 HID class
         // expects the report-id byte first, followed by the payload.
-        int length = Math.Max(Device.OutputReportLength, data.Length + 1);
+        int length = Math.Max((int)Device.OutputReportLength, data.Length + 1);
         var report = new byte[length];
         report[0] = reportId;
         Buffer.BlockCopy(data, 0, report, 1, Math.Min(data.Length, length - 1));
-        Device.WriteReport(report);
+        return Device.WriteReport(report);
     }
 
     public async Task<bool> SendCommandAsync(byte cmd, byte[] data, int contentSize,
         int addrStart = 0, byte[]? otherHeader = null, byte[]? customHeader = null,
         int timeoutMs = 500, bool skipResponse = false, CancellationToken ct = default, bool needLastFlag = true)
     {
-        if (!IsConnected) throw new InvalidOperationException("Not connected");
+        if (!IsConnected) return false;
         int chunk = HidProtocol.ChunkDataSize;
         int packets = Math.Max(1, (int)Math.Ceiling((double)contentSize / chunk));
         for (int t = 0; t < packets; t++)
@@ -99,7 +99,7 @@ public class DeviceService
     public async Task<List<byte[]>?> SendCommandWithResponseAsync(byte cmd, byte[] data, int contentSize,
         int addrStart = 0, byte[]? otherHeader = null, int timeoutMs = 2000)
     {
-        if (!IsConnected) throw new InvalidOperationException("Not connected");
+        if (!IsConnected) return null;
         int chunk = HidProtocol.ChunkDataSize;
         int packets = Math.Max(1, (int)Math.Ceiling((double)contentSize / chunk));
         var result = new List<byte[]>();
