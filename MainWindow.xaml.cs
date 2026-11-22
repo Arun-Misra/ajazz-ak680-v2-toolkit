@@ -16,7 +16,14 @@ public partial class MainWindow : Window
             var svc = new DeviceService();
             var ok = svc.Connect();
             StatusText.Text = ok ? $"Connected: {svc.ProductName}" : "No device: " + svc.LastError;
+            LocalizationService.Apply(this);
         };
+    }
+
+    private void Navigate(Page page)
+    {
+        page.Loaded += (_, _) => LocalizationService.Apply(page);
+        ContentFrame.Navigate(page);
     }
 
     private void CreateFile_Click(object sender, RoutedEventArgs e)
@@ -25,7 +32,7 @@ public partial class MainWindow : Window
         string name = $"profile-{DateTime.Now:yyyyMMdd-HHmmss}";
         svc.CreateProfile(name);
         StatusText.Text = $"Created profile {name}";
-        ContentFrame.Navigate(new ProfilesPage());
+        Navigate(new ProfilesPage());
     }
 
     private void ImportFiles_Click(object sender, RoutedEventArgs e)
@@ -43,7 +50,7 @@ public partial class MainWindow : Window
             try { profiles.ImportProfile(path); count++; } catch { }
         }
         StatusText.Text = $"Imported {count} file(s)";
-        ContentFrame.Navigate(new ProfilesPage());
+        Navigate(new ProfilesPage());
     }
 
     private void RefreshDevice_Click(object sender, RoutedEventArgs e)
@@ -73,6 +80,6 @@ public partial class MainWindow : Window
             "Debug" => new DebugPage(),
             _ => null
         };
-        if (page != null) ContentFrame.Navigate(page);
+        if (page != null) Navigate(page);
     }
 }

@@ -76,6 +76,7 @@ public partial class SettingsPage : Page
     {
         if (!_settingsLoaded || LanguageCombo.SelectedItem is not ComboBoxItem item) return;
         ThemeService.SetLanguage(item.Content.ToString() ?? "English");
+        LocalizationService.Refresh();
         Status.Text = $"Language preference saved: {ThemeService.Language}";
     }
 
