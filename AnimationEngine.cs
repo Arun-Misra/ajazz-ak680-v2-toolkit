@@ -262,7 +262,9 @@ public sealed class AnimationEngine
         while (_running && generation == _generation)
         {
             long now = sw.ElapsedMilliseconds;
-            if (now < next) { Thread.SpinWait(40); continue; }
+            long remaining = next - now;
+            if (remaining > 2) { Thread.Sleep(1); continue; } // don't burn a CPU core spinning
+            if (remaining > 0) { Thread.SpinWait(50); continue; }
             next = now + 1000L / _targetFps;
 
             double rawT = _clock.Elapsed.TotalSeconds;

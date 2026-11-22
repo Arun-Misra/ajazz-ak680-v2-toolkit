@@ -13,6 +13,11 @@ public class DeviceService
     public string? ProductName => Device?.ProductName;
     public string? LastError { get; private set; }
 
+    // Cached buffers for the 30 FPS animation path — avoids ~1200 allocations/sec.
+    private byte[]? _frameData;
+    private byte[][]? _frameReports;
+    private byte[][]? _frameWrites;
+
     public static IReadOnlyList<NativeHidDevice> FindDevices() =>
         NativeHidDevice.Enumerate()
             .Where(d => (d.ProductName ?? "").Contains("AJAZZ", StringComparison.OrdinalIgnoreCase)
@@ -173,23 +178,47 @@ public class DeviceService
     public Task<bool> SendCustomFrameAsync(List<LedColor> colors)
     {
         if (!IsConnected) return Task.FromResult(false);
-        var data = Commands.BuildCustomLedData(colors);
         int chunk = HidProtocol.ChunkDataSize;
-        int packets = (int)Math.Ceiling((double)data.Length / chunk);
+        int count = Math.Min(colors.Count, 128);
+        int length = count * 4;
+        int packets = Math.Max(1, (int)Math.Ceiling((double)length / chunk));
         int reportLen = Math.Max(1, (int)Device!.OutputReportLength);
+
+        _frameData ??= new byte[512];
+        _frameReports ??= new byte[packets][];
+        _frameWrites ??= new byte[packets][];
+        Array.Clear(_frameData, 0, length);
+        for (int i = 0; i < count; i++)
+        {
+            var c = colors[i];
+            int t = i * 4;
+            _frameData[t] = (byte)c.LedId;
+            _frameData[t + 1] = c.Red;
+            _frameData[t + 2] = c.Green;
+            _frameData[t + 3] = c.Blue;
+        }
+        var data = _frameData;
+
         for (int t = 0; t < packets; t++)
         {
             int start = t * chunk;
-            int end = Math.Min(start + chunk, data.Length);
-            var slice = new byte[end - start];
-            Buffer.BlockCopy(data, start, slice, 0, slice.Length);
+            int size = Math.Min(chunk, length - start);
             bool last = t == packets - 1;
-            int size = last ? data.Length - start : chunk;
-            var report = HidProtocol.BuildReport(Cmd.SetCustomLedData, size, start, slice, null, null, last);
-            var buffer = new byte[reportLen];
-            buffer[0] = 0; // report id
-            Buffer.BlockCopy(report, 0, buffer, 1, Math.Min(report.Length, reportLen - 1));
-            Device.WriteReportFast(buffer);
+            var report = _frameReports[t] ??= new byte[HidProtocol.ReportSize];
+            // Build the report in place in the cached packet, then append payload.
+            Array.Clear(report, 0, report.Length);
+            report[0] = HidProtocol.StartByte;
+            report[1] = Cmd.SetCustomLedData;
+            report[2] = (byte)size;
+            report[3] = (byte)(start & 0xFF);
+            report[4] = (byte)((start >> 8) & 0xFF);
+            report[6] = (byte)(last ? 1 : 0);
+            Buffer.BlockCopy(data, start, report, HidProtocol.HeaderSize, size);
+
+            var write = _frameWrites[t] ??= new byte[reportLen];
+            write[0] = 0; // report id
+            Buffer.BlockCopy(report, 0, write, 1, Math.Min(report.Length, reportLen - 1));
+            Device.WriteReportFast(write);
         }
         return Task.FromResult(true);
     }
