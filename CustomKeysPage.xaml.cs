@@ -11,6 +11,7 @@ public partial class CustomKeysPage : Page
     private string? _selectedKey;
     private KeyBinding? _chosen;
     private readonly Dictionary<int, KeyBinding> _bindings = new();
+    private readonly Dictionary<int, KeyBinding> _fnBindings = new();
 
     public CustomKeysPage()
     {
@@ -49,11 +50,18 @@ public partial class CustomKeysPage : Page
     private async void Apply_Click(object sender, RoutedEventArgs e)
     {
         if (_selectedKey is null || _chosen is null) { Status.Text = "Select a key and a character first"; return; }
+        if (!KeyMap.IdByLabel.TryGetValue(_selectedKey, out int ledId)) { Status.Text = "Unknown key"; return; }
         if (!_device.IsConnected) { Status.Text = "No device connected"; return; }
-        int value = _chosen.Value;
-        var slots = new List<KeySlot> { new KeySlot { Value = value, Binding = _chosen } };
-        bool ok = await _device.SetKeyDataAsync(slots);
-        Status.Text = ok ? $"Mapped {_chosen.Page} to key {value}" : "Failed to write key data";
+
+        bool fn = FnLayerCheck.IsChecked == true;
+        (fn ? _fnBindings : _bindings)[ledId] = _chosen;
+
+        var normal = _bindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
+        var fnKeys = _fnBindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
+        bool ok = await _device.SetKeyDataAsync(normal, fnKeys);
+        Status.Text = ok
+            ? $"Mapped {_selectedKey} → {_chosen.Page} ({(fn ? "FN layer" : "normal")})"
+            : "Failed to write key data";
     }
 
     private async void Reset_Click(object sender, RoutedEventArgs e)
