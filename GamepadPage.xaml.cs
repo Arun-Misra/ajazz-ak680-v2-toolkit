@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -13,6 +16,16 @@ public partial class GamepadPage : Page
     private HallStream? _hall;
     private VirtualGamepad? _pad;
     private DispatcherTimer? _uiTimer;
+    private Thread? _updateThread;
+    private volatile bool _updating;
+
+    // Controller reports are emitted at a fixed cadence instead of once per incoming
+    // telemetry frame. Firmware telemetry arrives in uneven bursts (~1 kHz overall),
+    // so driving the pad directly from those events made the stick feel inconsistent.
+    private const int UpdateHz = 500;
+
+    [DllImport("winmm.dll")] private static extern uint timeBeginPeriod(uint period);
+    [DllImport("winmm.dll")] private static extern uint timeEndPeriod(uint period);
 
     // Device key values from the config: W=34, A=49, S=50, D=51.
     private const int KeyW = 34, KeyA = 49, KeyS = 50, KeyD = 51;
@@ -56,7 +69,16 @@ public partial class GamepadPage : Page
             _hall.Dispose(); _hall = null;
             return;
         }
-        _hall.Sample += OnSample;
+        // Fresh state on every start — no carry-over from a previous session.
+        lock (_smooth) _smooth.Clear();
+        lock (_peaks) _peaks.Clear();
+        _lx = _ly = 0;
+        _pad.Reset();
+
+        timeBeginPeriod(1);
+        _updating = true;
+        _updateThread = new Thread(UpdateLoop) { IsBackground = true, Name = "GamepadUpdate" };
+        _updateThread.Start();
         _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(33) };
         _uiTimer.Tick += UpdateUi;
         _uiTimer.Start();
@@ -73,8 +95,17 @@ public partial class GamepadPage : Page
     {
         _uiTimer?.Stop();
         _uiTimer = null;
-        if (_hall != null) { _hall.Sample -= OnSample; _hall.Dispose(); _hall = null; }
-        _pad?.Reset();
+        _updating = false;
+        var updater = _updateThread;
+        if (updater != null && updater.IsAlive && updater != Thread.CurrentThread)
+        {
+            try { updater.Join(300); } catch { }
+        }
+        _updateThread = null;
+        timeEndPeriod(1);
+        if (_hall != null) { _hall.Dispose(); _hall = null; }
+        // Always release the virtual stick to centre before the pad disappears.
+        try { _pad?.SetSticks(0, 0); _pad?.Reset(); } catch { }
         _pad?.Dispose();
         _pad = null;
         _device?.Disconnect();
@@ -90,29 +121,58 @@ public partial class GamepadPage : Page
 
     private double Normalize(int key, int stroke)
     {
-        double full = _full.TryGetValue(key, out double f) ? f : 350;
+        double full;
+        lock (_full) full = _full.TryGetValue(key, out double f) ? f : 350;
         double dead = 8; // 0.08 mm
         return Math.Clamp((stroke - dead) / Math.Max(1, full - dead), 0, 1);
     }
 
-    private void OnSample(int key, int adc, int stroke)
+    private void UpdateLoop()
     {
-        if (!_keys.Contains(key)) return;
-        if (_calibrating)
-            _peaks[key] = Math.Max(_peaks.GetValueOrDefault(key), stroke);
+        var sw = Stopwatch.StartNew();
+        long next = 0;
+        const double Alpha = 0.25; // smoothing per fixed update
+        while (_updating)
+        {
+            long now = sw.ElapsedMilliseconds;
+            if (now < next) { Thread.SpinWait(30); continue; }
+            next = now + 1000L / UpdateHz;
 
+            var hall = _hall;
+            if (hall == null) continue;
+            int sw_ = hall.GetStroke(KeyW, 80), sa = hall.GetStroke(KeyA, 80);
+            int ss = hall.GetStroke(KeyS, 80), sd = hall.GetStroke(KeyD, 80);
+
+            if (_calibrating)
+            {
+                lock (_peaks)
+                {
+                    _peaks[KeyW] = Math.Max(_peaks.GetValueOrDefault(KeyW), sw_);
+                    _peaks[KeyA] = Math.Max(_peaks.GetValueOrDefault(KeyA), sa);
+                    _peaks[KeyS] = Math.Max(_peaks.GetValueOrDefault(KeyS), ss);
+                    _peaks[KeyD] = Math.Max(_peaks.GetValueOrDefault(KeyD), sd);
+                }
+            }
+
+            double w = Step(KeyW, sw_, Alpha), a = Step(KeyA, sa, Alpha);
+            double s = Step(KeyS, ss, Alpha), d = Step(KeyD, sd, Alpha);
+            _lx = d - a;
+            _ly = w - s;
+            try { _pad?.SetSticks(Deadzone(_lx), Deadzone(_ly)); } catch { }
+        }
+    }
+
+    private double Step(int key, int stroke, double alpha)
+    {
         double target = Normalize(key, stroke);
-        double prev = _smooth.GetValueOrDefault(key);
-        double v = prev + (target - prev) * 0.35; // light smoothing at ~1 kHz
-        _smooth[key] = v;
-
-        double w = key == KeyW ? v : _smooth.GetValueOrDefault(KeyW);
-        double s = key == KeyS ? v : _smooth.GetValueOrDefault(KeyS);
-        double a = key == KeyA ? v : _smooth.GetValueOrDefault(KeyA);
-        double d = key == KeyD ? v : _smooth.GetValueOrDefault(KeyD);
-        _lx = d - a;
-        _ly = w - s;
-        _pad?.SetSticks(Deadzone(_lx), Deadzone(_ly));
+        lock (_smooth)
+        {
+            double prev = _smooth.GetValueOrDefault(key);
+            double v = prev + (target - prev) * alpha;
+            if (Math.Abs(v) < 0.002) v = 0; // settle exactly at centre
+            _smooth[key] = v;
+            return v;
+        }
     }
 
     private static double Deadzone(double v) => Math.Abs(v) < 0.06 ? 0 : v;
@@ -149,10 +209,13 @@ public partial class GamepadPage : Page
         CalibrateButton.IsEnabled = false;
         await System.Threading.Tasks.Task.Delay(6000);
         int learned = 0;
-        foreach (int key in _keys)
+        lock (_peaks)
         {
-            int peak = _peaks.GetValueOrDefault(key);
-            if (peak >= 150) { _full[key] = peak + 5; learned++; }
+            foreach (int key in _keys)
+            {
+                int peak = _peaks.GetValueOrDefault(key);
+                if (peak >= 150) { lock (_full) _full[key] = peak + 5; learned++; }
+            }
         }
         _calibrating = false;
         CalibrateButton.IsEnabled = true;
