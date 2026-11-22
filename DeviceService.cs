@@ -29,6 +29,17 @@ public class DeviceService
             {
                 candidate.Open();
                 Device = candidate;
+                // A previous session that was killed while the Hall debugger was active
+                // can leave the firmware streaming 0xFB telemetry. Those unsolicited
+                // reports would otherwise be mistaken for command replies, so leave the
+                // device in its normal state before doing anything else.
+                try
+                {
+                    SendReport(0, HidProtocol.BuildReport(Cmd.SetSimulationTestOff, 0, 0, null, null,
+                        new byte[] { 0xAA, Cmd.SetSimulationTestOff, 0, 0, 0, 0, 0, 0 }, false));
+                    for (int i = 0; i < 16 && candidate.ReadReport(15) != null; i++) { }
+                }
+                catch { }
                 return true;
             }
             catch (Exception ex)
