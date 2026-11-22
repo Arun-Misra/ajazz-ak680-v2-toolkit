@@ -22,7 +22,8 @@ public enum ClickEffect
     PrismBloom,   // concentric rainbow rings
     LiquidBloom,  // soft ink spreading with a bright core
     Nova,         // radial rays + hot core
-    Comet         // directional streak with a fading tail
+    Comet,        // directional streak with a fading tail
+    Thunder       // instant lightning converging from the edges onto the key
 }
 
 /// <summary>
@@ -94,6 +95,47 @@ public sealed class AnimationEngine
         public double Start;
         public Color Color;
         public ClickEffect Effect;
+        // Precomputed jagged bolt cells for the Thunder effect, so the strike shape
+        // stays fixed for the whole burst instead of flickering between frames.
+        public HashSet<(int row, int col)>? BoltCells;
+    }
+
+    /// <summary>Builds jagged lightning paths from the four keyboard edges to the
+    /// pressed key. Interpolated steps with bounded jitter give a bolt-like shape.</summary>
+    private static HashSet<(int row, int col)> BuildThunderBolts(int centerLed, int seed)
+    {
+        var cells = new HashSet<(int, int)>();
+        var (tr, tc) = GetRc(centerLed);
+        var rng = new Random(seed);
+        int maxRow = RowLengths.Length - 1;
+        int maxCol = GridWidth - 1;
+
+        var starts = new[]
+        {
+            (0, Math.Clamp(tc + rng.Next(-4, 5), 0, maxCol)),
+            (maxRow, Math.Clamp(tc + rng.Next(-4, 5), 0, maxCol)),
+            (Math.Clamp(tr + rng.Next(-1, 2), 0, maxRow), 0),
+            (Math.Clamp(tr + rng.Next(-1, 2), 0, maxRow), maxCol)
+        };
+
+        foreach (var (sr, sc) in starts)
+        {
+            int steps = Math.Max(Math.Abs(tr - sr), Math.Abs(tc - sc)) * 2 + 2;
+            for (int i = 0; i <= steps; i++)
+            {
+                double u = i / (double)steps;
+                double r = sr + (tr - sr) * u;
+                double c = sc + (tc - sc) * u;
+                // Jitter perpendicular to travel, strongest in the middle of the bolt.
+                double j = Math.Sin(u * Math.PI) * 1.3;
+                r += (rng.NextDouble() * 2 - 1) * j;
+                c += (rng.NextDouble() * 2 - 1) * j;
+                cells.Add((Math.Clamp((int)Math.Round(r), 0, maxRow),
+                           Math.Clamp((int)Math.Round(c), 0, maxCol)));
+            }
+        }
+        cells.Add((tr, tc));
+        return cells;
     }
     private readonly List<Burst> _bursts = new();
     private readonly object _burstLock = new();
@@ -207,7 +249,10 @@ public sealed class AnimationEngine
             Center = ledId,
             Start = _clock.Elapsed.TotalSeconds,
             Color = color,
-            Effect = effect
+            Effect = effect,
+            BoltCells = effect == ClickEffect.Thunder
+                ? BuildThunderBolts(ledId, (int)(_clock.Elapsed.TotalSeconds * 1000) ^ (ledId * 7919))
+                : null
         };
         lock (_burstLock)
         {
@@ -316,6 +361,20 @@ public sealed class AnimationEngine
                                   (1 - Smoothstep(0.15, 0.6, age));
                     intensity = Math.Max(ring * rays, core) * fade;
                     c = Mix(b.Color, Colors.White, rays * 0.55 + core * 0.5);
+                    break;
+                }
+                case ClickEffect.Thunder:
+                {
+                    // Instant strike: full brightness at age 0, violent flicker, fast decay.
+                    bool onBolt = b.BoltCells != null && b.BoltCells.Contains((row, col));
+                    double strike = 1 - Smoothstep(0.10, 0.55, age);
+                    double flicker = age < 0.22
+                        ? 0.7 + 0.3 * Math.Abs(Math.Sin(age * 90 + dr * 1.7 + dc * 0.9))
+                        : 1.0;
+                    double core = Math.Exp(-dist * dist / 1.3) *
+                                  (1 - Smoothstep(0.25, 0.9, age));
+                    intensity = Math.Max(onBolt ? strike * flicker : 0, core * 1.2);
+                    c = Mix(b.Color, Colors.White, onBolt ? 0.8 : 0.95);
                     break;
                 }
                 case ClickEffect.Comet:

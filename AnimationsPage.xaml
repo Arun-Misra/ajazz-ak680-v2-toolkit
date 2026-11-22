@@ -102,6 +102,7 @@
                         <ComboBoxItem Content="Liquid Bloom"/>
                         <ComboBoxItem Content="Nova"/>
                         <ComboBoxItem Content="Comet"/>
+                        <ComboBoxItem Content="Thunder ⚡"/>
                     </ComboBox>
                 </StackPanel>
                 <local:KeyboardView Grid.Row="2" x:Name="ClickPreview" Height="300" VerticalAlignment="Top" KeyClicked="ClickPreview_KeyClicked"/>
