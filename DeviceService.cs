@@ -195,6 +195,42 @@ public class DeviceService
     }
 
     /// <summary>
+    /// Sends a compact frame of only the real keys (68 x 4 = 272 bytes = 5 packets)
+    /// so every key can be updated each frame without a full 128-key, 10-packet frame.
+    /// Each entry carries its own LED id, so the address is just the byte offset.
+    /// </summary>
+    public Task<bool> SendCompactFrameAsync(LedColor[] colors)
+    {
+        if (!IsConnected) return Task.FromResult(false);
+        var data = new byte[colors.Length * 4];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            data[i * 4] = (byte)colors[i].LedId;
+            data[i * 4 + 1] = colors[i].Red;
+            data[i * 4 + 2] = colors[i].Green;
+            data[i * 4 + 3] = colors[i].Blue;
+        }
+        int chunk = HidProtocol.ChunkDataSize;
+        int packets = Math.Max(1, (int)Math.Ceiling((double)data.Length / chunk));
+        int reportLen = Math.Max(1, (int)Device!.OutputReportLength);
+        for (int t = 0; t < packets; t++)
+        {
+            int start = t * chunk;
+            int end = Math.Min(start + chunk, data.Length);
+            var slice = new byte[end - start];
+            Buffer.BlockCopy(data, start, slice, 0, slice.Length);
+            bool last = t == packets - 1;
+            int size = last ? data.Length - start : chunk;
+            var report = HidProtocol.BuildReport(Cmd.SetCustomLedData, size, start, slice, null, null, last);
+            var buffer = new byte[reportLen];
+            buffer[0] = 0;
+            Buffer.BlockCopy(report, 0, buffer, 1, Math.Min(report.Length, reportLen - 1));
+            Device.WriteReportFast(buffer);
+        }
+        return Task.FromResult(true);
+    }
+
+    /// <summary>
     /// Updates only a contiguous range of LEDs (fast animation path).
     /// </summary>
     public Task<bool> SendCustomLedRangeAsync(int startLed, List<LedColor> colors)

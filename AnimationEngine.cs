@@ -69,61 +69,8 @@ public sealed class AnimationEngine
         PosByLed.TryGetValue(led, out int p) ? p : 0;
     private static int GridWidth => RowLengths[0];
 
-    // Only 68 of the 128 LED ids are physical keys. Sweeping 0..127 wastes ~47% of
-    // every cycle on ids with no key, which appears as a pause after each pass.
-    private static readonly int[] SortedIds = OrderedLeds.OrderBy(x => x).ToArray();
-
-    /// <summary>Group arbitrary LED ids into contiguous runs, each one HID packet.</summary>
-    private static List<(int start, int[] ids)> GroupRuns(IEnumerable<int> ids)
-    {
-        var sorted = ids.Distinct().OrderBy(x => x).ToArray();
-        var result = new List<(int, int[])>();
-        int i = 0;
-        while (i < sorted.Length)
-        {
-            int start = sorted[i], end = start;
-            while (i + 1 < sorted.Length && sorted[i + 1] == end + 1) { i++; end = sorted[i]; }
-            var run = new int[end - start + 1];
-            for (int k = 0; k < run.Length; k++) run[k] = start + k;
-            result.Add((start, run));
-            i++;
-        }
-        return result;
-    }
-
     // For each key, the nearby LED ids grouped into contiguous runs so a burst can
     // update only its neighbourhood with a few HID packets instead of all 128 keys.
-    private static readonly Dictionary<int, List<(int start, int[] ids)>> RegionRuns = BuildRegionRuns();
-
-    private static Dictionary<int, List<(int, int[])>> BuildRegionRuns()
-    {
-        var result = new Dictionary<int, List<(int, int[])>>();
-        foreach (int center in PosByLed.Keys)
-        {
-            var (cr, cc) = GetRc(center);
-            var ids = new List<int>();
-            foreach (int id in PosByLed.Keys)
-            {
-                var (r, c) = GetRc(id);
-                if (Math.Max(Math.Abs(r - cr), Math.Abs(c - cc)) <= 5) ids.Add(id);
-            }
-            ids.Sort();
-            var runs = new List<(int, int[])>();
-            int i = 0;
-            while (i < ids.Count)
-            {
-                int start = ids[i], end = ids[i];
-                while (i + 1 < ids.Count && ids[i + 1] == end + 1) { i++; end = ids[i]; }
-                var run = new int[end - start + 1];
-                for (int k = 0; k < run.Length; k++) run[k] = start + k;
-                runs.Add((start, run));
-                i++;
-            }
-            result[center] = runs;
-        }
-        return result;
-    }
-
     private readonly DeviceService _device;
     private readonly Dispatcher _dispatcher;
     private Thread? _thread;
@@ -143,25 +90,6 @@ public sealed class AnimationEngine
     }
     private readonly List<Burst> _bursts = new();
     private readonly object _burstLock = new();
-    private HashSet<int> _prevBurstIds = new();
-
-    /// <summary>Send the given LED ids (black when frame is null), grouped into
-    /// contiguous runs so each run is a single HID packet.</summary>
-    private void SendIds(HashSet<int> ids, LedColor[]? frame)
-    {
-        var sorted = ids.Where(i => i >= 0 && i < 128).OrderBy(i => i).ToList();
-        int i = 0;
-        while (i < sorted.Count)
-        {
-            int start = sorted[i], end = start;
-            while (i + 1 < sorted.Count && sorted[i + 1] == end + 1) { i++; end = sorted[i]; }
-            var list = new List<LedColor>(end - start + 1);
-            for (int id = start; id <= end; id++)
-                list.Add(frame != null ? frame[id] : new LedColor { LedId = id });
-            _ = _device.SendCustomLedRangeAsync(start, list);
-            i++;
-        }
-    }
 
     [DllImport("winmm.dll")] private static extern uint timeBeginPeriod(uint uPeriod);
     [DllImport("winmm.dll")] private static extern uint timeEndPeriod(uint uPeriod);
@@ -170,6 +98,7 @@ public sealed class AnimationEngine
     public double Speed { get => _speed; set => _speed = Math.Clamp(value, 0.25, 3.0); }
 
     public bool IsRunning => _running;
+    public long FramesRendered { get; private set; }
     public event Action<string>? Status;
 
     public AnimationEngine(DeviceService device)
@@ -324,7 +253,6 @@ public sealed class AnimationEngine
         var sw = Stopwatch.StartNew();
         long next = 0, lastReport = 0;
         int frames = 0;
-        const int Slice = 14; // 14 keys x 4 bytes = 56 bytes = one HID packet
         int width = GridWidth;
 
         while (_running && generation == _generation)
@@ -336,44 +264,15 @@ public sealed class AnimationEngine
             double rawT = _clock.Elapsed.TotalSeconds;
             double t = rawT * _speed;
 
-            Burst[] activeBursts;
-            lock (_burstLock) activeBursts = _bursts.ToArray();
-            bool burstsActive = activeBursts.Length > 0;
-
-            // Work out exactly which LEDs to touch, then compute colours only for
-            // those. Idle = a moving window over the 68 real keys; burst = a few
-            // neighbourhood runs. The window advances fast enough that every key is
-            // refreshed several times a second with no dead gap between passes.
-            const int SweepRate = 420; // physical keys per second
-            int start = (int)((t * SweepRate) % SortedIds.Length);
-            var sliceIds = new int[Slice];
-            for (int k = 0; k < Slice; k++) sliceIds[k] = SortedIds[(start + k) % SortedIds.Length];
-
-            var needed = new bool[128];
-            var runs = new SortedDictionary<int, int[]>();
-            var curBurstIds = new HashSet<int>();
-            // The ambient sweep always advances so the base pattern keeps flowing
-            // even while a click burst is overlay-rendered on top of it.
-            foreach (int id in sliceIds) needed[id] = true;
-
-            if (burstsActive)
-            {
-                foreach (var b in activeBursts)
-                {
-                    if (!RegionRuns.TryGetValue(b.Center, out var rr)) continue;
-                    foreach (var run in rr)
-                    {
-                        runs[run.start] = run.ids;
-                        foreach (int id in run.ids) { needed[id] = true; curBurstIds.Add(id); }
-                    }
-                }
-            }
-
+            // Update EVERY real key every frame. A moving window updates only a slice,
+            // so the update location jumps back to the start every few frames — that
+            // reads as a rhythmic "doin doin doin stop" stutter. Writing the whole
+            // compact frame makes the picture a pure function of time, with no reset.
             var frame = new LedColor[128];
 
-            for (int id = 0; id < 128; id++)
+            for (int fi = 0; fi < OrderedLeds.Length; fi++)
             {
-                if (!needed[id]) continue;
+                int id = OrderedLeds[fi];
                 var (row, col) = GetRc(id);
                 Color c;
                 switch (_pattern)
@@ -518,34 +417,15 @@ public sealed class AnimationEngine
 
             try
             {
-                // Send the moving window as one or a few contiguous LED-id runs.
-                foreach (var run in GroupRuns(sliceIds))
-                {
-                    var list = new List<LedColor>(run.ids.Length);
-                    foreach (int id in run.ids) list.Add(frame[id]);
-                    _ = _device.SendCustomLedRangeAsync(run.start, list);
-                }
-
-                if (burstsActive)
-                {
-                    // A handful of contiguous runs instead of ten packets for a full frame.
-                    foreach (var run in runs)
-                    {
-                        var list = new List<LedColor>(run.Value.Length);
-                        foreach (var id in run.Value) list.Add(frame[id]);
-                        _ = _device.SendCustomLedRangeAsync(run.Key, list);
-                    }
-                    _prevBurstIds = curBurstIds;
-                }
-                else if (_prevBurstIds.Count > 0)
-                {
-                    // Burst just ended — blank exactly the keys it touched.
-                    SendIds(_prevBurstIds, null);
-                    _prevBurstIds = new HashSet<int>();
-                }
+                // One compact frame containing all 68 real keys (5 HID packets).
+                // Bursts are already blended into the frame by ApplyBursts above.
+                var compact = new LedColor[OrderedLeds.Length];
+                for (int i = 0; i < OrderedLeds.Length; i++) compact[i] = frame[OrderedLeds[i]];
+                _ = _device.SendCompactFrameAsync(compact);
             }
             catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
+            FramesRendered++;
 
             if (now - lastReport >= 1000)
             {
