@@ -129,6 +129,7 @@ public class DeviceService
             SendReport(0, HidProtocol.BuildReport(cmd, size, addr, slice, otherHeader, customHeader, last));
             var response = Device!.ReadReport(timeoutMs);
             if (response != null) result.Add(response);
+            else break; // unsupported command — don't burn the timeout on every packet
         }
         return result;
     }
@@ -227,7 +228,7 @@ public class DeviceService
         return Task.FromResult(true);
     }
 
-    private async Task<byte[]?> ReadBlockAsync(byte cmd, int size, int addrStart = 0, int timeoutMs = 2000)
+    private async Task<byte[]?> ReadBlockAsync(byte cmd, int size, int addrStart = 0, int timeoutMs = 700)
     {
         var frames = await SendCommandWithResponseAsync(cmd, Array.Empty<byte>(), size,
             addrStart, timeoutMs: timeoutMs);
@@ -284,7 +285,7 @@ public class DeviceService
                 snap.Leds.Add(new LedColor { LedId = dLeds[i * 4], Red = dLeds[i * 4 + 1],
                     Green = dLeds[i * 4 + 2], Blue = dLeds[i * 4 + 3] });
 
-        var dTrigger = await ReadBlockAsync(Cmd.GetTriggerKey, 512, timeoutMs: 2500);
+        var dTrigger = await ReadBlockAsync(Cmd.GetTriggerKey, 512, timeoutMs: 700);
         Raw("GetTriggerKey", dTrigger);
         if (dTrigger != null)
             for (int i = 0; i < 128 && i * 4 + 3 < dTrigger.Length; i++)
