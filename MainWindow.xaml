@@ -30,7 +30,8 @@
                 </ListBox>
                 <Separator Margin="0,16"/>
                 <TextBlock Text="Keyboard Config File" FontWeight="Bold" Margin="0,4"/>
-                <Button Content="Create File" Margin="0,4" Padding="8,4"/>
+                <Button Content="Create File" Margin="0,4" Padding="8,4" Click="CreateFile_Click"/>
+            <Button Content="Import files" Margin="0,4" Padding="8,4" Click="ImportFiles_Click"/>
                 <TextBlock Text="profile" Foreground="Gray" Margin="0,4"/>
             </StackPanel>
         </Border>

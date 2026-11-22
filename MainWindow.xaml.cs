@@ -19,6 +19,33 @@ public partial class MainWindow : Window
         };
     }
 
+    private void CreateFile_Click(object sender, RoutedEventArgs e)
+    {
+        var svc = new ProfileService();
+        string name = $"profile-{DateTime.Now:yyyyMMdd-HHmmss}";
+        svc.CreateProfile(name);
+        StatusText.Text = $"Created profile {name}";
+        ContentFrame.Navigate(new ProfilesPage());
+    }
+
+    private void ImportFiles_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = "Profile or macro JSON (*.json)|*.json",
+            Multiselect = true
+        };
+        if (dlg.ShowDialog() != true) return;
+        var profiles = new ProfileService();
+        int count = 0;
+        foreach (var path in dlg.FileNames)
+        {
+            try { profiles.ImportProfile(path); count++; } catch { }
+        }
+        StatusText.Text = $"Imported {count} file(s)";
+        ContentFrame.Navigate(new ProfilesPage());
+    }
+
     private void RefreshDevice_Click(object sender, RoutedEventArgs e)
     {
         var svc = new DeviceService();
