@@ -11,7 +11,7 @@
         <local:KeyboardView x:Name="Preview" Height="230" Margin="0,0,0,8"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="280"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
@@ -19,54 +19,29 @@
                 <StackPanel>
                     <TextBlock Text="Advanced Keys" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
                     <TextBlock TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,12"
-                               Text="First, select any key to bind advanced keys. Each configuration file can use up to 40 advanced keys. An advanced key cannot be added to multiple layers on a single key but can be bound on different layers."/>
-                    <Border Background="#FAFAFA" CornerRadius="6" Padding="8" Margin="0,0,0,8" Cursor="Hand">
-                        <StackPanel>
-                            <TextBlock Text="RS" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" Text="Rappy Snappy monitors the 2 selected keys and activates whichever key is pressed down further."/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#FAFAFA" CornerRadius="6" Padding="8" Margin="0,0,0,8" Cursor="Hand">
-                        <StackPanel>
-                            <TextBlock Text="SOCD" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" Text="SOCD monitors the 2 selected keys and activates them based on your chosen settings."/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#FAFAFA" CornerRadius="6" Padding="8" Margin="0,0,0,8" Cursor="Hand">
-                        <StackPanel>
-                            <TextBlock Text="Dynamic Key Travel (DKS)" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" Text="A single key can achieve 4 functions: bind 1 to 4 functions based on different pressure levels."/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#FAFAFA" CornerRadius="6" Padding="8" Margin="0,0,0,8" Cursor="Hand">
-                        <StackPanel>
-                            <TextBlock Text="Dual Effect Click (MT)" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" Text="A single key can achieve 2 functions: holding the key is one function, clicking is another."/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#FAFAFA" CornerRadius="6" Padding="8" Cursor="Hand">
-                        <StackPanel>
-                            <TextBlock Text="Toggle Switch (TGL)" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" Text="Clicking the key toggles continuous triggering on or off. Holding the key triggers normally."/>
-                        </StackPanel>
-                    </Border>
+                               Text="Select keys on the keyboard, choose an advanced type, then configure and save."/>
+                    <Button Style="{StaticResource GhostButton}" Margin="0,0,0,8" Click="Type_Click" Tag="RS" Content="RS — Rappy Snappy (2 keys)"/>
+                    <Button Style="{StaticResource GhostButton}" Margin="0,0,0,8" Click="Type_Click" Tag="SOCD" Content="SOCD — priority (2 keys)"/>
+                    <Button Style="{StaticResource GhostButton}" Margin="0,0,0,8" Click="Type_Click" Tag="DKS" Content="DKS — dynamic travel (1 key)"/>
+                    <Button Style="{StaticResource GhostButton}" Margin="0,0,0,8" Click="Type_Click" Tag="MT" Content="MT — tap / hold (1 key)"/>
+                    <Button Style="{StaticResource GhostButton}" Click="Type_Click" Tag="TGL" Content="TGL — toggle (1 key)"/>
                 </StackPanel>
             </Border>
             <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Current Bindings" FontSize="16" FontWeight="Bold"/>
-                        <Border Background="#EEE" CornerRadius="4" Padding="4,2" Margin="8,0,0,0">
-                            <TextBlock Text="0/40"/>
-                        </Border>
-                    </StackPanel>
-                    <ListBox x:Name="BindingList" Margin="0,12,0,0" MinHeight="200"/>
+                    <TextBlock x:Name="ConfigTitle" Text="Configuration" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock x:Name="SelectedLabel" Foreground="#666" Margin="0,6,0,10" Text="No keys selected"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="430">
+                        <StackPanel x:Name="ConfigPanel"/>
+                    </ScrollViewer>
                 </StackPanel>
             </Border>
             <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="Test Your Bindings" FontSize="16" FontWeight="Bold" Margin="0,0,0,12"/>
-                    <Border BorderBrush="#CCC" BorderThickness="1" CornerRadius="4" Height="180"/>
+                    <TextBlock Text="Current Bindings" FontSize="16" FontWeight="Bold" Margin="0,0,0,12"/>
+                    <ListBox x:Name="BindingList" MinHeight="260"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Remove selected" Margin="0,10,0,0" Click="Remove_Click"/>
+                    <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
         </Grid>
