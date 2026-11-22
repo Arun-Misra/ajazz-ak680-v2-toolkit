@@ -30,13 +30,12 @@ public partial class GamepadPage : Page
     // Device key values from the config: W=34, A=49, S=50, D=51.
     private const int KeyW = 34, KeyA = 49, KeyS = 50, KeyD = 51;
     private readonly int[] _keys = { KeyW, KeyA, KeyS, KeyD };
-    private readonly Dictionary<int, double> _full = new()
-    {
-        [KeyW] = 343, [KeyA] = 349, [KeyS] = 352, [KeyD] = 386
-    };
-    private readonly Dictionary<int, int> _peaks = new();
+    // Empty by default: the firmware's reported maxStroke (normally 3.4 mm) is used
+    // until a key is explicitly calibrated. Hard-coded per-key peaks were the source
+    // of inconsistent saturation because they were taken from a few sample presses.
+    private readonly Dictionary<int, double> _full = new();
     private readonly Dictionary<int, double> _smooth = new();
-    private bool _calibrating;
+    private volatile bool _calibrating;
     private double _lx, _ly;
 
     public GamepadPage()
@@ -69,9 +68,10 @@ public partial class GamepadPage : Page
             _hall.Dispose(); _hall = null;
             return;
         }
-        // Fresh state on every start — no carry-over from a previous session.
+        // Fresh runtime state on every start — no carry-over from a previous session.
+        // (Learned per-key full-travel values in _full are kept deliberately.)
         lock (_smooth) _smooth.Clear();
-        lock (_peaks) _peaks.Clear();
+        _calibrating = false;
         _lx = _ly = 0;
         _pad.Reset();
 
@@ -96,6 +96,7 @@ public partial class GamepadPage : Page
         _uiTimer?.Stop();
         _uiTimer = null;
         _updating = false;
+        _calibrating = false;
         var updater = _updateThread;
         if (updater != null && updater.IsAlive && updater != Thread.CurrentThread)
         {
@@ -122,7 +123,9 @@ public partial class GamepadPage : Page
     private double Normalize(int key, int stroke)
     {
         double full;
-        lock (_full) full = _full.TryGetValue(key, out double f) ? f : 350;
+        lock (_full)
+            full = _full.TryGetValue(key, out double f) && f > 0 ? f : 0;
+        if (full <= 0) full = Math.Max(100, (_hall?.MaxStroke > 0 ? _hall.MaxStroke : 34) * 10.0);
         double dead = 8; // 0.08 mm
         return Math.Clamp((stroke - dead) / Math.Max(1, full - dead), 0, 1);
     }
@@ -142,17 +145,6 @@ public partial class GamepadPage : Page
             if (hall == null) continue;
             int sw_ = hall.GetStroke(KeyW, 80), sa = hall.GetStroke(KeyA, 80);
             int ss = hall.GetStroke(KeyS, 80), sd = hall.GetStroke(KeyD, 80);
-
-            if (_calibrating)
-            {
-                lock (_peaks)
-                {
-                    _peaks[KeyW] = Math.Max(_peaks.GetValueOrDefault(KeyW), sw_);
-                    _peaks[KeyA] = Math.Max(_peaks.GetValueOrDefault(KeyA), sa);
-                    _peaks[KeyS] = Math.Max(_peaks.GetValueOrDefault(KeyS), ss);
-                    _peaks[KeyD] = Math.Max(_peaks.GetValueOrDefault(KeyD), sd);
-                }
-            }
 
             double w = Step(KeyW, sw_, Alpha), a = Step(KeyA, sa, Alpha);
             double s = Step(KeyS, ss, Alpha), d = Step(KeyD, sd, Alpha);
@@ -201,25 +193,54 @@ public partial class GamepadPage : Page
 
     private async void Calibrate_Click(object sender, RoutedEventArgs e)
     {
-        if (_hall == null) return;
-        _calibrating = true;
-        _peaks.Clear();
-        Status.Foreground = System.Windows.Media.Brushes.Orange;
-        Status.Text = "Press W, A, S and D fully to the bottom, one at a time (6 s)…";
+        var hall = _hall;
+        if (hall == null) return;
         CalibrateButton.IsEnabled = false;
-        await System.Threading.Tasks.Task.Delay(6000);
+        _calibrating = true;
+        int expected = Math.Max(100, (hall.MaxStroke > 0 ? hall.MaxStroke : 34) * 10);
         int learned = 0;
-        lock (_peaks)
+
+        foreach (int key in _keys)
         {
-            foreach (int key in _keys)
+            string label = key == KeyW ? "W" : key == KeyA ? "A" : key == KeyS ? "S" : "D";
+            Status.Foreground = System.Windows.Media.Brushes.Orange;
+            Status.Text = $"Press and hold {label} fully to the bottom (up to 5 s)…";
+
+            int peak = 0;
+            var deadline = DateTime.UtcNow.AddSeconds(5);
+            while (_calibrating && DateTime.UtcNow < deadline)
             {
-                int peak = _peaks.GetValueOrDefault(key);
-                if (peak >= 150) { lock (_full) _full[key] = peak + 5; learned++; }
+                peak = Math.Max(peak, hall.GetStroke(key, 80));
+                // Only a genuine near-bottom press counts. Accepting a weak press as
+                // "full" is what made the stick saturate after a light tap.
+                if (peak >= expected * 0.85) break;
+                await System.Threading.Tasks.Task.Delay(10);
             }
+            if (!_calibrating) break; // Stop() took over
+
+            if (peak >= 250)
+            {
+                // Clamp to the firmware's full-travel spec: avoids both a half press
+                // and an occasional overshoot spike becoming the new full scale.
+                double full = Math.Clamp(peak, expected * 0.9, expected * 1.1);
+                lock (_full) _full[key] = full;
+                learned++;
+            }
+            await System.Threading.Tasks.Task.Delay(200);
+            if (!_calibrating) break;
         }
+
+        if (!_calibrating) return;
         _calibrating = false;
         CalibrateButton.IsEnabled = true;
         Status.Foreground = System.Windows.Media.Brushes.Green;
-        Status.Text = $"Calibrated {learned}/4 keys. Full travel: W {_full[KeyW]:0}  A {_full[KeyA]:0}  S {_full[KeyS]:0}  D {_full[KeyD]:0}";
+        Status.Text = $"Calibrated {learned}/4 keys. Expected full {expected / 100.0:0.00} mm — " +
+                      $"W {FullText(KeyW)}  A {FullText(KeyA)}  S {FullText(KeyS)}  D {FullText(KeyD)}";
+    }
+
+    private string FullText(int key)
+    {
+        lock (_full)
+            return _full.TryGetValue(key, out double f) ? $"{f / 100.0:0.00}" : "auto";
     }
 }

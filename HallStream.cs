@@ -28,6 +28,11 @@ public sealed class HallStream : IDisposable
 
     public event Action<int, int, int>? Sample; // keyValue, adc, stroke
 
+    /// <summary>Firmware-reported maximum travel. Bytes 12-13 of the 0xFB report
+    /// carry this as 0.1 mm units (e.g. 34 = 3.4 mm), so multiply by 10 to compare
+    /// with keyStroke, which is in 0.01 mm units.</summary>
+    public int MaxStroke { get; private set; }
+
     public HallStream(DeviceService device) => _device = device;
 
     public bool IsRunning => _running;
@@ -61,6 +66,8 @@ public sealed class HallStream : IDisposable
             if (key < 0 || key >= 128) continue;
             int adc = r[8] | (r[9] << 8);
             int stroke = r[10] | (r[11] << 8);
+            int maxStroke = r[12] | (r[13] << 8);
+            if (maxStroke > 0 && maxStroke < 100) MaxStroke = maxStroke;
             long now = _clock.ElapsedMilliseconds;
             lock (_lock) { _adc[key] = adc; _stroke[key] = stroke; _stamp[key] = now; }
             Sample?.Invoke(key, adc, stroke);
