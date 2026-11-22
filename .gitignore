@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+.vs/
+*.log
+GOAL.md
+PROTOCOL.md
+RE_ANALYSIS.md
+README.md
