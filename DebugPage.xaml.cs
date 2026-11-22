@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -94,5 +95,29 @@ public partial class DebugPage : Page
     {
         var info = await _device.GetDeviceInfoAsync();
         Status.Text = info is null ? "Read failed" : $"VID {info.Vid:X4} PID {info.Pid:X4} fw {info.Version}";
+    }
+
+    private async void FwInfo_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_device.IsConnected && !_device.Connect()) { ProbeText.Text = "No device connected"; return; }
+        var info = await _device.GetOtaSystemInfoAsync();
+        ProbeText.Text = info is null
+            ? "No reply to cmd 128 (OTA_GET_DEVICE_SYSTEM_INFO)"
+            : $"app {info.AppVersion:0.00}  boot {info.BootloaderVersion:0.00}\n" +
+              $"manufacturer {info.Manufacturer:X4}  product {info.Product:X4}\n" +
+              $"area {info.RunningArea}  mode {info.WorkMode}";
+    }
+
+    // LED ids (device key values) for W/A/S/D.
+    private static readonly int[] Wasd = { 34, 49, 50, 51 };
+
+    private async void Hall_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_device.IsConnected && !_device.Connect()) { ProbeText.Text = "No device connected"; return; }
+        var rows = await _device.GetMagneticAxisStatusAsync(Wasd);
+        ProbeText.Text = rows is null || rows.Count == 0
+            ? "No reply to cmd 104 (GET_MAGNETIC_AXIS_STATUS)"
+            : string.Join("\n", rows.Select(r =>
+                $"key {r.KeyValue}: status {r.CalibrationStatus}  adc {r.AdcValue}  stroke {r.CurrentStroke}"));
     }
 }

@@ -28,6 +28,14 @@
                     <Button Style="{StaticResource GhostButton}" Content="Read state" Margin="8,0,0,0" Click="Read_Click"/>
                 </StackPanel>
 
+                <TextBlock Text="Firmware / Hall probe" FontWeight="Bold" Margin="0,18,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource GhostButton}" Content="FW info" Click="FwInfo_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Hall WASD" Margin="8,0,0,0" Click="Hall_Click"/>
+                </StackPanel>
+                <TextBlock x:Name="ProbeText" Margin="0,8,0,0" FontSize="12"
+                           Foreground="{StaticResource Accent}" TextWrapping="Wrap"/>
+
                 <TextBlock x:Name="Status" Margin="0,14,0,0" Foreground="Green" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
