@@ -18,11 +18,17 @@ public enum ClickEffect { Ripple, Flash, Spread, SparkleBurst }
 
 /// <summary>
 /// Host-side animation engine. Generates per-key RGB frames on a dedicated thread and
-/// streams them to the keyboard with setCustomLEDData — no firmware animation needed.
-/// One HID packet (14 keys) per frame keeps the USB queue light and the motion smooth.
+/// streams them to the keyboard with setCustomLEDData.
+///
+/// Two important details:
+///  - LED ids are NOT laid out as a 15-column grid. Physical row/column comes from
+///    OrderedLeds, otherwise click bursts and spatial effects land on unrelated keys.
+///  - Stop/Start uses a generation token and joins the old thread before launching a new
+///    one, so rapid pattern changes cannot leave two writer loops racing on the HID endpoint.
 /// </summary>
 public sealed class AnimationEngine
 {
+    // Physical key order: 15 + 15 + 14 + 14 + 10 keys.
     public static readonly int[] OrderedLeds =
     {
         0,17,18,19,20,21,22,23,24,25,26,27,28,92,104,
@@ -31,12 +37,42 @@ public sealed class AnimationEngine
         64,65,66,67,68,69,70,71,72,73,74,75,90,108,
         80,81,82,83,84,85,87,88,89,91
     };
+    private static readonly int[] RowLengths = { 15, 15, 14, 14, 10 };
+
+    private static readonly Dictionary<int, (int row, int col)> RcByLed = BuildRcMap();
+    private static readonly Dictionary<int, int> PosByLed = BuildPosMap();
+
+    private static Dictionary<int, (int, int)> BuildRcMap()
+    {
+        var map = new Dictionary<int, (int, int)>();
+        int row = 0, col = 0;
+        foreach (int led in OrderedLeds)
+        {
+            if (col >= RowLengths[row]) { row++; col = 0; }
+            if (row >= RowLengths.Length) row = RowLengths.Length - 1;
+            map[led] = (row, col);
+            col++;
+        }
+        return map;
+    }
+    private static Dictionary<int, int> BuildPosMap()
+    {
+        var map = new Dictionary<int, int>();
+        for (int i = 0; i < OrderedLeds.Length; i++) map[OrderedLeds[i]] = i;
+        return map;
+    }
+    private static (int row, int col) GetRc(int led) =>
+        RcByLed.TryGetValue(led, out var rc) ? rc : (0, 0);
+    private static int GetPos(int led) =>
+        PosByLed.TryGetValue(led, out int p) ? p : 0;
+    private static int GridWidth => RowLengths[0];
 
     private readonly DeviceService _device;
     private readonly Dispatcher _dispatcher;
     private Thread? _thread;
     private volatile bool _running;
-    private int _targetFps = 60;
+    private int _generation;
+    private int _targetFps = 30;
     private AnimationPattern _pattern;
     private Color _primary, _secondary;
 
@@ -62,61 +98,109 @@ public sealed class AnimationEngine
         _dispatcher = Dispatcher.CurrentDispatcher;
     }
 
-    public async void Start(AnimationPattern pattern, int fps, Color primary, Color secondary)
+    /// <summary>Starts (or restarts) the animation loop safely.</summary>
+    public void Start(AnimationPattern pattern, int fps, Color primary, Color secondary) =>
+        _ = StartCore(pattern, fps, primary, secondary);
+
+    private async System.Threading.Tasks.Task StartCore(
+        AnimationPattern pattern, int fps, Color primary, Color secondary)
     {
-        if (_running) return;
+        int gen = Interlocked.Increment(ref _generation);
+        StopLoop(wait: true);
+
         if (!_device.IsConnected && !_device.Connect())
         {
             Report("No device connected");
             return;
         }
-        _pattern = pattern; _primary = primary; _secondary = secondary;
         _targetFps = Math.Clamp(fps, 1, 120);
-
-        var effect = new LedEffect { Mode = 128, ColorMode = 0, Red = primary.R, Green = primary.G, Blue = primary.B,
+        var effect = new LedEffect { Mode = 128, ColorMode = 0,
+            Red = primary.R, Green = primary.G, Blue = primary.B,
             Brightness = 6, Speed = 3, DriverSetting = 255 };
         if (!await _device.SetLedEffectAsync(effect))
         {
             Report("Failed to enter custom mode");
             return;
         }
-
-        // One-time full clear so colours from the previous pattern don't linger.
+        // One-time clear so the previous pattern's colours do not linger.
         var clear = new List<LedColor>(128);
         for (int i = 0; i < 128; i++) clear.Add(new LedColor { LedId = i });
         await _device.SendCustomFrameAsync(clear);
+        if (gen != _generation) return;
+
+        _pattern = pattern;
+        _primary = primary;
+        _secondary = secondary;
+        lock (_burstLock) _bursts.Clear();
 
         timeBeginPeriod(1);
         _running = true;
-        _thread = new Thread(FrameLoop) { IsBackground = true };
+        _thread = new Thread(() => FrameLoop(gen)) { IsBackground = true };
         _thread.Start();
         Report($"Playing {pattern} at up to {_targetFps} FPS");
     }
 
     public void Stop()
     {
-        _running = false;
-        _thread = null;
-        timeEndPeriod(1);
+        Interlocked.Increment(ref _generation);
+        StopLoop(wait: true);
         Report("Animation stopped");
     }
 
+    private void StopLoop(bool wait)
+    {
+        _running = false;
+        var old = _thread;
+        if (wait && old != null && old.IsAlive && old != Thread.CurrentThread)
+        {
+            try { old.Join(300); } catch { }
+        }
+        _thread = null;
+        timeEndPeriod(1);
+    }
+
     /// <summary>
-    /// Fires a one-shot effect centred on a key. If the engine is idle it starts a
-    /// black base loop automatically so the burst can animate.
+    /// Fires a one-shot effect centred on a key. When idle, the black Click Reactive
+    /// loop is fully initialised (awaited) before the burst is queued.
     /// </summary>
     public async void TriggerKey(int ledId, ClickEffect effect, Color color)
     {
         if (!_running)
+            await StartCore(AnimationPattern.ClickReactive, 30, color, color);
+        var burst = new Burst
         {
-            Start(AnimationPattern.ClickReactive, 30, color, color);
-            // Wait briefly for the engine to enter custom mode and start its loop.
-            await System.Threading.Tasks.Task.Delay(120);
-        }
+            Center = ledId,
+            Start = _clock.Elapsed.TotalSeconds,
+            Color = color,
+            Effect = effect
+        };
         lock (_burstLock)
         {
-            _bursts.Add(new Burst { Center = ledId, Start = _clock.Elapsed.TotalSeconds, Color = color, Effect = effect });
+            _bursts.Add(burst);
             if (_bursts.Count > 12) _bursts.RemoveAt(0);
+        }
+        // Immediate full-frame feedback: light the pressed key and its real grid
+        // neighbours right away instead of waiting for the rotating 14-key sweep.
+        if (_device.IsConnected)
+        {
+            var frame = new List<LedColor>(128);
+            for (int i = 0; i < 128; i++) frame.Add(new LedColor { LedId = i });
+            var (brow, bcol) = GetRc(ledId);
+            foreach (var other in PosByLed.Keys)
+            {
+                var (row, col) = GetRc(other);
+                int dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
+                byte scale = dist == 0 ? (byte)255 : dist == 1 ? (byte)110 : (byte)0;
+                if (scale > 0)
+                    frame[other] = new LedColor
+                    {
+                        LedId = other,
+                        Red = (byte)(burst.Color.R * scale / 255),
+                        Green = (byte)(burst.Color.G * scale / 255),
+                        Blue = (byte)(burst.Color.B * scale / 255)
+                    };
+            }
+            await _device.SendCustomFrameAsync(frame);
         }
         Report($"Click {effect} at key {ledId}");
     }
@@ -125,36 +209,34 @@ public sealed class AnimationEngine
 
     private Color ApplyBursts(int id, double t, Color baseColor)
     {
-        if (_bursts.Count == 0) return baseColor;
+        // Never light unused LED slots — they have no physical key position.
+        if (!PosByLed.ContainsKey(id)) return baseColor;
+        lock (_burstLock)
+        {
+            if (_bursts.Count == 0) return baseColor;
+            _bursts.RemoveAll(b => t - b.Start > 1.8);
+        }
         Burst[] bursts;
         lock (_burstLock) bursts = _bursts.ToArray();
+
         Color result = baseColor;
+        var (row, col) = GetRc(id);
         foreach (var b in bursts)
         {
             double age = t - b.Start;
             if (age < 0 || age > 1.6) continue;
-            int row = id / 15, col = id % 15;
-            int brow = b.Center / 15, bcol = b.Center % 15;
-            double dist = Math.Sqrt((row - brow) * (row - brow) + (col - bcol) * (col - bcol));
-            double intensity;
-            switch (b.Effect)
+            var (brow, bcol) = GetRc(b.Center);
+            // Chebyshev distance = exact grid neighbours (no diagonal bleed into
+            // keys that only look close because of irregular LED numbering).
+            double dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
+            double intensity = b.Effect switch
             {
-                case ClickEffect.Ripple:
-                    intensity = Math.Max(0, 1 - Math.Abs(dist - age * 9) / 1.8) * (1 - age / 1.6);
-                    break;
-                case ClickEffect.Flash:
-                    intensity = Math.Max(0, 1 - dist / 4) * Math.Max(0, 1 - age / 0.7);
-                    break;
-                case ClickEffect.Spread:
-                    intensity = Math.Max(0, 1 - dist / (1 + age * 14)) * (1 - age / 1.6);
-                    break;
-                case ClickEffect.SparkleBurst:
-                    intensity = (((id * 31 + (int)(t * 40)) % 53) < 4 && dist < 6) ? (1 - age / 1.2) : 0;
-                    break;
-                default:
-                    intensity = 0;
-                    break;
-            }
+                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 6) / 1.2) * (1 - age / 1.6),
+                ClickEffect.Flash => dist <= 1 ? Math.Max(0, 1 - age / 0.55) : 0,
+                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 10)) * (1 - age / 1.4),
+                ClickEffect.SparkleBurst => (((id * 31 + (int)(t * 40)) % 53) < 5 && dist <= 3) ? (1 - age / 1.1) : 0,
+                _ => 0
+            };
             if (intensity > 0) result = Mix(result, b.Color, Math.Clamp(intensity, 0, 1));
         }
         return result;
@@ -166,33 +248,34 @@ public sealed class AnimationEngine
         else _dispatcher.BeginInvoke(new Action(() => Status?.Invoke(text)));
     }
 
-    private void FrameLoop()
+    private void FrameLoop(int generation)
     {
         var sw = Stopwatch.StartNew();
-        long next = 0;
+        long next = 0, lastReport = 0;
         int frames = 0;
-        long lastReport = 0;
-        const int Slice = 14; // 14 keys x 4 bytes = 56 bytes = 1 HID packet
+        const int Slice = 14; // 14 keys x 4 bytes = 56 bytes = one HID packet
+        int width = GridWidth;
 
-        while (_running)
+        while (_running && generation == _generation)
         {
             long now = sw.ElapsedMilliseconds;
             if (now < next) { Thread.SpinWait(40); continue; }
             next = now + 1000L / _targetFps;
 
             double t = _clock.Elapsed.TotalSeconds;
-            int start = (int)((t * 90) % 128); // sweep across LEDs ~90 ids/sec
+            int start = (int)((t * 90) % 128);
             int count = Math.Min(Slice, 128 - start);
             var slice = new List<LedColor>(count);
 
             for (int k = 0; k < count; k++)
             {
                 int id = start + k;
+                var (row, col) = GetRc(id);
                 Color c;
                 switch (_pattern)
                 {
                     case AnimationPattern.RainbowWave:
-                        c = HsvToRgb(id * 2.8 + t * 95, 1, 1);
+                        c = HsvToRgb(GetPos(id) * 5 + t * 95, 1, 1);
                         break;
                     case AnimationPattern.Breathing:
                         c = Mix(Color.FromRgb(8, 8, 8), _primary, (Math.Sin(t * 2.2) + 1) / 2);
@@ -200,15 +283,14 @@ public sealed class AnimationEngine
                     case AnimationPattern.Chase:
                     {
                         int head = (int)(t * 45) % OrderedLeds.Length;
-                        int pos = Array.IndexOf(OrderedLeds, id);
-                        int dist = pos < 0 ? 99 : Math.Min(Math.Abs(pos - head), OrderedLeds.Length - Math.Abs(pos - head));
+                        int pos = GetPos(id);
+                        int dist = Math.Min(Math.Abs(pos - head), OrderedLeds.Length - Math.Abs(pos - head));
                         c = dist < 5 ? Mix(_primary, Color.FromRgb(0, 0, 0), dist / 5.0) : Color.FromRgb(0, 0, 0);
                         break;
                     }
                     case AnimationPattern.Ripple:
                     {
-                        int row = id / 15, col = id % 15;
-                        double d = Math.Sqrt((row - 2) * (row - 2) + (col - 7) * (col - 7));
+                        double d = Math.Sqrt((row - 2) * (row - 2) + (col - width / 2) * (col - width / 2));
                         c = Mix(Color.FromRgb(0, 0, 0), _primary, (Math.Sin(d * 1.1 - t * 4) + 1) / 2);
                         break;
                     }
@@ -217,50 +299,44 @@ public sealed class AnimationEngine
                         break;
                     case AnimationPattern.MatrixRain:
                     {
-                        int col = id % 15;
-                        double head = (t * 28 + col * 17) % 24;
-                        double dist = Math.Abs((id / 15) - head);
-                        c = dist < 1.5 ? Color.FromRgb(180, 255, 180)
-                          : dist < 5 ? Mix(Color.FromRgb(0, 0, 0), Color.FromRgb(0, 255, 40), 1 - dist / 5)
+                        double head = (t * 18 + col * 11) % 20;
+                        double dist = Math.Abs(row - head);
+                        c = dist < 1.2 ? Color.FromRgb(180, 255, 180)
+                          : dist < 4 ? Mix(Color.FromRgb(0, 0, 0), Color.FromRgb(0, 255, 40), 1 - dist / 4)
                           : Color.FromRgb(0, 0, 0);
                         break;
                     }
                     case AnimationPattern.Fire:
                     {
-                        int row = id / 15;
-                        double heat = Math.Clamp((5 - row) / 5.0 + Math.Sin(t * 7 + id * 1.3) * 0.12, 0, 1);
+                        double heat = Math.Clamp((4 - row) / 4.0 + Math.Sin(t * 7 + col * 1.3) * 0.12, 0, 1);
                         c = heat < 0.15 ? Color.FromRgb(0, 0, 0) : HsvToRgb(heat * 55, 1, heat);
                         break;
                     }
                     case AnimationPattern.Checkerboard:
                     {
-                        int row = id / 15, col = id % 15;
                         bool flip = ((int)(t * 3)) % 2 == 0;
-                        bool light = ((row + col) % 2 == 0) ^ flip;
-                        c = light ? _primary : _secondary;
+                        c = (((row + col) % 2 == 0) ^ flip) ? _primary : _secondary;
                         break;
                     }
                     case AnimationPattern.KittScanner:
                     {
-                        int col = id % 15;
-                        double phase = (t * 18) % 28;
-                        double pos = phase < 14 ? phase : 28 - phase;
+                        double phase = (t * 18) % (2 * (width - 1));
+                        double pos = phase < width - 1 ? phase : 2 * (width - 1) - phase;
                         double d = Math.Abs(col - pos);
                         c = d < 1 ? Color.FromRgb(255, 220, 120)
-                          : d < 4 ? Mix(Color.FromRgb(0, 0, 0), Color.FromRgb(255, 40, 20), 1 - d / 4)
+                          : d < 3.5 ? Mix(Color.FromRgb(0, 0, 0), Color.FromRgb(255, 40, 20), 1 - d / 3.5)
                           : Color.FromRgb(0, 0, 0);
                         break;
                     }
                     case AnimationPattern.Aurora:
                     {
-                        int row = id / 15, col = id % 15;
                         double hue = 140 + 80 * Math.Sin(col * 0.35 + t * 0.7);
                         double v = 0.45 + 0.45 * Math.Sin(row * 0.7 - t * 1.1);
                         c = HsvToRgb(hue, 0.85, Math.Clamp(v, 0.05, 1));
                         break;
                     }
                     case AnimationPattern.ColorFade:
-                        c = HsvToRgb(id * 47 + t * 24, 0.95, 1);
+                        c = HsvToRgb(GetPos(id) * 6 + t * 24, 0.95, 1);
                         break;
                     case AnimationPattern.ClickReactive:
                         c = Color.FromRgb(0, 0, 0);
@@ -278,7 +354,6 @@ public sealed class AnimationEngine
 
             if (now - lastReport >= 1000)
             {
-                lock (_burstLock) _bursts.RemoveAll(b => t - b.Start > 2.0);
                 Report($"{_pattern} — {frames * 1000.0 / (now - lastReport):0} FPS");
                 frames = 0;
                 lastReport = now;

@@ -28,7 +28,8 @@ public partial class AnimationsPage : Page
     private void OnPhysicalKey(int ledId)
     {
         // Don't fire while the user is typing into a control.
-        if (Keyboard.FocusedElement is TextBox or ComboBox) return;
+        // Only skip real text entry; a focused ComboBox must not swallow key presses.
+        if (Keyboard.FocusedElement is TextBox) return;
         if (!TryColor(PrimaryHex.Text, out var primary) || !TryColor(SecondaryHex.Text, out var secondary)) return;
         var effect = (ClickEffect)ClickEffectCombo.SelectedIndex;
         var color = effect == ClickEffect.SparkleBurst ? secondary : primary;
