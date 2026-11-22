@@ -230,6 +230,15 @@ public sealed class NativeHidDevice : IDisposable
         var copy = new byte[Math.Min((int)count, _readBuffer.Length)];
         Buffer.BlockCopy(_readBuffer, 0, copy, 0, copy.Length);
         StartRead();
+        // Win32 HID input reports include a leading report-id byte; WebHID's
+        // HIDInputReportEvent.data does not. Normalise to the WebHID shape so
+        // the protocol parsers (which assume 0x55 at offset 0) work correctly.
+        if (copy.Length > 1 && copy[0] == 0)
+        {
+            var data = new byte[copy.Length - 1];
+            Buffer.BlockCopy(copy, 1, data, 0, data.Length);
+            return data;
+        }
         return copy;
     }
 

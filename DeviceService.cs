@@ -97,7 +97,7 @@ public class DeviceService
     }
 
     public async Task<List<byte[]>?> SendCommandWithResponseAsync(byte cmd, byte[] data, int contentSize,
-        int addrStart = 0, byte[]? otherHeader = null, int timeoutMs = 2000)
+        int addrStart = 0, byte[]? otherHeader = null, int timeoutMs = 2000, byte[]? customHeader = null)
     {
         if (!IsConnected) return null;
         int chunk = HidProtocol.ChunkDataSize;
@@ -115,7 +115,7 @@ public class DeviceService
                 int start = t * chunk, end = Math.Min(start + chunk, data.Length);
                 if (end > start) { slice = new byte[end - start]; Buffer.BlockCopy(data, start, slice, 0, slice.Length); }
             }
-            SendReport(0, HidProtocol.BuildReport(cmd, size, addr, slice, otherHeader, null, last));
+            SendReport(0, HidProtocol.BuildReport(cmd, size, addr, slice, otherHeader, customHeader, last));
             var response = Device!.ReadReport(timeoutMs);
             if (response != null) result.Add(response);
         }
@@ -130,7 +130,7 @@ public class DeviceService
         var responses = await SendCommandWithResponseAsync(Cmd.GetDeviceInfo, Array.Empty<byte>(), 48);
         if (responses == null || responses.Count == 0) return null;
         var payload = new List<byte>();
-        foreach (var r in responses) payload.AddRange(r);
+        foreach (var r in responses) payload.AddRange(r.Skip(HidProtocol.HeaderSize));
         return Commands.ParseDeviceInfo(payload.ToArray());
     }
 
@@ -145,7 +145,7 @@ public class DeviceService
         var responses = await SendCommandWithResponseAsync(Cmd.GetLedEffect, Array.Empty<byte>(), 16);
         if (responses == null || responses.Count == 0) return null;
         var payload = new List<byte>();
-        foreach (var r in responses) payload.AddRange(r);
+        foreach (var r in responses) payload.AddRange(r.Skip(HidProtocol.HeaderSize));
         return Commands.ParseLedEffect(payload.ToArray());
     }
 
@@ -231,5 +231,78 @@ public class DeviceService
         bool ok1 = await SendCommandAsync(Cmd.SetMacro, index, 400, skipResponse: true, needLastFlag: false);
         if (!ok1 || actions.Length == 0) return ok1;
         return await SendCommandAsync(Cmd.SetMacro, actions, actions.Length, addrStart: 400, skipResponse: true);
+    }
+
+    // ---- Hall-effect / magnetic axis support -------------------------------------
+
+    public sealed class HallReading
+    {
+        public int KeyValue;
+        public int CalibrationStatus;
+        public int AdcValue;
+        public int CurrentStroke;
+    }
+
+    /// <summary>
+    /// GET_MAGNETIC_AXIS_STATUS (104). Request is 8 bytes per key with the key value in
+    /// byte 0; reply is 8 bytes per key: [status, adcLo, adcHi, strokeLo, strokeHi, ...].
+    /// currentStroke is the raw Hall travel value (not yet normalised to millimetres).
+    /// </summary>
+    public async Task<List<HallReading>?> GetMagneticAxisStatusAsync(int[] keyValues, int timeoutMs = 2000)
+    {
+        if (!IsConnected || keyValues.Length == 0) return null;
+        var request = new byte[keyValues.Length * 8];
+        for (int i = 0; i < keyValues.Length; i++) request[i * 8] = (byte)keyValues[i];
+        var frames = await SendCommandWithResponseAsync(Cmd.GetMagneticAxisStatus, request,
+            request.Length, timeoutMs: timeoutMs);
+        if (frames == null || frames.Count == 0) return null;
+        var payload = frames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).ToArray();
+        if (payload.Length < keyValues.Length * 5) return null;
+        var result = new List<HallReading>(keyValues.Length);
+        for (int i = 0; i < keyValues.Length; i++)
+        {
+            int o = i * 8;
+            if (o + 5 > payload.Length) break;
+            result.Add(new HallReading
+            {
+                KeyValue = keyValues[i],
+                CalibrationStatus = payload[o],
+                AdcValue = payload[o + 1] | (payload[o + 2] << 8),
+                CurrentStroke = payload[o + 3] | (payload[o + 4] << 8)
+            });
+        }
+        return result;
+    }
+
+    public sealed class OtaSystemInfo
+    {
+        public double BootloaderVersion;
+        public double AppVersion;
+        public int Manufacturer;
+        public int Product;
+        public string RunningArea = "unknown";
+        public int WorkMode;
+    }
+
+    /// <summary>OTA_GET_DEVICE_SYSTEM_INFO (128) — read-only firmware identity.</summary>
+    public async Task<OtaSystemInfo?> GetOtaSystemInfoAsync(int timeoutMs = 2000)
+    {
+        if (!IsConnected) return null;
+        var header = new byte[] { 0xAA, Cmd.OtaGetDeviceSystemInfo, 0, 0, 0, 0, 0, 0 };
+        var frames = await SendCommandWithResponseAsync(Cmd.OtaGetDeviceSystemInfo,
+            Array.Empty<byte>(), 56, customHeader: header, timeoutMs: timeoutMs);
+        if (frames == null || frames.Count == 0) return null;
+        var r = frames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).ToArray();
+        if (r.Length < 10) return null;
+        static double Ver(byte lo, byte hi) => ((lo & 15) + ((lo & 240) >> 4) * 10 + hi * 100) / 100.0;
+        return new OtaSystemInfo
+        {
+            BootloaderVersion = Ver(r[0], r[1]),
+            AppVersion = Ver(r[2], r[3]),
+            Manufacturer = r[4] | (r[5] << 8),
+            Product = r[6] | (r[7] << 8),
+            RunningArea = r[8] == 16 ? "app" : r[8] == 48 ? "boot" : "unknown",
+            WorkMode = r[9]
+        };
     }
 }
