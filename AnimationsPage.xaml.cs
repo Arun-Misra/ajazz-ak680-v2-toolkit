@@ -1,0 +1,87 @@
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Input;
+
+namespace AjazzManager;
+
+public partial class AnimationsPage : Page
+{
+    private readonly DeviceService _device = new();
+    private readonly AnimationEngine _engine;
+    private readonly KeyboardHook _hook = new();
+
+    public AnimationsPage()
+    {
+        InitializeComponent();
+        _device.Connect();
+        _engine = new AnimationEngine(_device);
+        _engine.Status += s => Status.Text = s;
+        FpsSlider.ValueChanged += (_, _) => FpsLabel.Text = ((int)FpsSlider.Value).ToString();
+
+        _hook.KeyPressed += OnPhysicalKey;
+        if (!_hook.Install()) Status.Text = "Keyboard hook unavailable";
+        Unloaded += (_, _) => _hook.Dispose();
+    }
+
+    private void OnPhysicalKey(int ledId)
+    {
+        // Don't fire while the user is typing into a control.
+        if (Keyboard.FocusedElement is TextBox or ComboBox) return;
+        if (!TryColor(PrimaryHex.Text, out var primary) || !TryColor(SecondaryHex.Text, out var secondary)) return;
+        var effect = (ClickEffect)ClickEffectCombo.SelectedIndex;
+        var color = effect == ClickEffect.SparkleBurst ? secondary : primary;
+        _engine.TriggerKey(ledId, effect, color);
+    }
+
+    private void PrimaryHex_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            var c = (Color)ColorConverter.ConvertFromString(PrimaryHex.Text);
+            PrimaryPreview.Background = new SolidColorBrush(c);
+        }
+        catch { }
+    }
+
+    private void SecondaryHex_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            var c = (Color)ColorConverter.ConvertFromString(SecondaryHex.Text);
+            SecondaryPreview.Background = new SolidColorBrush(c);
+        }
+        catch { }
+    }
+
+    private void Play_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryColor(PrimaryHex.Text, out var primary) || !TryColor(SecondaryHex.Text, out var secondary))
+        { Status.Text = "Invalid colour value"; return; }
+        var pattern = (AnimationPattern)PatternCombo.SelectedIndex;
+        _engine.Start(pattern, (int)FpsSlider.Value, primary, secondary);
+        PlayButton.IsEnabled = false;
+    }
+
+    private void ClickPreview_KeyClicked(object? sender, string key)
+    {
+        if (!LightingPage.KeyValues.TryGetValue(key, out int ledId)) return;
+        if (!TryColor(PrimaryHex.Text, out var primary) || !TryColor(SecondaryHex.Text, out var secondary)) return;
+        var effect = (ClickEffect)ClickEffectCombo.SelectedIndex;
+        var color = effect == ClickEffect.SparkleBurst ? secondary : primary;
+        _engine.TriggerKey(ledId, effect, color);
+    }
+
+    private void Stop_Click(object sender, RoutedEventArgs e)
+    {
+        _engine.Stop();
+        PlayButton.IsEnabled = true;
+    }
+
+    private static bool TryColor(string hex, out Color color)
+    {
+        try { color = (Color)ColorConverter.ConvertFromString(hex); return true; }
+        catch { color = Colors.Black; return false; }
+    }
+}

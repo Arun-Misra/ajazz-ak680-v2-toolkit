@@ -1,0 +1,81 @@
+<Page x:Class="AjazzManager.AnimationsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:AjazzManager"
+      Title="Animations" Background="{StaticResource PageBg}">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="420"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+            <StackPanel>
+                <TextBlock Text="Custom Animations" FontSize="20" FontWeight="Bold" Margin="0,0,0,6"/>
+                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextMuted}" Margin="0,0,0,16"
+                           Text="Frames are generated on the PC and streamed to the keyboard as per-key colours. Works without any firmware animation support."/>
+
+                <TextBlock Text="Pattern" FontWeight="Bold" Margin="0,0,0,4"/>
+                <ComboBox x:Name="PatternCombo" SelectedIndex="0">
+                    <ComboBoxItem Content="Rainbow Wave"/>
+                    <ComboBoxItem Content="Breathing"/>
+                    <ComboBoxItem Content="Chase"/>
+                    <ComboBoxItem Content="Ripple"/>
+                    <ComboBoxItem Content="Sparkle"/>
+                    <ComboBoxItem Content="Matrix Rain"/>
+                    <ComboBoxItem Content="Fire"/>
+                    <ComboBoxItem Content="Checkerboard"/>
+                    <ComboBoxItem Content="KITT Scanner"/>
+                    <ComboBoxItem Content="Aurora"/>
+                    <ComboBoxItem Content="Colour Fade"/>
+                    <ComboBoxItem Content="Click Reactive"/>
+                </ComboBox>
+
+                <TextBlock Text="Speed (frames per second)" FontWeight="Bold" Margin="0,16,0,4"/>
+                <DockPanel>
+                    <Slider x:Name="FpsSlider" Minimum="1" Maximum="60" Value="30" TickFrequency="1" IsSnapToTickEnabled="True" Width="280"/>
+                    <TextBlock x:Name="FpsLabel" Text="30" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                </DockPanel>
+
+                <TextBlock Text="Primary colour" FontWeight="Bold" Margin="0,16,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="PrimaryHex" Text="#00FF00" Width="110" TextChanged="PrimaryHex_TextChanged"/>
+                    <Border x:Name="PrimaryPreview" Width="26" Height="26" Background="#00FF00" Margin="8,0,0,0" CornerRadius="4"/>
+                </StackPanel>
+
+                <TextBlock Text="Secondary colour" FontWeight="Bold" Margin="0,12,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="SecondaryHex" Text="#FFFFFF" Width="110" TextChanged="SecondaryHex_TextChanged"/>
+                    <Border x:Name="SecondaryPreview" Width="26" Height="26" Background="#FFFFFF" Margin="8,0,0,0" CornerRadius="4"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button x:Name="PlayButton" Style="{StaticResource AccentButton}" Content="Play" Click="Play_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="Stop_Click"/>
+                </StackPanel>
+                <TextBlock x:Name="Status" Margin="0,14,0,0" Foreground="Green" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Style="{StaticResource Card}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Click a key to fire an effect" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
+                    <TextBlock Text="Click effect:" Width="90" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="ClickEffectCombo" Width="180" SelectedIndex="0">
+                        <ComboBoxItem Content="Ripple"/>
+                        <ComboBoxItem Content="Flash"/>
+                        <ComboBoxItem Content="Spread"/>
+                        <ComboBoxItem Content="Sparkle Burst"/>
+                    </ComboBox>
+                </StackPanel>
+                <local:KeyboardView Grid.Row="2" x:Name="ClickPreview" Height="300" VerticalAlignment="Top" KeyClicked="ClickPreview_KeyClicked"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
