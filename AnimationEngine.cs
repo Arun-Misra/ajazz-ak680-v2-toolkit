@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -68,6 +69,39 @@ public sealed class AnimationEngine
         PosByLed.TryGetValue(led, out int p) ? p : 0;
     private static int GridWidth => RowLengths[0];
 
+    // For each key, the nearby LED ids grouped into contiguous runs so a burst can
+    // update only its neighbourhood with a few HID packets instead of all 128 keys.
+    private static readonly Dictionary<int, List<(int start, int[] ids)>> RegionRuns = BuildRegionRuns();
+
+    private static Dictionary<int, List<(int, int[])>> BuildRegionRuns()
+    {
+        var result = new Dictionary<int, List<(int, int[])>>();
+        foreach (int center in PosByLed.Keys)
+        {
+            var (cr, cc) = GetRc(center);
+            var ids = new List<int>();
+            foreach (int id in PosByLed.Keys)
+            {
+                var (r, c) = GetRc(id);
+                if (Math.Max(Math.Abs(r - cr), Math.Abs(c - cc)) <= 5) ids.Add(id);
+            }
+            ids.Sort();
+            var runs = new List<(int, int[])>();
+            int i = 0;
+            while (i < ids.Count)
+            {
+                int start = ids[i], end = ids[i];
+                while (i + 1 < ids.Count && ids[i + 1] == end + 1) { i++; end = ids[i]; }
+                var run = new int[end - start + 1];
+                for (int k = 0; k < run.Length; k++) run[k] = start + k;
+                runs.Add((start, run));
+                i++;
+            }
+            result[center] = runs;
+        }
+        return result;
+    }
+
     private readonly DeviceService _device;
     private readonly Dispatcher _dispatcher;
     private Thread? _thread;
@@ -87,6 +121,25 @@ public sealed class AnimationEngine
     }
     private readonly List<Burst> _bursts = new();
     private readonly object _burstLock = new();
+    private HashSet<int> _prevBurstIds = new();
+
+    /// <summary>Send the given LED ids (black when frame is null), grouped into
+    /// contiguous runs so each run is a single HID packet.</summary>
+    private void SendIds(HashSet<int> ids, LedColor[]? frame)
+    {
+        var sorted = ids.Where(i => i >= 0 && i < 128).OrderBy(i => i).ToList();
+        int i = 0;
+        while (i < sorted.Count)
+        {
+            int start = sorted[i], end = start;
+            while (i + 1 < sorted.Count && sorted[i + 1] == end + 1) { i++; end = sorted[i]; }
+            var list = new List<LedColor>(end - start + 1);
+            for (int id = start; id <= end; id++)
+                list.Add(frame != null ? frame[id] : new LedColor { LedId = id });
+            _ = _device.SendCustomLedRangeAsync(start, list);
+            i++;
+        }
+    }
 
     [DllImport("winmm.dll")] private static extern uint timeBeginPeriod(uint uPeriod);
     [DllImport("winmm.dll")] private static extern uint timeEndPeriod(uint uPeriod);
@@ -192,29 +245,9 @@ public sealed class AnimationEngine
             _bursts.Add(burst);
             if (_bursts.Count > 12) _bursts.RemoveAt(0);
         }
-        // Immediate full-frame feedback: light the pressed key and its real grid
-        // neighbours right away instead of waiting for the rotating 14-key sweep.
-        if (_device.IsConnected)
-        {
-            var frame = new List<LedColor>(128);
-            for (int i = 0; i < 128; i++) frame.Add(new LedColor { LedId = i });
-            var (brow, bcol) = GetRc(ledId);
-            foreach (var other in PosByLed.Keys)
-            {
-                var (row, col) = GetRc(other);
-                int dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
-                byte scale = dist == 0 ? (byte)255 : dist == 1 ? (byte)110 : (byte)0;
-                if (scale > 0)
-                    frame[other] = new LedColor
-                    {
-                        LedId = other,
-                        Red = (byte)(burst.Color.R * scale / 255),
-                        Green = (byte)(burst.Color.G * scale / 255),
-                        Blue = (byte)(burst.Color.B * scale / 255)
-                    };
-            }
-            await _device.SendCustomFrameAsync(frame);
-        }
+        // No immediate full-frame write here: that used to push 10 HID packets and
+        // blank the whole pattern on every press. The frame loop picks the burst up
+        // within one frame (<=33ms) and updates only its neighbourhood.
         Report($"Click {effect} at key {ledId}");
     }
 
@@ -228,7 +261,7 @@ public sealed class AnimationEngine
         lock (_burstLock)
         {
             if (_bursts.Count == 0) return baseColor;
-            _bursts.RemoveAll(b => t - b.Start > 1.8);
+            _bursts.RemoveAll(b => t - b.Start > 1.4);
         }
         Burst[] bursts;
         lock (_burstLock) bursts = _bursts.ToArray();
@@ -245,9 +278,11 @@ public sealed class AnimationEngine
             double dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
             double intensity = b.Effect switch
             {
-                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 4.5) / 1.8) * (1 - Math.Pow(age / 1.8, 2)),
+                // Effects are tuned to stay within the 5-key neighbourhood we transmit,
+                // so a ripple cannot be clipped by the region boundary.
+                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 2.8) / 1.6) * (1 - Math.Pow(age / 1.3, 2)),
                 ClickEffect.Flash => dist <= 1 ? Math.Pow(1 - Math.Min(1, age / 0.7), 2) : 0,
-                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 9)) * (1 - Math.Pow(age / 1.7, 2)),
+                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 3)) * (1 - Math.Pow(age / 1.3, 2)),
                 ClickEffect.SparkleBurst => (((id * 31 + (int)(t * 40)) % 53) < 5 && dist <= 3) ? (1 - age / 1.1) : 0,
                 _ => 0
             };
@@ -279,17 +314,39 @@ public sealed class AnimationEngine
             double rawT = _clock.Elapsed.TotalSeconds;
             double t = rawT * _speed;
 
-            // While a click burst is alive, update ALL keys every frame. The 14-key
-            // rotating sweep only refreshes each key ~3x/sec, which makes ripples step.
-            bool burstsActive;
-            lock (_burstLock) burstsActive = _bursts.Count > 0;
-            int start = burstsActive ? 0 : (int)((t * 90) % 128);
-            int count = burstsActive ? 128 : Math.Min(Slice, 128 - start);
-            var slice = new List<LedColor>(count);
+            Burst[] activeBursts;
+            lock (_burstLock) activeBursts = _bursts.ToArray();
+            bool burstsActive = activeBursts.Length > 0;
 
-            for (int k = 0; k < count; k++)
+            // Work out exactly which LEDs to touch, then compute colours only for
+            // those. Idle = one 14-key slice; burst = a few neighbourhood runs.
+            int start = (int)((t * 90) % 128);
+            var needed = new bool[128];
+            var runs = new SortedDictionary<int, int[]>();
+            var curBurstIds = new HashSet<int>();
+            // The ambient sweep always advances so the base pattern keeps flowing
+            // even while a click burst is overlay-rendered on top of it.
+            int sliceCount = Math.Min(Slice, 128 - start);
+            for (int k = 0; k < sliceCount; k++) needed[start + k] = true;
+
+            if (burstsActive)
             {
-                int id = start + k;
+                foreach (var b in activeBursts)
+                {
+                    if (!RegionRuns.TryGetValue(b.Center, out var rr)) continue;
+                    foreach (var run in rr)
+                    {
+                        runs[run.start] = run.ids;
+                        foreach (int id in run.ids) { needed[id] = true; curBurstIds.Add(id); }
+                    }
+                }
+            }
+
+            var frame = new LedColor[128];
+
+            for (int id = 0; id < 128; id++)
+            {
+                if (!needed[id]) continue;
                 var (row, col) = GetRc(id);
                 Color c;
                 switch (_pattern)
@@ -426,13 +483,33 @@ public sealed class AnimationEngine
                         break;
                 }
                 c = ApplyBursts(id, rawT, c);
-                slice.Add(new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B });
+                frame[id] = new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B };
             }
 
             try
             {
-                if (burstsActive) _ = _device.SendCustomFrameAsync(slice);
-                else _ = _device.SendCustomLedRangeAsync(start, slice);
+                // One packet keeps the ambient pattern moving every frame.
+                var slice = new List<LedColor>(sliceCount);
+                for (int k = 0; k < sliceCount; k++) slice.Add(frame[start + k]);
+                _ = _device.SendCustomLedRangeAsync(start, slice);
+
+                if (burstsActive)
+                {
+                    // A handful of contiguous runs instead of ten packets for a full frame.
+                    foreach (var run in runs)
+                    {
+                        var list = new List<LedColor>(run.Value.Length);
+                        foreach (var id in run.Value) list.Add(frame[id]);
+                        _ = _device.SendCustomLedRangeAsync(run.Key, list);
+                    }
+                    _prevBurstIds = curBurstIds;
+                }
+                else if (_prevBurstIds.Count > 0)
+                {
+                    // Burst just ended — blank exactly the keys it touched.
+                    SendIds(_prevBurstIds, null);
+                    _prevBurstIds = new HashSet<int>();
+                }
             }
             catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
