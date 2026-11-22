@@ -69,6 +69,28 @@ public sealed class AnimationEngine
         PosByLed.TryGetValue(led, out int p) ? p : 0;
     private static int GridWidth => RowLengths[0];
 
+    // Only 68 of the 128 LED ids are physical keys. Sweeping 0..127 wastes ~47% of
+    // every cycle on ids with no key, which appears as a pause after each pass.
+    private static readonly int[] SortedIds = OrderedLeds.OrderBy(x => x).ToArray();
+
+    /// <summary>Group arbitrary LED ids into contiguous runs, each one HID packet.</summary>
+    private static List<(int start, int[] ids)> GroupRuns(IEnumerable<int> ids)
+    {
+        var sorted = ids.Distinct().OrderBy(x => x).ToArray();
+        var result = new List<(int, int[])>();
+        int i = 0;
+        while (i < sorted.Length)
+        {
+            int start = sorted[i], end = start;
+            while (i + 1 < sorted.Length && sorted[i + 1] == end + 1) { i++; end = sorted[i]; }
+            var run = new int[end - start + 1];
+            for (int k = 0; k < run.Length; k++) run[k] = start + k;
+            result.Add((start, run));
+            i++;
+        }
+        return result;
+    }
+
     // For each key, the nearby LED ids grouped into contiguous runs so a burst can
     // update only its neighbourhood with a few HID packets instead of all 128 keys.
     private static readonly Dictionary<int, List<(int start, int[] ids)>> RegionRuns = BuildRegionRuns();
@@ -319,15 +341,20 @@ public sealed class AnimationEngine
             bool burstsActive = activeBursts.Length > 0;
 
             // Work out exactly which LEDs to touch, then compute colours only for
-            // those. Idle = one 14-key slice; burst = a few neighbourhood runs.
-            int start = (int)((t * 90) % 128);
+            // those. Idle = a moving window over the 68 real keys; burst = a few
+            // neighbourhood runs. The window advances fast enough that every key is
+            // refreshed several times a second with no dead gap between passes.
+            const int SweepRate = 420; // physical keys per second
+            int start = (int)((t * SweepRate) % SortedIds.Length);
+            var sliceIds = new int[Slice];
+            for (int k = 0; k < Slice; k++) sliceIds[k] = SortedIds[(start + k) % SortedIds.Length];
+
             var needed = new bool[128];
             var runs = new SortedDictionary<int, int[]>();
             var curBurstIds = new HashSet<int>();
             // The ambient sweep always advances so the base pattern keeps flowing
             // even while a click burst is overlay-rendered on top of it.
-            int sliceCount = Math.Min(Slice, 128 - start);
-            for (int k = 0; k < sliceCount; k++) needed[start + k] = true;
+            foreach (int id in sliceIds) needed[id] = true;
 
             if (burstsActive)
             {
@@ -352,7 +379,10 @@ public sealed class AnimationEngine
                 switch (_pattern)
                 {
                     case AnimationPattern.RainbowWave:
-                        c = HsvToRgb(GetPos(id) * 5 + t * 95, 1, 1);
+                        // Exactly 360 degrees across all 68 keys, so the hue at row 5
+                        // meets the hue at row 1 with no seam. Negative time term makes
+                        // the colours flow row 1 -> row 5 continuously.
+                        c = HsvToRgb(GetPos(id) * (360.0 / OrderedLeds.Length) - t * 95, 1, 1);
                         break;
                     case AnimationPattern.Breathing:
                         c = Mix(Color.FromRgb(8, 8, 8), _primary, (Math.Sin(t * 2.2) + 1) / 2);
@@ -413,7 +443,7 @@ public sealed class AnimationEngine
                         break;
                     }
                     case AnimationPattern.ColorFade:
-                        c = HsvToRgb(GetPos(id) * 6 + t * 24, 0.95, 1);
+                        c = HsvToRgb(GetPos(id) * (360.0 / OrderedLeds.Length) - t * 24, 0.95, 1);
                         break;
                     case AnimationPattern.ClickReactive:
                         c = Color.FromRgb(0, 0, 0);
@@ -488,10 +518,13 @@ public sealed class AnimationEngine
 
             try
             {
-                // One packet keeps the ambient pattern moving every frame.
-                var slice = new List<LedColor>(sliceCount);
-                for (int k = 0; k < sliceCount; k++) slice.Add(frame[start + k]);
-                _ = _device.SendCustomLedRangeAsync(start, slice);
+                // Send the moving window as one or a few contiguous LED-id runs.
+                foreach (var run in GroupRuns(sliceIds))
+                {
+                    var list = new List<LedColor>(run.ids.Length);
+                    foreach (int id in run.ids) list.Add(frame[id]);
+                    _ = _device.SendCustomLedRangeAsync(run.start, list);
+                }
 
                 if (burstsActive)
                 {
