@@ -10,13 +10,13 @@
 
 ---
 
-## ⭐ Headline feature 1: custom RGB animations for AK680 V2
+## Headline feature 1: custom RGB animations for AK680 V2
 
 The official web driver gives you a fixed set of lighting effects. This app adds a full **custom animation engine** that generates frames on the PC and streams them to the keyboard through its firmware-rendered LED path, so motion stays smooth instead of stepping.
 
 - **20 animation patterns**: Rainbow Wave, Breathing, Chase, Ripple, Sparkle, Matrix Rain, Fire, Checkerboard, Kitt Scanner, Aurora, Color Fade, Click Reactive, Plasma, Diagonal Wave, Spiral, Meteor, Color Wipe, Breathing Rainbow, Equalizer, and Typing Trail
 - **17 click effects**: Ripple, Flash, Spread, Sparkle Burst, Prism Bloom, Liquid Bloom, Nova, Comet, Thunder, Pulse, Wave, Cross, Echo, Rainbow, Full Flash, Heartbeat, and Spiral
-- **Thunder ⚡** fires jagged bolts from all four keyboard edges into the pressed key
+- **Thunder** fires jagged bolts from all four keyboard edges into the pressed key
 - **Prism Bloom**, **Liquid Bloom**, **Nova**, and **Comet** add richer one-shot lighting than the stock driver
 - Adjustable **frame rate** and **animation speed**
 - Physical-key detection through a global Windows keyboard hook
@@ -27,7 +27,7 @@ If you are searching for **AK680 V2 custom animations**, **AK680 V2 RGB software
 
 ---
 
-## ⭐ Headline feature 2: Hall-effect analog gamepad emulation
+## Headline feature 2: Hall-effect analog gamepad emulation
 
 The AJAZZ AK680 V2 uses magnetic switches, so each key has a measurable travel depth. The **Hall Gamepad** feature samples that travel and turns the keyboard into a virtual Xbox 360 controller.
 
