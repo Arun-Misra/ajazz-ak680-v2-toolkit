@@ -67,15 +67,6 @@
                     <Button x:Name="PlayButton" Style="{StaticResource AccentButton}" Content="Play" Click="Play_Click"/>
                     <Button Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="Stop_Click"/>
                 </StackPanel>
-                <Button Style="{StaticResource GhostButton}" Content="Smooth firmware wave (recommended)" Margin="0,8,0,0"
-                        Click="FirmwareWave_Click" ToolTip="Lets the keyboard render the wave itself - perfectly smooth, but colours are fixed by firmware."/>
-                <TextBlock Text="Firmware key-reactive effects (rendered inside the keyboard)" FontWeight="Bold" Margin="0,14,0,4"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource GhostButton}" Content="Ripples (15)" Click="FirmwareRipple_Click" Tag="15"/>
-                    <Button Style="{StaticResource GhostButton}" Content="One Touch (13)" Margin="8,0,0,0" Click="FirmwareRipple_Click" Tag="13"/>
-                </StackPanel>
-                <Button Style="{StaticResource GhostButton}" Content="Hybrid: firmware wave + custom clicks" Margin="0,8,0,0"
-                        Click="Hybrid_Click" ToolTip="Smooth firmware wave while idle; streams your custom click burst only while a key burst is active."/>
                 <CheckBox x:Name="MusicPathCheck" Content="Smooth firmware path (recommended)" Margin="0,10,0,0"
                           IsChecked="True" Foreground="{StaticResource TextMuted}"
                           ToolTip="Firmware music-mode path (cmd 0x32) - smooth custom animations. Uncheck to use the legacy custom-LED path."/>
