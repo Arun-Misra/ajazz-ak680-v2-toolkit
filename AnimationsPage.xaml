@@ -69,6 +69,11 @@
                 </StackPanel>
                 <Button Style="{StaticResource GhostButton}" Content="Smooth firmware wave (recommended)" Margin="0,8,0,0"
                         Click="FirmwareWave_Click" ToolTip="Lets the keyboard render the wave itself - perfectly smooth, but colours are fixed by firmware."/>
+                <TextBlock Text="Firmware key-reactive effects (rendered inside the keyboard)" FontWeight="Bold" Margin="0,14,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource GhostButton}" Content="Ripples (15)" Click="FirmwareRipple_Click" Tag="15"/>
+                    <Button Style="{StaticResource GhostButton}" Content="One Touch (13)" Margin="8,0,0,0" Click="FirmwareRipple_Click" Tag="13"/>
+                </StackPanel>
                 <TextBlock x:Name="Status" Margin="0,14,0,0" Foreground="Green" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>

@@ -11,6 +11,7 @@ public partial class AnimationsPage : Page
     private readonly DeviceService _device = new();
     private readonly AnimationEngine _engine;
     private readonly KeyboardHook _hook = new();
+    private bool _firmwareMode; // true = firmware renders everything; skip host bursts
 
     public AnimationsPage()
     {
@@ -28,6 +29,7 @@ public partial class AnimationsPage : Page
 
     private void OnPhysicalKey(int ledId)
     {
+        if (_firmwareMode) return; // the keyboard handles key presses itself
         // Don't fire while the user is typing into a control.
         // Only skip real text entry; a focused ComboBox must not swallow key presses.
         if (Keyboard.FocusedElement is TextBox) return;
@@ -90,6 +92,7 @@ public partial class AnimationsPage : Page
         // wave. This is smooth by construction - the firmware drives the LEDs at
         // its native scan rate instead of us pushing 512-byte frames over HID.
         _engine.Stop();
+        _firmwareMode = true;
         PlayButton.IsEnabled = true;
         if (!_device.IsConnected && !_device.Connect())
         { Status.Text = "No device connected: " + _device.LastError; return; }
@@ -106,9 +109,31 @@ public partial class AnimationsPage : Page
         Status.Text = ok ? "Firmware wave running — rendered by the keyboard" : "Failed to set firmware effect";
     }
 
+    private async void FirmwareRipple_Click(object sender, RoutedEventArgs e)
+    {
+        int mode = int.Parse(((Button)sender).Tag.ToString()!);
+        _engine.Stop();
+        _firmwareMode = true;
+        PlayButton.IsEnabled = true;
+        if (!_device.IsConnected && !_device.Connect())
+        { Status.Text = "No device connected: " + _device.LastError; return; }
+        TryColor(PrimaryHex.Text, out var primary);
+        bool ok = await _device.SetLedEffectAsync(new LedEffect
+        {
+            Mode = (byte)mode, ColorMode = 1,
+            Red = primary.R, Green = primary.G, Blue = primary.B,
+            Brightness = 5, Speed = 3, Direction = 0, DriverSetting = 255
+        });
+        Status.Foreground = ok ? System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
+        Status.Text = ok
+            ? $"Firmware effect {mode} running — press keys to trigger it"
+            : $"Failed to set firmware effect {mode}";
+    }
+
     private void Stop_Click(object sender, RoutedEventArgs e)
     {
         _engine.Stop();
+        _firmwareMode = false;
         PlayButton.IsEnabled = true;
     }
 
