@@ -184,6 +184,17 @@ public class DeviceService
         return Commands.ParseLedEffect(payload.ToArray());
     }
 
+    /// <summary>GET_CUSTOM_LED_DATA (20) — read the 512-byte per-key colour table.</summary>
+    public async Task<List<LedColor>?> GetCustomLedDataAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetCustomLedData, 512, timeoutMs: timeoutMs);
+        if (d == null) return null;
+        var result = new List<LedColor>();
+        for (int i = 0; i < 128 && i * 4 + 3 < d.Length; i++)
+            result.Add(new LedColor { LedId = d[i * 4], Red = d[i * 4 + 1], Green = d[i * 4 + 2], Blue = d[i * 4 + 3] });
+        return result;
+    }
+
     public Task<bool> SetCustomLedDataAsync(List<LedColor> colors, bool skipResponse = false)
     {
         var data = Commands.BuildCustomLedData(colors);
@@ -456,6 +467,22 @@ public class DeviceService
     public Task<bool> SetGameModeAsync(GameMode g) =>
         SendCommandAsync(Cmd.SetGameMode, Commands.BuildGameMode(g), 56);
 
+    /// <summary>GET_GAME_MODE (17) — read the 56-byte system/game settings block.</summary>
+    public async Task<GameInfo?> GetGameModeAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetGameMode, 56, timeoutMs: timeoutMs);
+        if (d == null || d.Length < 21) return null;
+        return new GameInfo
+        {
+            GameMode = d[1], FnSwitch = d[2], SleepTime = d[3], KeyDelay = d[4],
+            ReportRate = d[5], SystemMode = d[6], TftDisplayTime = d[7],
+            TopDeadZone = d[8] / 100.0, BottomDeadZone = d[9] / 100.0,
+            StabilityMode = d[11], AutoCalibration = d[14], SingleKeyWakeup = d[15],
+            PushButtonMode = d[16], NkroSwitch = d[17],
+            WirelessReportRate = d[18] | (d[19] << 8), PowerMode = d[20]
+        };
+    }
+
     public Task<bool> SetTriggerConfigAsync(TriggerConfig[] t) =>
         SendCommandAsync(Cmd.SetTriggerKey, Commands.BuildTriggerConfig(t), 512, timeoutMs: 2000);
 
@@ -483,6 +510,12 @@ public class DeviceService
 
     public Task<bool> SetMagneticAxisDksAsync(IEnumerable<DksConfig> configs) =>
         SendCommandAsync(Cmd.SetMagneticAxisDksData, Commands.BuildMagneticAxisDks(configs), 1024, timeoutMs: 2000);
+
+    public async Task<List<DksConfig>?> GetMagneticAxisDksDataAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetMagneticAxisDksData, 1024, timeoutMs: timeoutMs);
+        return d == null ? null : Commands.ParseMagneticAxisDks(d);
+    }
 
     public async Task<bool> SetProfileAsync(byte index)
     {

@@ -198,6 +198,37 @@ public static class Commands
     }
 
     /// <summary>
+    /// Parses a 1024-byte GET_MAGNETIC_AXIS_DKS_DATA block back into DksConfig
+    /// objects. The four state bytes are nibble-packed press/hold masks.
+    /// </summary>
+    public static List<DksConfig> ParseMagneticAxisDks(byte[] data)
+    {
+        var result = new List<DksConfig>();
+        for (int i = 0; i < 64 && i * 16 + 15 < data.Length; i++)
+        {
+            int o = i * 16;
+            if (data[o] == 0 && data[o + 1] == 0 && data[o + 2] == 0 && data[o + 3] == 0) continue;
+            var c = new DksConfig
+            {
+                Index = i, MakeValue1 = data[o], MakeValue2 = data[o + 1],
+                BreakValue1 = data[o + 2], BreakValue2 = data[o + 3],
+                Action1 = data[o + 5], Action2 = data[o + 7],
+                Action3 = data[o + 9], Action4 = data[o + 11]
+            };
+            var all = new[] { c.Action1States, c.Action2States, c.Action3States, c.Action4States };
+            for (int t = 0; t < 4; t++)
+            {
+                byte b = data[o + 12 + t];
+                int press = b & 15, hold = (b >> 4) & 15;
+                for (int a = 0; a < 4; a++)
+                    all[a][t] = (byte)((press & (1 << a)) != 0 ? 1 : (hold & (1 << a)) != 0 ? 2 : 0);
+            }
+            result.Add(c);
+        }
+        return result;
+    }
+
+    /// <summary>
     /// setGameMode (qX): 56-byte payload. Mirrors qX().
     /// </summary>
     public static byte[] BuildGameMode(GameMode g)

@@ -178,6 +178,6 @@ Because both the browser WebHID driver and this app try to open the same HID int
 - Key Test: live per-key Hall travel in millimetres
 - Device Inspector: decoded device state and raw replies
 
-Verified against the connected keyboard with readback: key matrix and FN-layer writes, RT/DKS/trigger writes, profile apply acknowledgement, and macro save (index plus action bytes). The trigger-config read command (`GET_TRIGGER_KEY`, 30) is not answered by the current firmware, so writes are confirmed only by acceptance. OTA transfer is implemented but requires a firmware image (none is published) and was not flashed during verification.
+Verified against the connected keyboard with readback: key matrix and FN-layer writes, RT/DKS writes, trigger-write acceptance, profile apply acknowledgement, macro save (index plus action bytes), macro recording, game-mode settings, lighting-effect mode/brightness/speed, per-key custom RGB colours, and RS/SOCD/MT/TGL key bindings. Two firmware limitations: `GET_TRIGGER_KEY` (30) is not answered, and `GET_LED_EFFECT` (19) reports normalized white colours regardless of the colour bytes sent — the app writes the exact payload the official driver writes, and the driver likewise keeps its own colour state. OTA transfer is implemented but requires a firmware image (none is published) and was not flashed during verification.
 
 Author: Arun-Misra

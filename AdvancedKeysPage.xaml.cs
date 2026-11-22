@@ -14,6 +14,8 @@ public partial class AdvancedKeysPage : Page
     private readonly RtConfig[] _rt = new RtConfig[128];
     private string _type = "RS";
     private int _rtPrecision;
+    private static readonly Dictionary<int, string> LabelById =
+        KeyMap.IdByLabel.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     public AdvancedKeysPage()
     {
@@ -32,6 +34,24 @@ public partial class AdvancedKeysPage : Page
     {
         var info = await _device.GetDeviceInfoAsync();
         if (info != null) _rtPrecision = info.RtPrecision;
+
+        // Load the existing state so a save merges instead of zeroing other keys/slots.
+        var keys = await _device.GetKeyDataAsync();
+        if (keys != null)
+        {
+            _bindings.Clear();
+            foreach (var s in keys)
+                if (s.Binding != null && LabelById.TryGetValue(s.Value, out var label))
+                    _bindings[label] = s.Binding;
+            _ = Dispatcher.BeginInvoke(new Action(RefreshBindings));
+        }
+
+        var dks = await _device.GetMagneticAxisDksDataAsync();
+        if (dks != null)
+        {
+            _dkss.Clear();
+            _dkss.AddRange(dks);
+        }
     }
 
     private void UpdateSelection()
