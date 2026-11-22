@@ -85,7 +85,7 @@
                         <ComboBoxItem Content="8K Return Rate"/>
                     </ComboBox>
                     <TextBlock Text="Dead Zone" FontWeight="Bold" Margin="0,16,0,4"/>
-                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextMuted}" Margin="0,0,0,6"
+                    <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextMuted}" Margin="0,0,0,6"
                                Text="Minimum travel ignored at the top and bottom of a key press."/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                         <TextBlock Text="Top" Width="36" VerticalAlignment="Center"/>
