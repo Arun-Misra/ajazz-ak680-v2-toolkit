@@ -254,6 +254,10 @@ public sealed class AnimationEngine
         long next = 0, lastReport = 0;
         int frames = 0;
         int width = GridWidth;
+        // The firmware only commits a full 512-byte custom-LED frame to the physical
+        // LEDs. Keep one list alive and mutate it to avoid per-frame allocations.
+        var fullFrame = new List<LedColor>(128);
+        for (int i = 0; i < 128; i++) fullFrame.Add(new LedColor { LedId = i });
 
         while (_running && generation == _generation)
         {
@@ -267,9 +271,7 @@ public sealed class AnimationEngine
             // Update EVERY real key every frame. A moving window updates only a slice,
             // so the update location jumps back to the start every few frames — that
             // reads as a rhythmic "doin doin doin stop" stutter. Writing the whole
-            // compact frame makes the picture a pure function of time, with no reset.
-            var frame = new LedColor[128];
-
+            // full frame makes the picture a pure function of time, with no reset.
             for (int fi = 0; fi < OrderedLeds.Length; fi++)
             {
                 int id = OrderedLeds[fi];
@@ -412,16 +414,15 @@ public sealed class AnimationEngine
                         break;
                 }
                 c = ApplyBursts(id, rawT, c);
-                frame[id] = new LedColor { LedId = id, Red = c.R, Green = c.G, Blue = c.B };
+                var slot = fullFrame[id];
+                slot.Red = c.R; slot.Green = c.G; slot.Blue = c.B;
             }
 
             try
             {
-                // One compact frame containing all 68 real keys (5 HID packets).
-                // Bursts are already blended into the frame by ApplyBursts above.
-                var compact = new LedColor[OrderedLeds.Length];
-                for (int i = 0; i < OrderedLeds.Length; i++) compact[i] = frame[OrderedLeds[i]];
-                _ = _device.SendCompactFrameAsync(compact);
+                // A full 512-byte frame is required for the firmware to refresh the
+                // physical LEDs. Bursts are already blended in by ApplyBursts above.
+                _ = _device.SendCustomFrameAsync(fullFrame);
             }
             catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
