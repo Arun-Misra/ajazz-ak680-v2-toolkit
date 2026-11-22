@@ -13,6 +13,8 @@ public sealed class KeyboardHook : IDisposable
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_SYSKEYDOWN = 0x0104;
+    private const int WM_KEYUP = 0x0101;
+    private const int WM_SYSKEYUP = 0x0105;
 
     private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -31,6 +33,9 @@ public sealed class KeyboardHook : IDisposable
 
     public event Action<int>? KeyPressed;
 
+    /// <summary>Raised for every mapped key as (HID usage, isPress). Auto-repeat is suppressed on keydown.</summary>
+    public event Action<int, bool>? KeyEvent;
+
     public bool Install()
     {
         if (_hook != IntPtr.Zero) return true;
@@ -41,15 +46,21 @@ public sealed class KeyboardHook : IDisposable
 
     private IntPtr OnKey(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN))
+        if (nCode >= 0)
         {
-            var k = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-            // Ignore auto-repeat.
-            if ((k.flags & 0x80000000) == 0 &&
-                UsageByVk.TryGetValue((int)k.vkCode, out int usage) &&
-                LedByUsage.TryGetValue(usage, out int led))
+            bool down = wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN;
+            bool up = wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP;
+            if (down || up)
             {
-                KeyPressed?.Invoke(led);
+                var k = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                bool repeat = (k.flags & 0x80000000) != 0;
+                // Ignore auto-repeat on keydown; keyup never repeats.
+                if ((!down || !repeat) && UsageByVk.TryGetValue((int)k.vkCode, out int usage))
+                {
+                    KeyEvent?.Invoke(usage, down);
+                    if (down && LedByUsage.TryGetValue(usage, out int led))
+                        KeyPressed?.Invoke(led);
+                }
             }
         }
         return CallNextHookEx(_hook, nCode, wParam, lParam);

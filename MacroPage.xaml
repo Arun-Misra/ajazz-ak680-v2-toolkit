@@ -44,7 +44,15 @@
                         <CheckBox x:Name="RecordInterval" Content="Record interval" IsChecked="True"/>
                     </StackPanel>
                     <Button Style="{StaticResource AccentButton}" Content="Insert action" Margin="0,16,0,0" Click="Insert_Click"/>
-                    <Button Style="{StaticResource GhostButton}" Content="Save to keyboard" Margin="0,8,0,0" Click="Save_Click"/>
+                    <TextBlock Text="Record from physical keys" FontWeight="Bold" Margin="0,18,0,4"/>
+                    <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextMuted}" Margin="0,0,0,6"
+                               Text="Press Start, type the sequence, then Stop. Key codes are the keyboard's HID usages; delays are captured between events."/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="StartRecordButton" Style="{StaticResource AccentButton}" Content="Start recording" Click="StartRecording_Click"/>
+                        <Button x:Name="StopRecordButton" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="StopRecording_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <TextBlock x:Name="RecordStatus" Margin="0,6,0,0" FontWeight="Bold" Foreground="#C0392B" TextWrapping="Wrap"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Save to keyboard" Margin="0,12,0,0" Click="Save_Click"/>
                     <TextBlock x:Name="Status" Margin="0,12,0,0" Foreground="Green" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
