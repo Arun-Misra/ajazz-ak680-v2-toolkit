@@ -61,4 +61,27 @@ public partial class ProfilesPage : Page
             MessageBox.Show("Exported.");
         }
     }
+
+    private readonly DeviceService _device = new();
+
+    private async void Apply_Click(object sender, RoutedEventArgs e)
+    {
+        if (Selected is null) return;
+        if (!byte.TryParse(SlotBox.Text, out byte slot)) { MessageBox.Show("Invalid slot"); return; }
+        if (!_device.IsConnected && !_device.Connect()) { MessageBox.Show("No device connected"); return; }
+        bool ok = await _device.SetProfileAsync(slot);
+        MessageBox.Show(ok ? $"Profile slot {slot} applied" : "Failed to apply profile");
+    }
+
+    private async void SaveFromDevice_Click(object sender, RoutedEventArgs e)
+    {
+        if (Selected is null) return;
+        if (!_device.IsConnected && !_device.Connect()) { MessageBox.Show("No device connected"); return; }
+        var snapshot = await _device.GetSnapshotAsync();
+        var json = System.Text.Json.JsonSerializer.Serialize(snapshot,
+            new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        _svc.WriteProfile(Selected, json);
+        ContentBox.Text = json;
+        MessageBox.Show($"Keyboard state saved to profile {Selected}");
+    }
 }
