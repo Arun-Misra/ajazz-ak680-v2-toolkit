@@ -227,6 +227,115 @@ public class DeviceService
         return Task.FromResult(true);
     }
 
+    private async Task<byte[]?> ReadBlockAsync(byte cmd, int size, int addrStart = 0, int timeoutMs = 2000)
+    {
+        var frames = await SendCommandWithResponseAsync(cmd, Array.Empty<byte>(), size,
+            addrStart, timeoutMs: timeoutMs);
+        if (frames == null || frames.Count == 0) return null;
+        return frames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).Take(size).ToArray();
+    }
+
+    /// <summary>Reads every block the firmware answers, with the exact content size
+    /// each command expects (the RT/DKS tables are 1024 bytes, not 512).</summary>
+    public async Task<DeviceSnapshot> GetSnapshotAsync()
+    {
+        var snap = new DeviceSnapshot { ReadAt = DateTime.Now };
+
+        void Raw(string name, byte[]? d) =>
+            snap.Raw[name] = d == null ? "no reply" : Convert.ToHexString(d.Take(48).ToArray()) +
+                             (d.Length > 48 ? $" … ({d.Length} bytes)" : "");
+
+        var dInfo = await ReadBlockAsync(Cmd.GetDeviceInfo, 48);
+        Raw("GetDeviceInfo", dInfo);
+        snap.Info = dInfo == null ? null : Commands.ParseDeviceInfo(dInfo);
+
+        var dGame = await ReadBlockAsync(Cmd.GetGameMode, 56);
+        Raw("GetGameMode", dGame);
+        if (dGame != null && dGame.Length >= 21)
+            snap.Game = new GameInfo
+            {
+                GameMode = dGame[1], FnSwitch = dGame[2], SleepTime = dGame[3], KeyDelay = dGame[4],
+                ReportRate = dGame[5], SystemMode = dGame[6], TftDisplayTime = dGame[7],
+                TopDeadZone = dGame[8] / 100.0, BottomDeadZone = dGame[9] / 100.0,
+                StabilityMode = dGame[11], AutoCalibration = dGame[14], SingleKeyWakeup = dGame[15],
+                PushButtonMode = dGame[16], NkroSwitch = dGame[17],
+                WirelessReportRate = dGame[18] | (dGame[19] << 8), PowerMode = dGame[20]
+            };
+
+        var dEffect = await ReadBlockAsync(Cmd.GetLedEffect, 16);
+        Raw("GetLedEffect", dEffect);
+        snap.Effect = dEffect == null ? null : Commands.ParseLedEffect(dEffect);
+
+        int precision = snap.Info?.RtPrecision ?? 0;
+        double travelScale = precision > 0 ? 1000.0 : 100.0;
+        double rtScale = precision == 2 ? 1000.0 : 100.0;
+
+        var dKeys = await ReadBlockAsync(Cmd.GetKey, 512);
+        Raw("GetKey", dKeys);
+        if (dKeys != null)
+            for (int i = 0; i < 128 && i * 4 + 3 < dKeys.Length; i++)
+                snap.Keys.Add(new KeyRaw { Index = i, PageType = dKeys[i * 4], Param1 = dKeys[i * 4 + 1],
+                    Param2 = dKeys[i * 4 + 2], Param3 = dKeys[i * 4 + 3] });
+
+        var dLeds = await ReadBlockAsync(Cmd.GetCustomLedData, 512);
+        Raw("GetCustomLedData", dLeds);
+        if (dLeds != null)
+            for (int i = 0; i < 128 && i * 4 + 3 < dLeds.Length; i++)
+                snap.Leds.Add(new LedColor { LedId = dLeds[i * 4], Red = dLeds[i * 4 + 1],
+                    Green = dLeds[i * 4 + 2], Blue = dLeds[i * 4 + 3] });
+
+        var dTrigger = await ReadBlockAsync(Cmd.GetTriggerKey, 512, timeoutMs: 2500);
+        Raw("GetTriggerKey", dTrigger);
+        if (dTrigger != null)
+            for (int i = 0; i < 128 && i * 4 + 3 < dTrigger.Length; i++)
+                snap.Triggers.Add(new TriggerRaw { Index = i, FastTrigger = dTrigger[i * 4] == 1,
+                    TriggerPoint = dTrigger[i * 4 + 1], ReleasePoint = dTrigger[i * 4 + 2],
+                    AxisType = dTrigger[i * 4 + 3] });
+
+        var dRt = await ReadBlockAsync(Cmd.GetMagneticAxisRt, 1024);
+        Raw("GetMagneticAxisRt", dRt);
+        if (dRt != null)
+            for (int i = 0; i < 128 && i * 8 + 7 < dRt.Length; i++)
+            {
+                int o = i * 8;
+                int flags = dRt[o + 1];
+                snap.Rt.Add(new RtRaw
+                {
+                    Index = i, AxisType = dRt[o], WholeFast = (flags & 1) != 0, Rampage = (flags & 2) != 0,
+                    TriggerStroke = (dRt[o + 2] | (dRt[o + 3] << 8)) / travelScale,
+                    PressRt = (dRt[o + 4] | (dRt[o + 5] << 8)) / rtScale,
+                    ReleaseRt = (dRt[o + 6] | (dRt[o + 7] << 8)) / rtScale
+                });
+            }
+
+        var dDks = await ReadBlockAsync(Cmd.GetMagneticAxisDksData, 1024);
+        Raw("GetMagneticAxisDksData", dDks);
+        if (dDks != null)
+            for (int i = 0; i < 64 && i * 16 + 15 < dDks.Length; i++)
+            {
+                int o = i * 16;
+                if (dDks[o] == 0 && dDks[o + 1] == 0 && dDks[o + 2] == 0 && dDks[o + 3] == 0) continue;
+                static string States(byte b) => (b & 15) != 0 ? "press" : ((b & 240) >> 4) != 0 ? "hold" : "-";
+                snap.Dks.Add(new DksRaw
+                {
+                    Index = i, MakeValue1 = dDks[o], MakeValue2 = dDks[o + 1],
+                    BreakValue1 = dDks[o + 2], BreakValue2 = dDks[o + 3],
+                    Action1 = dDks[o + 5], Action2 = dDks[o + 7], Action3 = dDks[o + 9], Action4 = dDks[o + 11],
+                    Action1States = States(dDks[o + 12]), Action2States = States(dDks[o + 13]),
+                    Action3States = States(dDks[o + 14]), Action4States = States(dDks[o + 15])
+                });
+            }
+
+        var dMacro = await ReadBlockAsync(Cmd.GetMacro, 400);
+        Raw("GetMacro(index)", dMacro);
+        if (dMacro != null)
+            for (int i = 0; i < 100 && i * 4 + 3 < dMacro.Length; i++)
+                snap.MacroOffsets[i] = dMacro[i * 4] | (dMacro[i * 4 + 1] << 8) |
+                                       (dMacro[i * 4 + 2] << 16) | (dMacro[i * 4 + 3] << 24);
+
+        return snap;
+    }
+
     public Task<bool> SetGameModeAsync(GameMode g) =>
         SendCommandAsync(Cmd.SetGameMode, Commands.BuildGameMode(g), 56);
 
