@@ -218,7 +218,10 @@ public class DeviceService
             var write = _frameWrites[t] ??= new byte[reportLen];
             write[0] = 0; // report id
             Buffer.BlockCopy(report, 0, write, 1, Math.Min(report.Length, reportLen - 1));
-            Device.WriteReportFast(write);
+            if (last)
+                Device.WriteReportFastWait(write, 8); // frame delivered before the next one
+            else
+                Device.WriteReportFast(write);
         }
         return Task.FromResult(true);
     }

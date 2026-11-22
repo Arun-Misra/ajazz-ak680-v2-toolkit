@@ -218,6 +218,25 @@ public sealed class NativeHidDevice : IDisposable
         WriteFile(_handle!, _fastBuffers[slot], (uint)data.Length, out _, _fastOverlapped[slot]);
     }
 
+    /// <summary>Like WriteReportFast but waits for the write to complete. Used for the
+    /// last packet of an animation frame so packets don't pile up in the HID queue and
+    /// arrive as a burst followed by a pause.</summary>
+    public bool WriteReportFastWait(byte[] data, int timeoutMs)
+    {
+        if (!IsOpen || _fastBuffers[0] == IntPtr.Zero) return false;
+        int slot = _fastIndex++ % FastWriteSlots;
+        int len = Math.Min(data.Length, _fastBuffers[slot] == IntPtr.Zero ? data.Length : Math.Max(1, (int)OutputReportLength));
+        Marshal.Copy(data, 0, _fastBuffers[slot], Math.Min(data.Length, len));
+        ResetEvent(_fastEvents[slot]);
+        InitOverlapped(_fastOverlapped[slot], _fastEvents[slot]);
+        if (!WriteFile(_handle!, _fastBuffers[slot], (uint)data.Length, out _, _fastOverlapped[slot]))
+        {
+            int err = Marshal.GetLastWin32Error();
+            if (err != ERROR_IO_PENDING) return false;
+        }
+        return WaitForSingleObject(_fastEvents[slot], (uint)timeoutMs) == WAIT_OBJECT_0;
+    }
+
     /// <summary>
     /// Read an input report with timeout. Returns null on timeout.
     /// </summary>
