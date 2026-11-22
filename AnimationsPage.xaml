@@ -98,6 +98,10 @@
                         <ComboBoxItem Content="Flash"/>
                         <ComboBoxItem Content="Spread"/>
                         <ComboBoxItem Content="Sparkle Burst"/>
+                        <ComboBoxItem Content="Prism Bloom"/>
+                        <ComboBoxItem Content="Liquid Bloom"/>
+                        <ComboBoxItem Content="Nova"/>
+                        <ComboBoxItem Content="Comet"/>
                     </ComboBox>
                 </StackPanel>
                 <local:KeyboardView Grid.Row="2" x:Name="ClickPreview" Height="300" VerticalAlignment="Top" KeyClicked="ClickPreview_KeyClicked"/>

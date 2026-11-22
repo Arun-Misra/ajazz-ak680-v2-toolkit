@@ -16,7 +16,14 @@ public enum AnimationPattern
     Plasma, DiagonalWave, Spiral, Meteor, ColorWipe, BreathingRainbow, Equalizer, TypingTrail
 }
 
-public enum ClickEffect { Ripple, Flash, Spread, SparkleBurst }
+public enum ClickEffect
+{
+    Ripple, Flash, Spread, SparkleBurst,
+    PrismBloom,   // concentric rainbow rings
+    LiquidBloom,  // soft ink spreading with a bright core
+    Nova,         // radial rays + hot core
+    Comet         // directional streak with a fading tail
+}
 
 /// <summary>
 /// Host-side animation engine. Generates per-key RGB frames on a dedicated thread and
@@ -216,6 +223,28 @@ public sealed class AnimationEngine
     private readonly Stopwatch _clock = Stopwatch.StartNew();
     private readonly double[] _lastPress = new double[128];
 
+    private static double Smoothstep(double a, double b, double x)
+    {
+        double u = Math.Clamp((x - a) / (b - a), 0, 1);
+        return u * u * (3 - 2 * u);
+    }
+
+    private static double Ring(double dist, double radius, double width) =>
+        Math.Exp(-Math.Pow((dist - radius) / width, 2));
+
+    private static double HueOf(Color c)
+    {
+        double r = c.R / 255.0, g = c.G / 255.0, b = c.B / 255.0;
+        double max = Math.Max(r, Math.Max(g, b)), min = Math.Min(r, Math.Min(g, b));
+        double d = max - min;
+        if (d < 1e-6) return 0;
+        double h;
+        if (max == r) h = ((g - b) / d) % 6;
+        else if (max == g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        return (h * 60 + 360) % 360;
+    }
+
     private Color ApplyBursts(int id, double t, Color baseColor)
     {
         // Never light unused LED slots — they have no physical key position.
@@ -223,7 +252,7 @@ public sealed class AnimationEngine
         lock (_burstLock)
         {
             if (_bursts.Count == 0) return baseColor;
-            _bursts.RemoveAll(b => t - b.Start > 1.4);
+            _bursts.RemoveAll(b => t - b.Start > 2.2);
         }
         Burst[] bursts;
         lock (_burstLock) bursts = _bursts.ToArray();
@@ -233,22 +262,81 @@ public sealed class AnimationEngine
         foreach (var b in bursts)
         {
             double age = t - b.Start;
-            if (age < 0 || age > 1.6) continue;
+            if (age < 0 || age > 2.2) continue;
             var (brow, bcol) = GetRc(b.Center);
-            // Chebyshev distance = exact grid neighbours (no diagonal bleed into
-            // keys that only look close because of irregular LED numbering).
-            double dist = Math.Max(Math.Abs(row - brow), Math.Abs(col - bcol));
-            double intensity = b.Effect switch
+            int dr = row - brow, dc = col - bcol;
+            double cheb = Math.Max(Math.Abs(dr), Math.Abs(dc)); // exact grid neighbours
+            double dist = Math.Sqrt(dr * (double)dr + dc * (double)dc);
+            double fade = 1 - Smoothstep(1.35, 2.0, age);       // smooth tail, no abrupt cut
+
+            Color c = b.Color;
+            double intensity = 0;
+
+            switch (b.Effect)
             {
-                // Effects are tuned to stay within the 5-key neighbourhood we transmit,
-                // so a ripple cannot be clipped by the region boundary.
-                ClickEffect.Ripple => Math.Max(0, 1 - Math.Abs(dist - age * 2.8) / 1.6) * (1 - Math.Pow(age / 1.3, 2)),
-                ClickEffect.Flash => dist <= 1 ? Math.Pow(1 - Math.Min(1, age / 0.7), 2) : 0,
-                ClickEffect.Spread => Math.Max(0, 1 - dist / (1 + age * 3)) * (1 - Math.Pow(age / 1.3, 2)),
-                ClickEffect.SparkleBurst => (((id * 31 + (int)(t * 40)) % 53) < 5 && dist <= 3) ? (1 - age / 1.1) : 0,
-                _ => 0
-            };
-            if (intensity > 0) result = Mix(result, b.Color, Math.Clamp(intensity, 0, 1));
+                case ClickEffect.Ripple:
+                    intensity = Ring(dist, age * 4.5, 1.1) * fade;
+                    break;
+                case ClickEffect.Flash:
+                    intensity = cheb <= 1 ? Math.Pow(1 - Math.Min(1, age / 0.7), 2) : 0;
+                    break;
+                case ClickEffect.Spread:
+                    intensity = (1 - Smoothstep(0, 1 + age * 4, dist)) *
+                                Math.Pow(1 - Math.Min(1, age / 1.6), 2);
+                    break;
+                case ClickEffect.SparkleBurst:
+                    intensity = (((id * 31 + (int)(t * 40)) % 53) < 5 && cheb <= 3)
+                        ? 1 - Smoothstep(0.7, 1.4, age) : 0;
+                    break;
+
+                case ClickEffect.PrismBloom:
+                {
+                    double radius = age * 5.0;
+                    intensity = Ring(dist, radius, 1.5) * fade;
+                    double hue = HueOf(b.Color) + dist * 42 - age * 210;
+                    c = HsvToRgb(hue, 1, 1);
+                    intensity *= 0.95;
+                    break;
+                }
+                case ClickEffect.LiquidBloom:
+                {
+                    double radius = age * 4.6;
+                    double inside = 1 - Smoothstep(radius - 1.6, radius + 0.4, dist);
+                    intensity = inside * fade;
+                    c = Mix(b.Color, Colors.White,
+                        Math.Clamp(1 - dist / (radius + 0.01), 0, 1) * 0.45);
+                    break;
+                }
+                case ClickEffect.Nova:
+                {
+                    double angle = Math.Atan2(dr, dc);
+                    double rays = Math.Pow(Math.Max(0, Math.Cos(angle * 6 - age * 2.2)), 6);
+                    double ring = Ring(dist, age * 5.2, 1.1);
+                    double core = Math.Exp(-dist * dist / 1.6) *
+                                  (1 - Smoothstep(0.15, 0.6, age));
+                    intensity = Math.Max(ring * rays, core) * fade;
+                    c = Mix(b.Color, Colors.White, rays * 0.55 + core * 0.5);
+                    break;
+                }
+                case ClickEffect.Comet:
+                {
+                    // Direction points outward from the keyboard centre through the pressed key.
+                    double ox = bcol - GridWidth / 2.0, oy = brow - 2.0;
+                    double len = Math.Sqrt(ox * ox + oy * oy);
+                    if (len < 0.001) { ox = 1; oy = 0; len = 1; }
+                    ox /= len; oy /= len;
+                    double proj = dc * ox + dr * oy;
+                    double perp = Math.Abs(-dc * oy + dr * ox);
+                    double head = age * 6.5;
+                    intensity = Math.Exp(-Math.Pow(proj - head, 2) / 1.4) *
+                                Math.Exp(-perp * perp / 2.2) * fade;
+                    c = Mix(b.Color, Colors.White,
+                        Math.Exp(-Math.Pow(proj - head, 2) / 0.35) * 0.65);
+                    break;
+                }
+            }
+
+            if (intensity > 0) result = Mix(result, c, Math.Clamp(intensity, 0, 1));
         }
         return result;
     }

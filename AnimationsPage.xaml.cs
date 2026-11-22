@@ -55,7 +55,7 @@ public partial class AnimationsPage : Page
         _restoreCts = new System.Threading.CancellationTokenSource();
         var token = _restoreCts.Token;
         _engine.TriggerKey(ledId, effect, color); // starts custom mode + ClickReactive loop
-        try { await System.Threading.Tasks.Task.Delay(1700, token); }
+        try { await System.Threading.Tasks.Task.Delay(2400, token); }
         catch (System.Threading.Tasks.TaskCanceledException) { return; }
         if (token.IsCancellationRequested || !_hybridMode) return;
         _engine.Stop();
