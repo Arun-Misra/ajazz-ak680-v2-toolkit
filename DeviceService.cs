@@ -263,6 +263,36 @@ public class DeviceService
     }
 
     /// <summary>
+    /// Experimental: sends frames through the AJAZZ music plugin's command (0x32 /
+    /// GET_LED_DATA used as a writer) in 56-byte chunks, with the per-packet reply
+    /// read the plugin performs. Intended for use with firmware mode 100.
+    /// </summary>
+    public Task<bool> SendMusicFrameAsync(LedColor[] colors)
+    {
+        if (!IsConnected) return Task.FromResult(false);
+        var data = new byte[colors.Length * 4];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            data[i * 4] = (byte)colors[i].LedId;
+            data[i * 4 + 1] = colors[i].Red;
+            data[i * 4 + 2] = colors[i].Green;
+            data[i * 4 + 3] = colors[i].Blue;
+        }
+        int chunk = HidProtocol.ChunkDataSize;
+        for (int off = 0; off < data.Length; off += chunk)
+        {
+            int size = Math.Min(chunk, data.Length - off);
+            var slice = new byte[size];
+            Buffer.BlockCopy(data, off, slice, 0, size);
+            bool last = off + chunk >= data.Length;
+            var report = HidProtocol.BuildReport(Cmd.GetLedData, size, off, slice, null, null, last);
+            SendReport(0, report);
+            try { Device!.ReadReport(40); } catch { }
+        }
+        return Task.FromResult(true);
+    }
+
+    /// <summary>
     /// Updates only a contiguous range of LEDs (fast animation path).
     /// </summary>
     public Task<bool> SendCustomLedRangeAsync(int startLed, List<LedColor> colors)

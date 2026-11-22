@@ -98,6 +98,7 @@ public partial class AnimationsPage : Page
         _restoreCts?.Cancel();
         _firmwareMode = false;
         _hybridMode = false;
+        _engine.UseMusicPath = MusicPathCheck.IsChecked == true;
         var pattern = (AnimationPattern)PatternCombo.SelectedIndex;
         _engine.Start(pattern, (int)FpsSlider.Value, primary, secondary);
         PlayButton.IsEnabled = false;

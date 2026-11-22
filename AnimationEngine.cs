@@ -97,6 +97,10 @@ public sealed class AnimationEngine
     /// <summary>Multiplies pattern time (0.25 = slow, 3 = fast). Live while running.</summary>
     public double Speed { get => _speed; set => _speed = Math.Clamp(value, 0.25, 3.0); }
 
+    /// <summary>Experimental: render through the music plugin's cmd 0x32 path in
+    /// firmware mode 100 instead of the normal custom-LED path (mode 128).</summary>
+    public bool UseMusicPath { get; set; }
+
     public bool IsRunning => _running;
     public long FramesRendered { get; private set; }
     public event Action<string>? Status;
@@ -123,7 +127,7 @@ public sealed class AnimationEngine
             return;
         }
         _targetFps = Math.Clamp(fps, 1, 120);
-        var effect = new LedEffect { Mode = 128, ColorMode = 0,
+        var effect = new LedEffect { Mode = (byte)(UseMusicPath ? 100 : 128), ColorMode = 0,
             Red = primary.R, Green = primary.G, Blue = primary.B,
             Brightness = 6, Speed = 3, DriverSetting = 255 };
         if (!await _device.SetLedEffectAsync(effect))
@@ -424,7 +428,10 @@ public sealed class AnimationEngine
             {
                 // A full 512-byte frame is required for the firmware to refresh the
                 // physical LEDs. Bursts are already blended in by ApplyBursts above.
-                _ = _device.SendCustomFrameAsync(fullFrame);
+                if (UseMusicPath)
+                    _ = _device.SendMusicFrameAsync(fullFrame.Where(c => OrderedLeds.Contains(c.LedId)).ToArray());
+                else
+                    _ = _device.SendCustomFrameAsync(fullFrame);
             }
             catch { /* device may be busy — skip this frame, never kill the loop */ }
             frames++;
