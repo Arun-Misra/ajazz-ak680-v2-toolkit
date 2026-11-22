@@ -145,7 +145,7 @@ public sealed class AnimationEngine
         if (UseMusicPath)
             _ = _device.SendMusicFrameAsync(clear.Where(c => OrderedLeds.Contains(c.LedId)).ToArray());
         else
-            _device.SendCustomFrameAsync(clear);
+            _ = _device.SendCustomFrameAsync(clear);
         if (gen != _generation) return;
 
         _pattern = pattern;
