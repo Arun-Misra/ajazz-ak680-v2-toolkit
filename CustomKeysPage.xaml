@@ -1,0 +1,48 @@
+<Page x:Class="AjazzManager.CustomKeysPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:AjazzManager"
+      Title="Custom Keys" Background="{StaticResource PageBg}">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <local:KeyboardView x:Name="Preview" Height="250" Margin="0,0,0,12" KeyClicked="Preview_KeyClicked"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="420"/>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="Custom Keys" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <TextBlock Text="Select a key on the keyboard, then choose a character on the right to remap it." Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <TextBlock x:Name="SelectedKey" Text="Selected key: —" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource AccentButton}" Content="Apply remap" Click="Apply_Click"/>
+                        <Button Style="{StaticResource GhostButton}" Content="Reset" Margin="8,0,0,0" Click="Reset_Click"/>
+                    </StackPanel>
+                    <TextBlock x:Name="Status" Margin="0,12,0,0" Foreground="Green"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource Card}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Characters" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                    <TabControl>
+                        <TabItem Header="Basic Characters">
+                            <WrapPanel x:Name="BasicChars"/>
+                        </TabItem>
+                        <TabItem Header="Extended Characters">
+                            <WrapPanel x:Name="ExtendedChars"/>
+                        </TabItem>
+                        <TabItem Header="Special Characters">
+                            <WrapPanel x:Name="SpecialChars"/>
+                        </TabItem>
+                    </TabControl>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
