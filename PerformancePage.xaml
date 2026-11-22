@@ -11,10 +11,10 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-            <Button Style="{StaticResource AccentButton}" Content="Custom" Margin="0,0,8,0"/>
-            <Button Style="{StaticResource GhostButton}" Content="Office Mode" Margin="0,0,8,0"/>
-            <Button Style="{StaticResource GhostButton}" Content="Beginner Mode" Margin="0,0,8,0"/>
-            <Button Style="{StaticResource GhostButton}" Content="Game Mode"/>
+            <Button x:Name="ModeCustom" Style="{StaticResource AccentButton}" Content="Custom" Margin="0,0,8,0" Click="Mode_Click" Tag="0"/>
+            <Button x:Name="ModeOffice" Style="{StaticResource GhostButton}" Content="Office Mode" Margin="0,0,8,0" Click="Mode_Click" Tag="1"/>
+            <Button x:Name="ModeBeginner" Style="{StaticResource GhostButton}" Content="Beginner Mode" Margin="0,0,8,0" Click="Mode_Click" Tag="2"/>
+            <Button x:Name="ModeGame" Style="{StaticResource GhostButton}" Content="Game Mode" Click="Mode_Click" Tag="3"/>
         </StackPanel>
 
         <local:KeyboardView x:Name="Preview" Grid.Row="1" Height="250" ShowValues="True" Margin="0,0,0,12"/>
@@ -32,16 +32,26 @@
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" Foreground="{StaticResource TextMuted}"
                                            Text="Per-key trigger point and actuation are shown on the keyboard above. Select keys to configure."/>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                    <CheckBox Content="Select All" Margin="0,0,16,0"/>
-                                    <CheckBox Content="WASD" Margin="0,0,16,0"/>
-                                    <CheckBox Content="Numeric keys" Margin="0,0,16,0"/>
-                                    <CheckBox Content="Arrow keys" Margin="0,0,16,0"/>
-                                    <CheckBox Content="Record"/>
+                                    <CheckBox x:Name="SelectAllCheck" Content="Select All" Margin="0,0,16,0" Click="QuickSelect_Click"/>
+                                    <CheckBox x:Name="WasdCheck" Content="WASD" Margin="0,0,16,0" Click="QuickSelect_Click"/>
+                                    <CheckBox x:Name="NumericCheck" Content="Numeric keys" Margin="0,0,16,0" Click="QuickSelect_Click"/>
+                                    <CheckBox x:Name="ArrowCheck" Content="Arrow keys" Margin="0,0,16,0" Click="QuickSelect_Click"/>
+                                    <CheckBox x:Name="RecordCheck" Content="Record" Click="Record_Click"/>
                                 </StackPanel>
                                 <TextBlock Text="Trigger Distance" FontWeight="Bold" Margin="0,12,0,4"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <Slider x:Name="TriggerDistance" Minimum="2" Maximum="40" Value="12" Width="260"/>
+                                    <Slider x:Name="TriggerDistance" Minimum="2" Maximum="40" Value="12" Width="260" ValueChanged="TriggerDistance_ValueChanged"/>
                                     <TextBlock x:Name="TriggerLabel" Text="1.2mm" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="Selectable Axles" FontWeight="Bold" Margin="0,12,0,4"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource GhostButton}" Content="Default Axis" Tag="1" Click="Axle_Click" Margin="0,0,8,0"/>
+                                    <Button Style="{StaticResource GhostButton}" Content="Magnetic Jade Pro" Tag="2" Click="Axle_Click" Margin="0,0,8,0"/>
+                                    <Button Style="{StaticResource GhostButton}" Content="Magneto Shaft" Tag="3" Click="Axle_Click"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                    <Button Style="{StaticResource AccentButton}" Content="Apply to selected keys" Click="ApplyTrigger_Click"/>
+                                    <Button Style="{StaticResource GhostButton}" Content="Cancel" Margin="8,0,0,0" Click="Cancel_Click"/>
                                 </StackPanel>
                             </StackPanel>
                         </TabItem>

@@ -23,8 +23,47 @@ public partial class KeyboardView : UserControl
     public bool ShowValues { get => (bool)GetValue(ShowValuesProperty); set => SetValue(ShowValuesProperty, value); }
 
     public event EventHandler<string>? KeyClicked;
+    public event EventHandler? SelectionChanged;
+
+    /// <summary>Enables toggling multiple keys instead of just firing KeyClicked.</summary>
+    public bool AllowMultiSelect { get; set; }
+
+    private readonly HashSet<string> _selected = new();
+    private readonly Dictionary<string, string> _values = new();
+    public IReadOnlyCollection<string> SelectedKeys => _selected;
 
     public KeyboardView() { InitializeComponent(); Loaded += (_, _) => Rebuild(); }
+
+    /// <summary>Per-key value text shown when ShowValues is enabled.</summary>
+    public void SetValues(Dictionary<string, string> values)
+    {
+        _values.Clear();
+        foreach (var kv in values) _values[kv.Key] = kv.Value;
+        Rebuild();
+    }
+
+    public void ClearSelection()
+    {
+        _selected.Clear();
+        Rebuild();
+        SelectionChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SelectAll()
+    {
+        _selected.Clear();
+        foreach (var row in Rows) foreach (var (label, _) in row) _selected.Add(label);
+        Rebuild();
+        SelectionChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SelectWhere(Func<string, bool> predicate)
+    {
+        _selected.Clear();
+        foreach (var row in Rows) foreach (var (label, _) in row) if (predicate(label)) _selected.Add(label);
+        Rebuild();
+        SelectionChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     private void Rebuild()
     {
@@ -40,18 +79,31 @@ public partial class KeyboardView : UserControl
             int col = 0;
             foreach (var (label, units) in Rows[r])
             {
+                bool isSelected = _selected.Contains(label);
+                string value = _values.TryGetValue(label, out var v) ? v : "1.2";
                 var btn = new Button
                 {
-                    Content = ShowValues ? $"1.5{Environment.NewLine}{label}" : label,
+                    Content = ShowValues ? $"{value}{Environment.NewLine}{label}" : label,
                     Margin = new Thickness(2),
                     FontSize = 11,
-                    Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFFF")),
-                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E7DCD3")),
-                    BorderThickness = new Thickness(1),
+                    Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(
+                        isSelected ? "#FFD9A0" : "#FFFFFF")),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(
+                        isSelected ? "#FF8C00" : "#E7DCD3")),
+                    BorderThickness = new Thickness(isSelected ? 2 : 1),
                     Padding = new Thickness(2),
                     Tag = label
                 };
-                btn.Click += (s, _) => KeyClicked?.Invoke(this, (string)((Button)s!).Tag);
+                btn.Click += (s, _) =>
+                {
+                    if (AllowMultiSelect)
+                    {
+                        if (!_selected.Add(label)) _selected.Remove(label);
+                        Rebuild();
+                        SelectionChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    KeyClicked?.Invoke(this, label);
+                };
                 Grid.SetRow(btn, r);
                 Grid.SetColumn(btn, col);
                 Grid.SetColumnSpan(btn, units);

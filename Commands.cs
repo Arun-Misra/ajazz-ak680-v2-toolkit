@@ -229,7 +229,8 @@ public class LedColor { public int LedId; public byte Red, Green, Blue; }
 public class GameMode
 {
     public byte Mode, FnSwitch, SleepTime, KeyDelay, ReportRate, SystemMode, TftDisplayTime;
-    public byte TopDeadZone, BottomDeadZone, StabilityMode, AutoCalibration, SingleKeyWakeup;
+    public double TopDeadZone, BottomDeadZone;
+    public byte StabilityMode, AutoCalibration, SingleKeyWakeup;
     public byte PushButtonMode, NkroSwitch, PowerMode;
     public int WirelessReportRate;
 }
