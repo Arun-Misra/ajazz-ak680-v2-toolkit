@@ -84,6 +84,28 @@ public partial class AnimationsPage : Page
         _engine.TriggerKey(ledId, effect, color);
     }
 
+    private async void FirmwareWave_Click(object sender, RoutedEventArgs e)
+    {
+        // Stop host streaming and let the keyboard's own effect engine render the
+        // wave. This is smooth by construction - the firmware drives the LEDs at
+        // its native scan rate instead of us pushing 512-byte frames over HID.
+        _engine.Stop();
+        PlayButton.IsEnabled = true;
+        if (!_device.IsConnected && !_device.Connect())
+        { Status.Text = "No device connected: " + _device.LastError; return; }
+        TryColor(PrimaryHex.Text, out var primary);
+        var effect = new LedEffect
+        {
+            Mode = 11,                 // Flowing with the Waves
+            ColorMode = 1,             // RGB
+            Red = primary.R, Green = primary.G, Blue = primary.B,
+            Brightness = 5, Speed = 3, Direction = 0, DriverSetting = 255
+        };
+        bool ok = await _device.SetLedEffectAsync(effect);
+        Status.Foreground = ok ? System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
+        Status.Text = ok ? "Firmware wave running — rendered by the keyboard" : "Failed to set firmware effect";
+    }
+
     private void Stop_Click(object sender, RoutedEventArgs e)
     {
         _engine.Stop();
