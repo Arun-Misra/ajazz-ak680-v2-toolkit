@@ -74,6 +74,8 @@
                     <Button Style="{StaticResource GhostButton}" Content="Ripples (15)" Click="FirmwareRipple_Click" Tag="15"/>
                     <Button Style="{StaticResource GhostButton}" Content="One Touch (13)" Margin="8,0,0,0" Click="FirmwareRipple_Click" Tag="13"/>
                 </StackPanel>
+                <Button Style="{StaticResource GhostButton}" Content="Hybrid: firmware wave + custom clicks" Margin="0,8,0,0"
+                        Click="Hybrid_Click" ToolTip="Smooth firmware wave while idle; streams your custom click burst only while a key burst is active."/>
                 <TextBlock x:Name="Status" Margin="0,14,0,0" Foreground="Green" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
