@@ -40,6 +40,7 @@ public partial class MainWindow : Window
             "Settings" => new SettingsPage(),
             "Profiles" => new ProfilesPage(),
             "Animations" => new AnimationsPage(),
+            "Debug" => new DebugPage(),
             _ => null
         };
         if (page != null) ContentFrame.Navigate(page);

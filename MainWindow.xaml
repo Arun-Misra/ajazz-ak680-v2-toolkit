@@ -23,6 +23,7 @@
                     <ListBoxItem Content="Settings" Tag="Settings"/>
                     <ListBoxItem Content="Profiles" Tag="Profiles"/>
                     <ListBoxItem Content="Animations" Tag="Animations"/>
+                    <ListBoxItem Content="Key Map Debug" Tag="Debug"/>
                 </ListBox>
                 <Separator Margin="0,16"/>
                 <TextBlock Text="Keyboard Config File" FontWeight="Bold" Margin="0,4"/>

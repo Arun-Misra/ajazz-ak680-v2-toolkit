@@ -1,0 +1,39 @@
+<Page x:Class="AjazzManager.DebugPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Key Map Debug" Background="{StaticResource PageBg}">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+            <StackPanel>
+                <TextBlock Text="Key Map Debug" FontSize="20" FontWeight="Bold" Margin="0,0,0,6"/>
+                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextMuted}" Margin="0,0,0,16"
+                           Text="Click any key on the virtual keyboard. Only that key's LED turns on, so you can verify the label → id → physical key mapping."/>
+
+                <TextBlock Text="Test colour" FontWeight="Bold" Margin="0,0,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="ColorHex" Text="#FF0000" Width="120" TextChanged="ColorHex_TextChanged"/>
+                    <Border x:Name="ColorPreview" Width="26" Height="26" Background="#FF0000" Margin="8,0,0,0" CornerRadius="4"/>
+                </StackPanel>
+
+                <TextBlock Text="Last clicked" FontWeight="Bold" Margin="0,18,0,4"/>
+                <TextBlock x:Name="LastKey" Text="—" FontSize="16" Foreground="{StaticResource Accent}"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                    <Button Style="{StaticResource AccentButton}" Content="Clear all" Click="Clear_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Read state" Margin="8,0,0,0" Click="Read_Click"/>
+                </StackPanel>
+
+                <TextBlock x:Name="Status" Margin="0,14,0,0" Foreground="Green" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Style="{StaticResource Card}">
+            <StackPanel x:Name="KeyboardRows"/>
+        </Border>
+    </Grid>
+</Page>
