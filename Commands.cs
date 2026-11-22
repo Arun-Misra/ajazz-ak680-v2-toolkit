@@ -102,6 +102,69 @@ public static class Commands
         return data;
     }
 
+    /// <summary>setMagneticAxisRT (cmd 39): 1024 bytes, 128 x 8. Mirrors IZ().</summary>
+    public static byte[] BuildMagneticAxisRt(RtConfig[] configs, int rtPrecision)
+    {
+        var data = new byte[1024];
+        double scale = rtPrecision > 0 ? 1000.0 : 100.0;
+        for (int i = 0; i < 128 && i < configs.Length; i++)
+        {
+            var c = configs[i];
+            if (c is null) continue;
+            int flags = 0;
+            if (c.IsWholeFast) flags |= 1;
+            if (c.IsRampage) flags |= 2;
+            int trigger = (int)Math.Round(c.TriggerKeyStroke * scale);
+            int press = (int)Math.Round(c.PressRt * scale);
+            int release = (int)Math.Round(c.ReleaseRt * scale);
+            int o = i * 8;
+            data[o] = c.AxisType;
+            data[o + 1] = (byte)flags;
+            data[o + 2] = (byte)(trigger & 255);
+            data[o + 3] = (byte)((trigger >> 8) & 255);
+            data[o + 4] = (byte)(press & 255);
+            data[o + 5] = (byte)((press >> 8) & 255);
+            data[o + 6] = (byte)(release & 255);
+            data[o + 7] = (byte)((release >> 8) & 255);
+        }
+        return data;
+    }
+
+    /// <summary>setMagneticAxisDKSData (cmd 40): 1024 bytes, 64 x 16. Mirrors BZ().</summary>
+    public static byte[] BuildMagneticAxisDks(IEnumerable<DksConfig> configs)
+    {
+        var data = new byte[1024];
+        foreach (var c in configs)
+        {
+            if (c is null || c.Index < 0 || c.Index >= 64) continue;
+            int o = c.Index * 16;
+            data[o] = c.MakeValue1;
+            data[o + 1] = c.MakeValue2;
+            data[o + 2] = c.BreakValue1;
+            data[o + 3] = c.BreakValue2;
+            data[o + 5] = c.Action1;
+            data[o + 7] = c.Action2;
+            data[o + 9] = c.Action3;
+            data[o + 11] = c.Action4;
+            var states = new[] { c.Action1States, c.Action2States, c.Action3States, c.Action4States };
+            for (int t = 0; t < 4; t++)
+            {
+                int pressMask = 0, holdMask = 0;
+                for (int a = 0; a < 4; a++)
+                {
+                    var s = states[a];
+                    if (s != null && s.Length > t)
+                    {
+                        if (s[t] == 1) pressMask |= 1 << a;
+                        if (s[t] == 2) holdMask |= 1 << a;
+                    }
+                }
+                data[o + 12 + t] = (byte)(pressMask | (holdMask << 4));
+            }
+        }
+        return data;
+    }
+
     /// <summary>
     /// setGameMode (qX): 56-byte payload. Mirrors qX().
     /// </summary>
@@ -238,6 +301,24 @@ public class TriggerConfig
 {
     public bool IsFastTrigger;
     public byte TriggerPoint, ReleasePoint, AxisType;
+}
+
+public class RtConfig
+{
+    public byte AxisType;
+    public bool IsWholeFast, IsRampage;
+    public double TriggerKeyStroke, PressRt, ReleaseRt;
+}
+
+public class DksConfig
+{
+    public int Index;
+    public byte MakeValue1, MakeValue2, BreakValue1, BreakValue2;
+    public byte Action1, Action2, Action3, Action4;
+    public byte[] Action1States = new byte[4];
+    public byte[] Action2States = new byte[4];
+    public byte[] Action3States = new byte[4];
+    public byte[] Action4States = new byte[4];
 }
 public class MacroEntry
 {

@@ -441,6 +441,12 @@ public class DeviceService
     public Task<bool> SetTriggerConfigAsync(TriggerConfig[] t) =>
         SendCommandAsync(Cmd.SetTriggerKey, Commands.BuildTriggerConfig(t), 512, timeoutMs: 2000);
 
+    public Task<bool> SetMagneticAxisRtAsync(RtConfig[] configs, int rtPrecision = 0) =>
+        SendCommandAsync(Cmd.SetMagneticAxisRt, Commands.BuildMagneticAxisRt(configs, rtPrecision), 1024, timeoutMs: 2000);
+
+    public Task<bool> SetMagneticAxisDksAsync(IEnumerable<DksConfig> configs) =>
+        SendCommandAsync(Cmd.SetMagneticAxisDksData, Commands.BuildMagneticAxisDks(configs), 1024, timeoutMs: 2000);
+
     public Task<bool> SetProfileAsync(byte index) =>
         SendCommandAsync(Cmd.SetProfile, new[] { index }, 1, customHeader: Commands.BuildProfileHeader(index), timeoutMs: 2000);
 
