@@ -15,10 +15,15 @@
                     <TextBox x:Name="NewName" Width="150" Margin="0,0,4,0"/>
                     <Button Content="Create" Click="Create_Click" Padding="8,4"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                     <Button Content="Import" Click="Import_Click" Padding="8,4" Margin="0,0,4,0"/>
                     <Button Content="Export" Click="Export_Click" Padding="8,4" Margin="0,0,4,0"/>
                     <Button Content="Delete" Click="Delete_Click" Padding="8,4"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBox x:Name="TargetName" Width="150" Margin="0,0,4,0"/>
+                    <Button Content="Rename" Click="Rename_Click" Padding="8,4" Margin="0,0,4,0"/>
+                    <Button Content="Copy" Click="Copy_Click" Padding="8,4"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,4">
                     <TextBlock Text="Onboard slot" VerticalAlignment="Center" Margin="0,0,8,0"/>

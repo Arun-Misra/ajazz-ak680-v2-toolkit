@@ -41,6 +41,38 @@ public partial class ProfilesPage : Page
         Refresh();
     }
 
+    private void Rename_Click(object sender, RoutedEventArgs e)
+    {
+        var oldName = Selected;
+        var newName = TargetName.Text.Trim();
+        if (oldName is null) { MessageBox.Show("Select a profile to rename"); return; }
+        if (string.IsNullOrWhiteSpace(newName)) { MessageBox.Show("Enter a new name"); return; }
+        if (!_svc.RenameProfile(oldName, newName))
+        {
+            MessageBox.Show("Rename failed — the name may already be in use.");
+            return;
+        }
+        TargetName.Text = "";
+        Refresh();
+        ProfileList.SelectedItem = newName;
+    }
+
+    private void Copy_Click(object sender, RoutedEventArgs e)
+    {
+        var source = Selected;
+        var newName = TargetName.Text.Trim();
+        if (source is null) { MessageBox.Show("Select a profile to copy"); return; }
+        if (string.IsNullOrWhiteSpace(newName)) { MessageBox.Show("Enter a name for the copy"); return; }
+        if (!_svc.CopyProfile(source, newName))
+        {
+            MessageBox.Show("Copy failed — the name may already be in use.");
+            return;
+        }
+        TargetName.Text = "";
+        Refresh();
+        ProfileList.SelectedItem = newName;
+    }
+
     private void Import_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new OpenFileDialog { Filter = "JSON profile (*.json)|*.json" };

@@ -20,10 +20,42 @@ public class ProfileService
 
     public void CreateProfile(string name)
     {
+        name = Sanitize(name);
+        if (string.IsNullOrWhiteSpace(name)) return;
         var path = Path.Combine(ProfilesDir, name + ".json");
         if (File.Exists(path)) return;
         var obj = new { name, created = DateTime.UtcNow };
         File.WriteAllText(path, JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    private static string Sanitize(string name)
+    {
+        foreach (var c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
+        return name.Trim();
+    }
+
+    /// <summary>Rename a profile. Returns false if the target is empty or already exists.</summary>
+    public bool RenameProfile(string oldName, string newName)
+    {
+        newName = Sanitize(newName);
+        if (string.IsNullOrWhiteSpace(newName) || newName == oldName) return false;
+        var src = Path.Combine(ProfilesDir, oldName + ".json");
+        var dst = Path.Combine(ProfilesDir, newName + ".json");
+        if (!File.Exists(src) || File.Exists(dst)) return false;
+        File.Move(src, dst);
+        return true;
+    }
+
+    /// <summary>Duplicate a profile under a new name. Returns false on invalid/existing target.</summary>
+    public bool CopyProfile(string source, string newName)
+    {
+        newName = Sanitize(newName);
+        if (string.IsNullOrWhiteSpace(newName) || newName == source) return false;
+        var src = Path.Combine(ProfilesDir, source + ".json");
+        var dst = Path.Combine(ProfilesDir, newName + ".json");
+        if (!File.Exists(src) || File.Exists(dst)) return false;
+        File.Copy(src, dst);
+        return true;
     }
 
     public string? ReadProfile(string name)
