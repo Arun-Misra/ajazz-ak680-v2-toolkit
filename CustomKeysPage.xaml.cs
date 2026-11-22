@@ -12,6 +12,7 @@ public partial class CustomKeysPage : Page
     private KeyBinding? _chosen;
     private readonly Dictionary<int, KeyBinding> _bindings = new();
     private readonly Dictionary<int, KeyBinding> _fnBindings = new();
+    private bool _fnLoaded;
 
     public CustomKeysPage()
     {
@@ -23,6 +24,21 @@ public partial class CustomKeysPage : Page
         AddChars(BasicChars, basic.Select(c => c.ToString()));
         AddChars(ExtendedChars, extended.Select(c => c.ToString()));
         AddChars(SpecialChars, special.Split(' '));
+        _ = LoadBindingsAsync();
+    }
+
+    /// <summary>Load the current matrices so an edit merges with existing bindings.</summary>
+    private async Task LoadBindingsAsync()
+    {
+        var normal = await _device.GetKeyDataAsync();
+        var fn = await _device.GetFnKeyDataAsync();
+        if (normal != null)
+            foreach (var s in normal) if (s.Binding != null) _bindings[s.Value] = s.Binding;
+        if (fn != null)
+        {
+            foreach (var s in fn) if (s.Binding != null) _fnBindings[s.Value] = s.Binding;
+            _fnLoaded = true;
+        }
     }
 
     private void AddChars(Panel panel, IEnumerable<string> chars)
@@ -58,7 +74,8 @@ public partial class CustomKeysPage : Page
 
         var normal = _bindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
         var fnKeys = _fnBindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
-        bool ok = await _device.SetKeyDataAsync(normal, fnKeys);
+        bool ok = await _device.SetKeyDataAsync(normal);
+        if (ok && _fnLoaded) ok = await _device.SetFnKeyDataAsync(fnKeys);
         Status.Text = ok
             ? $"Mapped {_selectedKey} → {_chosen.Page} ({(fn ? "FN layer" : "normal")})"
             : "Failed to write key data";

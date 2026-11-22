@@ -59,6 +59,38 @@ public static class Commands
     }
 
     /// <summary>
+    /// Parses a 512-byte GET_KEY / GET_FN_KEY matrix back into KeySlots so an
+    /// edit can be merged with the existing bindings instead of zeroing them.
+    /// </summary>
+    public static List<KeySlot> ParseKeyData(byte[] data)
+    {
+        var result = new List<KeySlot>();
+        for (int i = 0; i < 128 && i * 4 + 3 < data.Length; i++)
+        {
+            int o = i * 4;
+            KeyBinding? binding = data[o] switch
+            {
+                PageMouse => new KeyBinding { Page = "MOUSE", Param1 = data[o + 1], Value = data[o + 2] },
+                PageKeyboard => new KeyBinding { Page = "KEYBOARD", Value = data[o + 2] },
+                PageConsumer => new KeyBinding { Page = "CONSUMER_KEY", Value = data[o + 1] | (data[o + 2] << 8) },
+                PageMacro => new KeyBinding { Page = "MACRO", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageMt => new KeyBinding { Page = "MT", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageSocd => new KeyBinding { Page = "SOCD", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageRs => new KeyBinding { Page = "RS", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageCb => new KeyBinding { Page = "CB", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageMpt => new KeyBinding { Page = "MPT", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageDks => new KeyBinding { Page = "DKS", Value = data[o + 1] },
+                PageTgl => new KeyBinding { Page = "TGL", Value = data[o + 1] },
+                PageFunc => new KeyBinding { Page = "FUNC", Value = (data[o + 1] << 16) | (data[o + 2] << 8) | data[o + 3] },
+                PageEnd => new KeyBinding { Page = "END", Param1 = data[o + 1], Param2 = data[o + 2] },
+                _ => null
+            };
+            if (binding != null) result.Add(new KeySlot { Value = i, Binding = binding });
+        }
+        return result;
+    }
+
+    /// <summary>
     /// setLEDEffect (vZ): 16-byte payload. Mirrors vZ().
     /// </summary>
     public static byte[] BuildLedEffect(LedEffect e)

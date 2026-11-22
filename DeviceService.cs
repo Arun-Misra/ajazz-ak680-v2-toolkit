@@ -154,6 +154,24 @@ public class DeviceService
     public Task<bool> SetKeyDataAsync(List<KeySlot> keys, List<KeySlot>? fnKeys = null) =>
         SendCommandAsync(Cmd.SetKey, Commands.BuildKeyData(keys, fnKeys), 512, timeoutMs: 2000);
 
+    /// <summary>GET_KEY (18) — read the 512-byte normal key matrix.</summary>
+    public async Task<List<KeySlot>?> GetKeyDataAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetKey, 512, timeoutMs: timeoutMs);
+        return d == null ? null : Commands.ParseKeyData(d);
+    }
+
+    /// <summary>GET_FN_KEY (22) — read the 512-byte Fn-layer key matrix.</summary>
+    public async Task<List<KeySlot>?> GetFnKeyDataAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetFnKey, 512, timeoutMs: timeoutMs);
+        return d == null ? null : Commands.ParseKeyData(d);
+    }
+
+    /// <summary>SET_FN_KEY (38) — write the 512-byte Fn-layer matrix (separate from SET_KEY).</summary>
+    public Task<bool> SetFnKeyDataAsync(IEnumerable<KeySlot> fnKeys) =>
+        SendCommandAsync(Cmd.SetFnKey, Commands.BuildKeyData(fnKeys.ToList()), 512, timeoutMs: 2000);
+
     public Task<bool> SetLedEffectAsync(LedEffect e) =>
         SendCommandAsync(Cmd.SetLedEffect, Commands.BuildLedEffect(e), 16);
 
@@ -466,8 +484,15 @@ public class DeviceService
     public Task<bool> SetMagneticAxisDksAsync(IEnumerable<DksConfig> configs) =>
         SendCommandAsync(Cmd.SetMagneticAxisDksData, Commands.BuildMagneticAxisDks(configs), 1024, timeoutMs: 2000);
 
-    public Task<bool> SetProfileAsync(byte index) =>
-        SendCommandAsync(Cmd.SetProfile, new[] { index }, 1, customHeader: Commands.BuildProfileHeader(index), timeoutMs: 2000);
+    public async Task<bool> SetProfileAsync(byte index)
+    {
+        // The driver treats byte 2 of the reply as the acknowledgement: it must echo
+        // the requested slot. A bare "some report arrived" check is not sufficient.
+        var header = new byte[] { 0xAA, Cmd.SetProfile, index };
+        var frames = await SendCommandWithResponseAsync(Cmd.SetProfile, new[] { index }, 1,
+            customHeader: header, timeoutMs: 2000);
+        return frames != null && frames.Count > 0 && frames[0].Length > 2 && frames[0][2] == index;
+    }
 
     public async Task<bool> SetMacroDataAsync(List<MacroEntry> macros)
     {
