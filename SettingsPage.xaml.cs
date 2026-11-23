@@ -14,8 +14,13 @@ public partial class SettingsPage : Page
         InitializeComponent();
         _device.Connect();
         (ThemeService.Theme switch { AppTheme.Light => LightTheme, AppTheme.Dark => DarkTheme, _ => SyncTheme }).IsChecked = true;
-        int langIndex = ThemeService.Language switch { "中文" => 1, "日本語" => 2, _ => 0 };
-        LanguageCombo.SelectedIndex = langIndex;
+        string currentCode = LocalizationService.CodeOf(ThemeService.Language);
+        for (int i = 0; i < LocalizationService.Languages.Length; i++)
+        {
+            var (code, display) = LocalizationService.Languages[i];
+            LanguageCombo.Items.Add(new ComboBoxItem { Content = display, Tag = code });
+            if (code == currentCode) LanguageCombo.SelectedIndex = i;
+        }
         _settingsLoaded = true;
         _ = LoadInfoAsync();
     }
@@ -75,7 +80,7 @@ public partial class SettingsPage : Page
     private void Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_settingsLoaded || LanguageCombo.SelectedItem is not ComboBoxItem item) return;
-        ThemeService.SetLanguage(item.Content.ToString() ?? "English");
+        ThemeService.SetLanguage(item.Tag?.ToString() ?? "en");
         LocalizationService.Refresh();
         Status.Text = $"Language preference saved: {ThemeService.Language}";
     }

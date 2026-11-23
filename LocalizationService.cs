@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,9 +16,44 @@ namespace AK680V2Toolkit;
 /// </summary>
 public static class LocalizationService
 {
+    /// <summary>All locales offered by the official web driver (code + native name).</summary>
+    public static readonly (string Code, string Display)[] Languages =
+    {
+        ("en", "English"), ("zh", "简体中文"), ("zh-TW", "繁體中文"), ("ja", "日本語"),
+        ("ko", "한국어"), ("fr", "Français"), ("es", "Español"), ("pt", "Português"),
+        ("it", "Italiano"), ("de", "Deutsch"), ("ru", "Русский"), ("uk", "Українська"),
+        ("ar", "العربية"), ("vi", "Tiếng Việt"), ("id", "Bahasa Indonesia"), ("th", "ไทย"),
+        ("pt-BR", "Português (BR)"), ("pl", "Polski"), ("hu", "Magyar"), ("tr", "Türkçe"),
+        ("sr", "Српски"), ("hr", "Hrvatski"), ("sl", "Slovenščina"), ("mk", "Македонски"),
+        ("sq", "Shqip"), ("ro", "Română"), ("cs", "Čeština")
+    };
+
     public static readonly DependencyProperty SourceTextProperty =
         DependencyProperty.RegisterAttached("SourceText", typeof(string),
             typeof(LocalizationService), new PropertyMetadata(null));
+
+    private static Dictionary<string, Dictionary<string, string>>? _driverTranslations;
+
+    private static void EnsureTranslationsLoaded()
+    {
+        if (_driverTranslations != null) return;
+        _driverTranslations = new Dictionary<string, Dictionary<string, string>>();
+        try
+        {
+            using var stream = typeof(LocalizationService).Assembly.GetManifestResourceStream(
+                "AK680V2Toolkit.Resources.Translations.json");
+            if (stream == null) return;
+            using var doc = JsonDocument.Parse(stream);
+            foreach (var text in doc.RootElement.EnumerateObject())
+            {
+                var byLanguage = new Dictionary<string, string>();
+                foreach (var lang in text.Value.EnumerateObject())
+                    byLanguage[lang.Name] = lang.Value.GetString() ?? "";
+                _driverTranslations[text.Name] = byLanguage;
+            }
+        }
+        catch { }
+    }
 
     private static readonly Dictionary<string, string> Zh = new(StringComparer.Ordinal)
     {
@@ -191,10 +229,32 @@ public static class LocalizationService
             "安定モードを有効にすると、極端なパラメータ下でのキーアルゴリズムが最適化されます。",
     };
 
+    /// <summary>Accepts either a locale code ("zh") or a legacy display name ("中文").</summary>
+    public static string CodeOf(string language)
+    {
+        foreach (var (code, display) in Languages)
+            if (string.Equals(language, code, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(language, display, StringComparison.OrdinalIgnoreCase)) return code;
+        return language switch
+        {
+            "中文" => "zh", "日本語" => "ja", "繁體中文" => "zh-TW", "English" => "en", _ => "en"
+        };
+    }
+
     public static string Translate(string text, string language)
     {
-        if (string.IsNullOrEmpty(text) || language == "English") return text;
-        var dict = language == "中文" ? Zh : language == "日本語" ? Ja : null;
+        if (string.IsNullOrEmpty(text)) return text;
+        string code = CodeOf(language);
+        if (code == "en") return text;
+
+        // Exact translations extracted from the driver's own locale chunks.
+        EnsureTranslationsLoaded();
+        if (_driverTranslations != null && _driverTranslations.TryGetValue(text, out var byLanguage) &&
+            byLanguage.TryGetValue(code, out var translated) && !string.IsNullOrEmpty(translated))
+            return translated;
+
+        // Keep the hand-curated labels for strings the driver does not localise.
+        var dict = code == "zh" ? Zh : code == "ja" ? Ja : null;
         return dict != null && dict.TryGetValue(text, out var value) ? value : text;
     }
 

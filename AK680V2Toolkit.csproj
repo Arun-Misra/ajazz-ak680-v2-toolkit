@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Translations.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
   </ItemGroup>

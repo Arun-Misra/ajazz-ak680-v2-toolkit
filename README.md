@@ -174,7 +174,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 - Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, calibration, keyboard settings, configurable top/bottom dead zone
 - Advanced keys: RS, SOCD, DKS, MT and TGL configuration and device writes
 - Profiles: create/**rename**/**copy**/delete/import/export, apply onboard slot, save keyboard state to profile
-- Settings: Light/Dark/Sync system theme, English/中文/日本語 UI translation, device info read, manual-file OTA firmware flow
+- Settings: Light/Dark/Sync system theme, **all 27 languages offered by the web driver** (translations extracted from the driver's own locale chunks), device info read, manual-file OTA firmware flow
 - Key Test: live per-key Hall travel in millimetres
 - Device Inspector: decoded device state and raw replies
 

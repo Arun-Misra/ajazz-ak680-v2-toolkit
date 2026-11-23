@@ -28,11 +28,7 @@
                     <RadioButton x:Name="SyncTheme" Content="Sync theme with computer" Checked="Theme_Changed"/>
                 </StackPanel>
                 <TextBlock Text="Language" FontWeight="Bold" Margin="0,0,0,8"/>
-                <ComboBox x:Name="LanguageCombo" Width="180" SelectedIndex="0" SelectionChanged="Language_SelectionChanged">
-                    <ComboBoxItem Content="English"/>
-                    <ComboBoxItem Content="中文"/>
-                    <ComboBoxItem Content="日本語"/>
-                </ComboBox>
+                <ComboBox x:Name="LanguageCombo" Width="180" SelectedIndex="0" SelectionChanged="Language_SelectionChanged"/>
 
                 <StackPanel x:Name="KeyboardPanel" Visibility="Collapsed">
                     <TextBlock Text="Stability Mode" FontWeight="Bold" Margin="0,20,0,4"/>
