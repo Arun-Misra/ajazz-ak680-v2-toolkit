@@ -1137,7 +1137,7 @@
   "pl": "zorza polarna",
   "pt-BR": "aurora",
   "ro": "aurora",
-  "ru": "Северное сияние",
+  "ru": "Аврора",
   "sl": "aurora",
   "sq": "aurora",
   "sr": "аурора",
@@ -1146,14 +1146,16 @@
   "uk": "Полярне сяйво",
   "vi": "cực quang",
   "zh-TW": "極光",
-  "zh": "极光"
+  "zh": "极光",
+  "es": "Aurora",
+  "de": "Aurora"
  },
  "Meteor": {
   "ar": "نيزك",
   "cs": "meteor",
   "en": "meteor",
-  "es": "meteorito",
-  "fr": "météore",
+  "es": "Meteoro",
+  "fr": "Météore",
   "hr": "meteor",
   "hu": "meteor",
   "id": "meteor",
@@ -1165,7 +1167,7 @@
   "pt-BR": "meteoro",
   "pt": "meteoro",
   "ro": "meteor",
-  "ru": "метеор",
+  "ru": "Метеорит",
   "sl": "meteor",
   "sq": "meteor",
   "sr": "метеор",
@@ -1174,7 +1176,8 @@
   "uk": "Метеор",
   "vi": "sao băng",
   "zh-TW": "流星",
-  "zh": "流星"
+  "zh": "流星",
+  "de": "Meteor"
  },
  "Display Mode": {
   "ar": "وضع العرض",
@@ -1227,7 +1230,9 @@
   "uk": "Амплітуда",
   "vi": "biên độ",
   "zh-TW": "振幅",
-  "zh": "振幅"
+  "zh": "振幅",
+  "fr": "Amplitude",
+  "de": "Amplitude"
  },
  "Background Lighting Display Mode": {
   "ar": "وضع عرض ضوء الخلفية",
