@@ -43,6 +43,14 @@
                     <ListBox x:Name="BindingList" MinHeight="260"/>
                     <Button Style="{StaticResource GhostButton}" Content="Remove selected" Margin="0,10,0,0" Click="Remove_Click"/>
                     <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green" TextWrapping="Wrap"/>
+                    <TextBlock Text="Test Your Bindings" FontWeight="Bold" Margin="0,16,0,4"/>
+                    <TextBlock Text="Live Hall travel for the bound keys — press them to verify actuation."
+                               Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="TestBindingsStart" Style="{StaticResource GhostButton}" Content="Start test" Click="TestBindingsStart_Click"/>
+                        <Button x:Name="TestBindingsStop" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="TestBindingsStop_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <TextBlock x:Name="TestBindingsText" FontFamily="Consolas" TextWrapping="Wrap" Margin="0,8,0,0" Text="Not testing"/>
                 </StackPanel>
             </Border>
         </Grid>

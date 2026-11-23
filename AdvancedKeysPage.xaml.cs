@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace AK680V2Toolkit;
 
@@ -25,7 +26,7 @@ public partial class AdvancedKeysPage : Page
             _rt[i] = new RtConfig { AxisType = 1, TriggerKeyStroke = 1.2, PressRt = 0.2, ReleaseRt = 0.2 };
         Preview.AllowMultiSelect = true;
         Preview.SelectionChanged += (_, _) => UpdateSelection();
-        Unloaded += (_, _) => _device.Disconnect();
+        Unloaded += (_, _) => { StopBindingTest(); _device.Disconnect(); };
         _ = LoadAsync();
         BuildConfig();
     }
@@ -264,6 +265,63 @@ public partial class AdvancedKeysPage : Page
         await _device.SetKeyDataAsync(slots);
         RefreshBindings();
         Status.Text = $"Removed {label}";
+    }
+
+    private HallStream? _testHall;
+    private DispatcherTimer? _testTimer;
+
+    private void TestBindingsStart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_testHall != null) return;
+        if (_bindings.Count == 0) { Status.Text = "No bindings to test yet"; return; }
+        if (!_device.IsConnected && !_device.Connect()) { Status.Text = "No device connected"; return; }
+        _testHall = new HallStream(_device);
+        if (!_testHall.Start())
+        {
+            Status.Text = "Could not start Hall telemetry";
+            _testHall = null;
+            return;
+        }
+        _testTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(33) };
+        _testTimer.Tick += UpdateBindingTest;
+        _testTimer.Start();
+        Preview.ShowValues = true;
+        TestBindingsStart.IsEnabled = false;
+        TestBindingsStop.IsEnabled = true;
+        TestBindingsText.Text = "Press a bound key…";
+    }
+
+    private void TestBindingsStop_Click(object sender, RoutedEventArgs e) => StopBindingTest();
+
+    private void StopBindingTest()
+    {
+        _testTimer?.Stop();
+        _testTimer = null;
+        _testHall?.Dispose();
+        _testHall = null;
+        Preview.ShowValues = false;
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            TestBindingsStart.IsEnabled = true;
+            TestBindingsStop.IsEnabled = false;
+            TestBindingsText.Text = "Not testing";
+        }));
+    }
+
+    private void UpdateBindingTest(object? sender, EventArgs e)
+    {
+        if (_testHall == null) return;
+        var lines = new List<string>();
+        var preview = new Dictionary<string, string>();
+        foreach (var label in _bindings.Keys.OrderBy(k => k))
+        {
+            if (!KeyMap.IdByLabel.TryGetValue(label, out int id)) continue;
+            double mm = _testHall.GetStroke(id) / 100.0;
+            lines.Add($"{label,-10} {mm:0.00} mm");
+            preview[label] = $"{mm:0.00}mm";
+        }
+        TestBindingsText.Text = string.Join("\n", lines);
+        Preview.SetValues(preview);
     }
 
     private void RefreshBindings()
