@@ -169,6 +169,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 ## Web-driver feature parity
 
 - Custom keys: key remapping, FN-layer remapping, macro-to-key/FN binding, reset
+- Lighting: clear live LED buffer; Device Inspector reads live per-key RGB
 - Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, and web-driver-equivalent **Musical Rhythm** (13 display modes, amplitude, 10 background styles, background brightness, driven through the AJAZZ music plugin's local API) plus a plugin-free PC-audio rhythm fallback
 - Shortcut command / macros: create, edit, **record from physical keys**, save to keyboard, JSON import/export
 - Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, live Hall switch calibration (start/stop/clear with per-key min/max/ADC/travel readback), keyboard settings, configurable top/bottom dead zone
@@ -178,6 +179,6 @@ Because both the browser WebHID driver and this app try to open the same HID int
 - Key Test: live per-key Hall travel in millimetres
 - Device Inspector: decoded device state and raw replies
 
-Verified against the connected keyboard with readback: key matrix and FN-layer writes, RT/DKS writes, trigger-write acceptance, profile apply acknowledgement, macro save (index plus action bytes), macro recording, game-mode settings, lighting-effect mode/brightness/speed, per-key custom RGB colours, and RS/SOCD/MT/TGL key bindings. Two firmware limitations: `GET_TRIGGER_KEY` (30) is not answered, and `GET_LED_EFFECT` (19) reports normalized white colours regardless of the colour bytes sent — the app writes the exact payload the official driver writes, and the driver likewise keeps its own colour state. OTA transfer is implemented but requires a firmware image (none is published) and was not flashed during verification.
+Verified against the connected keyboard with readback: key matrix and FN-layer writes, RT/DKS writes, trigger-write acceptance, profile apply acknowledgement, macro save (index plus action bytes), macro recording, game-mode settings, lighting-effect mode/brightness/speed, per-key custom RGB colours, and RS/SOCD/MT/TGL key bindings. Two firmware limitations: `GET_TRIGGER_KEY` (30) and `GET_DEFAULT_FN_KEY_MATRIX` (28) are not answered, and `GET_LED_EFFECT` (19) reports normalized white colours regardless of the colour bytes sent — the app writes the exact payload the official driver writes, and the driver likewise keeps its own colour state. OTA transfer is implemented but requires a firmware image (none is published) and was not flashed during verification.
 
 Author: Arun-Misra

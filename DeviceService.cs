@@ -207,6 +207,31 @@ public class DeviceService
         return Commands.ParseLedEffect(payload.ToArray());
     }
 
+    /// <summary>CLEAR_LED_DATA (54) — clear the firmware's live LED buffer.</summary>
+    public Task<bool> ClearLedDataAsync() =>
+        SendCommandAsync(Cmd.ClearLedData, Array.Empty<byte>(), 0, timeoutMs: 2000);
+
+    /// <summary>GET_ALL_LIGHTS_RGB (51) — read the live per-key RGB buffer.</summary>
+    public async Task<List<LedColor>?> GetAllLightsRgbAsync(int timeoutMs = 700)
+    {
+        var request = new byte[512];
+        for (int i = 0; i < 128; i++) request[i * 4] = (byte)i;
+        var frames = await SendCommandWithResponseAsync(Cmd.GetAllLightsRgb, request, 512, timeoutMs: timeoutMs);
+        if (frames == null || frames.Count == 0) return null;
+        var d = frames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).Take(512).ToArray();
+        var result = new List<LedColor>();
+        for (int i = 0; i < 128 && i * 4 + 3 < d.Length; i++)
+            result.Add(new LedColor { LedId = d[i * 4], Red = d[i * 4 + 1], Green = d[i * 4 + 2], Blue = d[i * 4 + 3] });
+        return result;
+    }
+
+    /// <summary>GET_DEFAULT_FN_KEY_MATRIX (28) — read the firmware's default Fn bindings.</summary>
+    public async Task<List<KeySlot>?> GetDefaultFnKeyMatrixAsync(int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetDefaultFnKeyMatrix, 512, timeoutMs: timeoutMs);
+        return d == null ? null : Commands.ParseKeyData(d);
+    }
+
     /// <summary>GET_CUSTOM_LED_DATA (20) — read the 512-byte per-key colour table.</summary>
     public async Task<List<LedColor>?> GetCustomLedDataAsync(int timeoutMs = 700)
     {

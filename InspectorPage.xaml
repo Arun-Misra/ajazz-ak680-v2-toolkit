@@ -45,6 +45,11 @@
                         <TextBlock x:Name="DksText" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" Margin="8"/>
                     </ScrollViewer>
                 </TabItem>
+                <TabItem Header="Live RGB &amp; FN">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="LiveText" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" Margin="8"/>
+                    </ScrollViewer>
+                </TabItem>
                 <TabItem Header="Raw replies">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <TextBlock x:Name="RawText" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" Margin="8"/>

@@ -30,6 +30,15 @@ public partial class InspectorPage : Page
         try
         {
             _snapshot = await _device.GetSnapshotAsync();
+            var liveRgb = await _device.GetAllLightsRgbAsync();
+            var defaultFn = await _device.GetDefaultFnKeyMatrixAsync();
+            LiveText.Text =
+                "Live per-key RGB:\n" +
+                (liveRgb == null ? "  no reply" : string.Join("\n", liveRgb.Where(l => l.Red != 0 || l.Green != 0 || l.Blue != 0)
+                    .Select(l => $"led {l.LedId,3}: {l.Red,3},{l.Green,3},{l.Blue,3}"))) +
+                "\n\nDefault FN matrix (non-default):\n" +
+                (defaultFn == null ? "  no reply" : string.Join("\n", defaultFn.Select(k =>
+                    $"key {k.Value,3}: page {k.Binding?.Page} p1={k.Binding?.Param1} p2={k.Binding?.Param2} p3={k.Binding?.Param3}")));
         }
         catch (Exception ex)
         {

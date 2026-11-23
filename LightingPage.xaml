@@ -155,6 +155,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource AccentButton}" Content="Apply to keyboard" Click="Apply_Click"/>
                         <CheckBox x:Name="LiveCheck" Content="Live update" IsChecked="True" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        <Button Style="{StaticResource GhostButton}" Content="Clear LED data" Margin="12,0,0,0" Click="ClearLedData_Click"/>
                     </StackPanel>
                     <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green" TextWrapping="Wrap"/>
                 </StackPanel>

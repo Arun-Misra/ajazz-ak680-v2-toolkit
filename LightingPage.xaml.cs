@@ -253,6 +253,13 @@ public partial class LightingPage : Page
 
     private async void Apply_Click(object sender, RoutedEventArgs e) => await ApplyAsync(showStatus: true);
 
+    private async void ClearLedData_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_device.IsConnected && !_device.Connect()) { Status.Text = "No device connected"; return; }
+        bool ok = await _device.ClearLedDataAsync();
+        Status.Text = ok ? "Live LED buffer cleared" : "Failed to clear LED data";
+    }
+
     private AudioMeter? _meter;
     private AnimationEngine? _musicEngine;
     private DispatcherTimer? _musicTimer;
