@@ -34,8 +34,27 @@ public partial class MacroPage : Page
         _device.Connect();
         ActionGrid.ItemsSource = _rows;
         _recordHook.KeyEvent += OnRecordedKey;
-        for (int i = 0; i < 8; i++) { var m = new MacroEntry { MacroId = i }; _macros.Add(m); MacroCombo.Items.Add(DisplayName(m)); }
-        MacroCombo.SelectedIndex = 0;
+        _ = LoadFromDeviceAsync();
+    }
+
+    private async System.Threading.Tasks.Task LoadFromDeviceAsync()
+    {
+        var stored = await _device.GetMacroDataAsync();
+        await Dispatcher.BeginInvoke(new Action(() =>
+        {
+            _macros.Clear();
+            MacroCombo.Items.Clear();
+            if (stored != null)
+                foreach (var m in stored) { _macros.Add(m); MacroCombo.Items.Add(DisplayName(m)); }
+            int next = _macros.Count == 0 ? 0 : _macros.Max(m => m.MacroId) + 1;
+            for (int i = _macros.Count; i < 8; i++)
+            {
+                var m = new MacroEntry { MacroId = next++ };
+                _macros.Add(m);
+                MacroCombo.Items.Add(DisplayName(m));
+            }
+            MacroCombo.SelectedIndex = 0;
+        }));
     }
 
     protected override void OnInitialized(EventArgs e)
@@ -113,7 +132,7 @@ public partial class MacroPage : Page
 
     private void New_Click(object sender, RoutedEventArgs e)
     {
-        _current = new MacroEntry { MacroId = _macros.Count };
+        _current = new MacroEntry { MacroId = _macros.Count == 0 ? 0 : _macros.Max(m => m.MacroId) + 1 };
         _macros.Add(_current);
         MacroCombo.Items.Add(DisplayName(_current));
         MacroCombo.SelectedIndex = MacroCombo.Items.Count - 1;

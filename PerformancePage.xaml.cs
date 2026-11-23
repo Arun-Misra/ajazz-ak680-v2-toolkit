@@ -11,6 +11,8 @@ public partial class PerformancePage : Page
 {
     private readonly DeviceService _device = new();
     private readonly TriggerConfig[] _triggers = new TriggerConfig[128];
+    private RtConfig[] _rt = new RtConfig[128];
+    private int _rtPrecision;
     private readonly KeyboardHook _recordHook = new();
     private byte _axisType = 1;
     private bool _recording;
@@ -25,7 +27,10 @@ public partial class PerformancePage : Page
 
         for (int i = 0; i < _triggers.Length; i++)
             _triggers[i] = new TriggerConfig { TriggerPoint = 12, ReleasePoint = 12, AxisType = 1 };
+        for (int i = 0; i < _rt.Length; i++)
+            _rt[i] = new RtConfig { AxisType = 1, TriggerKeyStroke = 1.2, PressRt = 0.2, ReleaseRt = 0.2 };
 
+        _ = LoadFromDeviceAsync();
         Preview.ShowValues = true;
         Preview.AllowMultiSelect = true;
         Preview.SelectionChanged += (_, _) => UpdateStatus();
@@ -44,11 +49,39 @@ public partial class PerformancePage : Page
         };
     }
 
+    private async System.Threading.Tasks.Task LoadFromDeviceAsync()
+    {
+        if (!_device.IsConnected && !_device.Connect()) return;
+        var info = await _device.GetDeviceInfoAsync();
+        _rtPrecision = info?.RtPrecision ?? 0;
+        var rt = await _device.GetMagneticAxisRtAsync(_rtPrecision);
+        var mode = await _device.GetGameModeAsync();
+        if (rt != null || mode != null)
+            await Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (rt != null)
+                {
+                    _rt = rt;
+                    _axisType = rt.FirstOrDefault()?.AxisType ?? 1;
+                    UpdateKeyValues();
+                }
+                if (mode != null)
+                {
+                    Stability.IsChecked = mode.StabilityMode != 0;
+                    Adaptive.IsChecked = mode.AutoCalibration != 0;
+                    ReturnRate.SelectedIndex = mode.ReportRate switch { 2 => 0, 4 => 1, _ => 2 };
+                    TopDeadZone.Value = Math.Min(30, mode.TopDeadZone * 100);
+                    BottomDeadZone.Value = Math.Min(30, mode.BottomDeadZone * 100);
+                }
+                UpdateStatus();
+            }));
+    }
+
     private void UpdateKeyValues()
     {
         var values = new Dictionary<string, string>();
         foreach (var kv in KeyMap.IdByLabel)
-            values[kv.Key] = $"{_triggers[kv.Value].TriggerPoint / 10.0:0.0}";
+            values[kv.Key] = $"{_rt[kv.Value].TriggerKeyStroke:0.0}";
         Preview.SetValues(values);
     }
 
@@ -114,6 +147,8 @@ public partial class PerformancePage : Page
     private async void ApplyTrigger_Click(object sender, RoutedEventArgs e)
     {
         if (Preview.SelectedKeys.Count == 0) { Status.Text = "Select keys first"; return; }
+        double travel = TriggerDistance.Value / 10.0;
+        double fastRt = FastTrigger.IsChecked == true ? 0.2 : 0.0;
         byte point = (byte)TriggerDistance.Value;
         byte release = (byte)(ReleasePoint.SelectedIndex == 0 ? 12 : 20);
         foreach (var label in Preview.SelectedKeys)
@@ -123,10 +158,15 @@ public partial class PerformancePage : Page
             _triggers[id].ReleasePoint = release;
             _triggers[id].AxisType = _axisType;
             _triggers[id].IsFastTrigger = FastTrigger.IsChecked == true;
+            _rt[id].AxisType = _axisType;
+            _rt[id].TriggerKeyStroke = travel;
+            _rt[id].PressRt = fastRt;
+            _rt[id].ReleaseRt = fastRt;
         }
         UpdateKeyValues();
         if (!_device.IsConnected && !_device.Connect()) { Status.Text = "No device connected"; return; }
-        bool ok = await _device.SetTriggerConfigAsync(_triggers);
+        bool ok = await _device.SetMagneticAxisRtAsync(_rt, _rtPrecision);
+        ok = await _device.SetTriggerConfigAsync(_triggers) && ok;
         Status.Text = ok ? $"Applied to {Preview.SelectedKeys.Count} key(s)" : "Failed to apply trigger settings";
     }
 

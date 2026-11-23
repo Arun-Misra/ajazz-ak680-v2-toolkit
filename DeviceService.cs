@@ -556,6 +556,31 @@ public class DeviceService
     public Task<bool> SetMagneticAxisRtAsync(RtConfig[] configs, int rtPrecision = 0) =>
         SendCommandAsync(Cmd.SetMagneticAxisRt, Commands.BuildMagneticAxisRt(configs, rtPrecision), 1024, timeoutMs: 2000);
 
+    /// <summary>GET_MAGNETIC_AXIS_RT (23) — read the 1024-byte rapid-trigger table.</summary>
+    public async Task<RtConfig[]?> GetMagneticAxisRtAsync(int rtPrecision = 0, int timeoutMs = 700)
+    {
+        var d = await ReadBlockAsync(Cmd.GetMagneticAxisRt, 1024, timeoutMs: timeoutMs);
+        if (d == null) return null;
+        double travelScale = rtPrecision > 0 ? 1000.0 : 100.0;
+        double rtScale = rtPrecision == 2 ? 1000.0 : 100.0;
+        var result = new RtConfig[128];
+        for (int i = 0; i < 128; i++)
+        {
+            int o = i * 8;
+            int flags = d[o + 1];
+            result[i] = new RtConfig
+            {
+                AxisType = d[o],
+                IsWholeFast = (flags & 1) != 0,
+                IsRampage = (flags & 2) != 0,
+                TriggerKeyStroke = (d[o + 2] | (d[o + 3] << 8)) / travelScale,
+                PressRt = (d[o + 4] | (d[o + 5] << 8)) / rtScale,
+                ReleaseRt = (d[o + 6] | (d[o + 7] << 8)) / rtScale
+            };
+        }
+        return result;
+    }
+
     public Task<bool> SetMagneticAxisDksAsync(IEnumerable<DksConfig> configs) =>
         SendCommandAsync(Cmd.SetMagneticAxisDksData, Commands.BuildMagneticAxisDks(configs), 1024, timeoutMs: 2000);
 
@@ -581,6 +606,48 @@ public class DeviceService
         bool ok1 = await SendCommandAsync(Cmd.SetMacro, index, 400, skipResponse: true, needLastFlag: false);
         if (!ok1 || actions.Length == 0) return ok1;
         return await SendCommandAsync(Cmd.SetMacro, actions, actions.Length, addrStart: 400, skipResponse: true);
+    }
+
+    /// <summary>GET_MACRO (21) — read the macro index and all stored action blocks.</summary>
+    public async Task<List<MacroEntry>?> GetMacroDataAsync(int timeoutMs = 700)
+    {
+        var indexFrames = await SendCommandWithResponseAsync(Cmd.GetMacro, Array.Empty<byte>(), 400, timeoutMs: timeoutMs);
+        if (indexFrames == null || indexFrames.Count == 0) return null;
+        var index = indexFrames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).Take(400).ToArray();
+        var result = new List<MacroEntry>();
+        for (int i = 0; i < 100; i++)
+        {
+            int o = i * 4;
+            int offset = index[o] | (index[o + 1] << 8) | (index[o + 2] << 16) | (index[o + 3] << 24);
+            if (offset == 0) continue;
+            var head = await SendCommandWithResponseAsync(Cmd.GetMacro, Array.Empty<byte>(), 4,
+                addrStart: offset, timeoutMs: timeoutMs);
+            if (head == null || head.Count == 0) continue;
+            var h = head[0].Skip(HidProtocol.HeaderSize).Take(4).ToArray();
+            if (h.Length < 4) continue;
+            int count = (h[0] | (h[1] << 8)) / 2;
+            if (count <= 0 || count > 512) continue;
+            var bodyFrames = await SendCommandWithResponseAsync(Cmd.GetMacro, Array.Empty<byte>(), count * 4,
+                addrStart: offset + 4, timeoutMs: timeoutMs);
+            if (bodyFrames == null || bodyFrames.Count == 0) continue;
+            var body = bodyFrames.SelectMany(f => f.Skip(HidProtocol.HeaderSize)).Take(count * 4).ToArray();
+            var entry = new MacroEntry { MacroId = i };
+            for (int a = 0; a < count; a++)
+            {
+                int p = a * 4;
+                if (p + 3 >= body.Length) break;
+                byte flags = body[p + 3];
+                entry.Actions.Add(new MacroAction
+                {
+                    Delay = body[p] | (body[p + 1] << 8),
+                    KeyCode = body[p + 2],
+                    IsPress = (flags & 0x80) != 0,
+                    ActionType = (flags >> 4) & 7
+                });
+            }
+            result.Add(entry);
+        }
+        return result;
     }
 
     // ---- Hall-effect / magnetic axis support -------------------------------------

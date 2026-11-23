@@ -35,6 +35,8 @@ public partial class AdvancedKeysPage : Page
     {
         var info = await _device.GetDeviceInfoAsync();
         if (info != null) _rtPrecision = info.RtPrecision;
+        var rt = await _device.GetMagneticAxisRtAsync(_rtPrecision);
+        if (rt != null) Array.Copy(rt, _rt, 128);
 
         // Load the existing state so a save merges instead of zeroing other keys/slots.
         var keys = await _device.GetKeyDataAsync();
