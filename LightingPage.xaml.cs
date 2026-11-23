@@ -74,7 +74,15 @@ public partial class LightingPage : Page
             Swatches.Children.Add(b);
         }
         _liveTimer.Tick += async (_, _) => { _liveTimer.Stop(); if (LiveCheck.IsChecked == true) await ApplyAsync(showStatus: false); };
-        Loaded += async (_, _) => { EffectsList.SelectedIndex = 0; await LoadFromDeviceAsync(); _loaded = true; UpdateVisibility(); };
+        Loaded += async (_, _) =>
+        {
+            EffectsList.SelectedIndex = 0;
+            await LoadFromDeviceAsync();
+            _loaded = true;
+            _musicLoaded = true;
+            UpdateVisibility();
+            await CheckMusicPluginAsync();
+        };
     }
 
     private async System.Threading.Tasks.Task LoadFromDeviceAsync()
@@ -248,6 +256,54 @@ public partial class LightingPage : Page
     private AudioMeter? _meter;
     private AnimationEngine? _musicEngine;
     private DispatcherTimer? _musicTimer;
+
+    private readonly MusicPluginService _musicPlugin = new();
+    private DispatcherTimer? _firmwareDebounce;
+    private bool _musicLoaded;
+
+    private async System.Threading.Tasks.Task CheckMusicPluginAsync()
+    {
+        bool available = await _musicPlugin.IsAvailableAsync();
+        MusicPluginState.Text = available
+            ? "Plugin status: connected — firmware effects ready"
+            : "Plugin status: not running (install the AJAZZ music plugin for firmware effects)";
+    }
+
+    private int ComboTag(ComboBox combo) =>
+        combo.SelectedItem is ComboBoxItem item && int.TryParse(item.Tag?.ToString(), out int v) ? v : 0;
+
+    private async System.Threading.Tasks.Task<bool> ApplyFirmwareMusicAsync()
+    {
+        bool ok = await _musicPlugin.SetEffectAsync(ComboTag(MusicModeCombo),
+            (int)MusicAmplitude.Value, ComboTag(MusicBackModeCombo), (int)MusicBackBrightness.Value);
+        MusicPluginState.Text = ok ? "Firmware effect applied" : "Plugin unavailable — effect not applied";
+        return ok;
+    }
+
+    private void MusicSetting_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_musicLoaded || MusicAmplitudeLabel is null || MusicBackBrightnessLabel is null) return;
+        MusicAmplitudeLabel.Text = $"{MusicAmplitude.Value:0}%";
+        MusicBackBrightnessLabel.Text = $"{MusicBackBrightness.Value:0}%";
+        // The web driver debounces effect changes by 300 ms.
+        _firmwareDebounce?.Stop();
+        _firmwareDebounce = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _firmwareDebounce.Tick += async (_, _) =>
+        {
+            _firmwareDebounce!.Stop();
+            await ApplyFirmwareMusicAsync();
+        };
+        _firmwareDebounce.Start();
+    }
+
+    private async void FwMusicApply_Click(object sender, RoutedEventArgs e) => await ApplyFirmwareMusicAsync();
+
+    private async void FwMusicStop_Click(object sender, RoutedEventArgs e)
+    {
+        await _musicPlugin.StopAsync();
+        MusicModeCombo.SelectedIndex = 0;
+        MusicPluginState.Text = "Firmware effect stopped";
+    }
 
     private void MusicStart_Click(object sender, RoutedEventArgs e)
     {

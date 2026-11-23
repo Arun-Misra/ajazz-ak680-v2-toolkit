@@ -169,7 +169,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 ## Web-driver feature parity
 
 - Custom keys: key remapping, FN-layer remapping, reset
-- Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, native system-audio Music Rhythm
+- Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, and web-driver-equivalent **Musical Rhythm** (13 display modes, amplitude, 10 background styles, background brightness, driven through the AJAZZ music plugin's local API) plus a plugin-free PC-audio rhythm fallback
 - Shortcut command / macros: create, edit, **record from physical keys**, save to keyboard, JSON import/export
 - Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, calibration, keyboard settings, configurable top/bottom dead zone
 - Advanced keys: RS, SOCD, DKS, MT and TGL configuration and device writes

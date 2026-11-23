@@ -70,10 +70,57 @@
                             <ComboBoxItem Content="Both" Tag="2"/><ComboBoxItem Content="Constant" Tag="3"/>
                         </ComboBox>
                     </StackPanel>
-                    <TextBlock Text="Musical Rhythm" FontWeight="Bold" Margin="0,18,0,4"/>
-                    <TextBlock Text="Drives the keyboard lighting from system audio amplitude." Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                    <TextBlock Text="Musical Rhythm" FontWeight="Bold" FontSize="14" Margin="0,18,0,4"/>
+                    <TextBlock Text="Firmware music effects — uses the AJAZZ music plugin, same as the web driver."
+                               Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <TextBlock Text="Display Mode" Margin="0,4,0,2"/>
+                    <ComboBox x:Name="MusicModeCombo" SelectedIndex="10" SelectionChanged="MusicSetting_Changed">
+                        <ComboBoxItem Content="None" Tag="0"/>
+                        <ComboBoxItem Content="Dance to the Beat" Tag="1"/>
+                        <ComboBoxItem Content="Dual Heart Dance" Tag="2"/>
+                        <ComboBoxItem Content="Dust Glow Spiral" Tag="13"/>
+                        <ComboBoxItem Content="Dormant Volcano" Tag="4"/>
+                        <ComboBoxItem Content="Light Arrow Piercing" Tag="5"/>
+                        <ComboBoxItem Content="Light Cocoon Resonance" Tag="6"/>
+                        <ComboBoxItem Content="Tuning Fork Vibration" Tag="7"/>
+                        <ComboBoxItem Content="Firefly Trail" Tag="8"/>
+                        <ComboBoxItem Content="Curvature Legacy Track" Tag="9"/>
+                        <ComboBoxItem Content="Row Wave Rhythm" Tag="11"/>
+                        <ComboBoxItem Content="Curvature Frequency Steps" Tag="10"/>
+                        <ComboBoxItem Content="Screen light linkage" Tag="100"/>
+                    </ComboBox>
+                    <TextBlock Text="Amplitude" Margin="0,8,0,2"/>
                     <StackPanel Orientation="Horizontal">
-                        <Button x:Name="MusicStart" Style="{StaticResource GhostButton}" Content="Start rhythm" Click="MusicStart_Click"/>
+                        <Slider x:Name="MusicAmplitude" Minimum="1" Maximum="100" Value="50" Width="150" ValueChanged="MusicSetting_Changed"/>
+                        <TextBlock x:Name="MusicAmplitudeLabel" Text="50%" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="Background Lighting Display Mode" Margin="0,8,0,2"/>
+                    <ComboBox x:Name="MusicBackModeCombo" SelectedIndex="0" SelectionChanged="MusicSetting_Changed">
+                        <ComboBoxItem Content="None" Tag="0"/>
+                        <ComboBoxItem Content="White" Tag="6"/>
+                        <ComboBoxItem Content="Red" Tag="7"/>
+                        <ComboBoxItem Content="Orange" Tag="8"/>
+                        <ComboBoxItem Content="Yellow" Tag="9"/>
+                        <ComboBoxItem Content="Blue" Tag="10"/>
+                        <ComboBoxItem Content="Green" Tag="11"/>
+                        <ComboBoxItem Content="Green/Yellow/Red" Tag="1"/>
+                        <ComboBoxItem Content="Rainbow" Tag="2"/>
+                        <ComboBoxItem Content="Color Spectrum" Tag="4"/>
+                    </ComboBox>
+                    <TextBlock Text="Background Brightness" Margin="0,8,0,2"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Slider x:Name="MusicBackBrightness" Minimum="1" Maximum="100" Value="15" Width="150" ValueChanged="MusicSetting_Changed"/>
+                        <TextBlock x:Name="MusicBackBrightnessLabel" Text="15%" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock x:Name="MusicPluginState" Margin="0,6,0,2" Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Text="Plugin status: checking…"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <Button x:Name="FwMusicApply" Style="{StaticResource AccentButton}" Content="Apply firmware effect" Click="FwMusicApply_Click"/>
+                        <Button x:Name="FwMusicStop" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="FwMusicStop_Click"/>
+                    </StackPanel>
+                    <TextBlock Text="PC-generated rhythm (no plugin required)" FontWeight="Bold" Margin="0,16,0,4"/>
+                    <TextBlock Text="Drives the keyboard lighting from system audio amplitude." Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="MusicStart" Style="{StaticResource GhostButton}" Content="Start PC rhythm" Click="MusicStart_Click"/>
                         <Button x:Name="MusicStop" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="MusicStop_Click" IsEnabled="False"/>
                     </StackPanel>
                 </StackPanel>
