@@ -247,6 +247,9 @@ public partial class AdvancedKeysPage : Page
                 break;
         }
 
+        int advancedCount = _bindings.Values.Count(b => b.Page is "RS" or "SOCD" or "DKS" or "MT" or "TGL");
+        if (advancedCount > 40) { Status.Text = "Maximum 40 advanced keys reached"; return; }
+
         var slots = _bindings.Select(kv => new KeySlot { Value = KeyMap.IdByLabel[kv.Key], Binding = kv.Value }).ToList();
         bool ok = await _device.SetKeyDataAsync(slots);
         RefreshBindings();
@@ -267,5 +270,7 @@ public partial class AdvancedKeysPage : Page
     {
         BindingList.Items.Clear();
         foreach (var kv in _bindings.OrderBy(k => k.Key)) BindingList.Items.Add($"{kv.Key} — {kv.Value.Page}");
+        int advancedCount = _bindings.Values.Count(b => b.Page is "RS" or "SOCD" or "DKS" or "MT" or "TGL");
+        BindingCount.Text = $"{advancedCount}/40";
     }
 }

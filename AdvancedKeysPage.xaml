@@ -38,7 +38,8 @@
             </Border>
             <Border Grid.Column="2" Background="{DynamicResource CardBg}" CornerRadius="8" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="Current Bindings" FontSize="16" FontWeight="Bold" Margin="0,0,0,12"/>
+                    <TextBlock Text="Current Bindings" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="BindingCount" Foreground="{DynamicResource TextMuted}" Margin="0,0,0,8" Text="0/40"/>
                     <ListBox x:Name="BindingList" MinHeight="260"/>
                     <Button Style="{StaticResource GhostButton}" Content="Remove selected" Margin="0,10,0,0" Click="Remove_Click"/>
                     <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green" TextWrapping="Wrap"/>
