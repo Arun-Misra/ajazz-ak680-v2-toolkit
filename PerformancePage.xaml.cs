@@ -169,6 +169,17 @@ public partial class PerformancePage : Page
         Status.Text = ok ? "Settings applied" : "Failed to apply settings";
     }
 
+    private async void ResetAll_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_device.IsConnected && !_device.Connect())
+        {
+            Status.Text = "No device connected";
+            return;
+        }
+        bool ok = await _device.FactoryResetAsync(FactoryResetType.ResetAll);
+        Status.Text = ok ? "All keyboard settings reset" : "Failed to reset keyboard settings";
+    }
+
     private sealed class CalibrationRow
     {
         public string Key { get; set; } = "";

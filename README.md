@@ -171,7 +171,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 - Custom keys: key remapping, FN-layer remapping, macro-to-key/FN binding, reset
 - Lighting: clear live LED buffer; Device Inspector reads live per-key RGB
 - Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, and web-driver-equivalent **Musical Rhythm** (13 display modes, amplitude, 10 background styles, background brightness, driven through the AJAZZ music plugin's local API) plus a plugin-free PC-audio rhythm fallback
-- Shortcut command / macros: create, edit, **record from physical keys**, save to keyboard, JSON import/export
+- Shortcut command / macros: create, **copy**, **rename**, edit, **record from physical keys** (live / no interval / fixed 10 ms), save to keyboard, JSON import/export
 - Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, live Hall switch calibration (start/stop/clear with per-key min/max/ADC/travel readback), keyboard settings, configurable top/bottom dead zone
 - Advanced keys: RS, SOCD, DKS, MT and TGL configuration and device writes
 - Profiles: create/**rename**/**copy**/delete/import/export, apply onboard slot, save keyboard state to profile

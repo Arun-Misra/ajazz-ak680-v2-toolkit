@@ -14,9 +14,15 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource AccentButton}" Content="New" Click="New_Click"/>
                     <Button Style="{StaticResource GhostButton}" Content="Delete" Margin="8,0,0,0" Click="Delete_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Copy" Margin="8,0,0,0" Click="Copy_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Rename" Margin="8,0,0,0" Click="Rename_Click"/>
                     <Button Style="{StaticResource GhostButton}" Content="Import" Margin="8,0,0,0" Click="Import_Click"/>
                     <Button Style="{StaticResource GhostButton}" Content="Export" Margin="8,0,0,0" Click="Export_Click"/>
                     <ComboBox x:Name="MacroCombo" Width="180" Margin="16,0,0,0" SelectionChanged="MacroCombo_SelectionChanged"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Text="Macro name" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="MacroName" Width="180"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -41,7 +47,9 @@
                     <TextBox x:Name="Delay" Text="10"/>
                     <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                         <CheckBox x:Name="IsPress" Content="Press" IsChecked="True" Margin="0,0,12,0"/>
-                        <CheckBox x:Name="RecordInterval" Content="Record interval" IsChecked="True"/>
+                        <RadioButton x:Name="IntervalLive" Content="Record interval" IsChecked="True" GroupName="MacroInterval" Margin="0,0,8,0"/>
+                        <RadioButton x:Name="IntervalNone" Content="No interval" GroupName="MacroInterval" Margin="0,0,8,0"/>
+                        <RadioButton x:Name="IntervalFixed" Content="Fixed 10 ms" GroupName="MacroInterval"/>
                     </StackPanel>
                     <Button Style="{StaticResource AccentButton}" Content="Insert action" Margin="0,16,0,0" Click="Insert_Click"/>
                     <TextBlock Text="Record from physical keys" FontWeight="Bold" Margin="0,18,0,4"/>

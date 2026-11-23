@@ -113,6 +113,7 @@
                         <TextBlock x:Name="BottomDeadZoneLabel" Text="0.05 mm" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <Button Style="{StaticResource AccentButton}" Content="Apply settings" Margin="0,12,0,0" HorizontalAlignment="Left" Click="Apply_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="Reset all keyboard settings" Margin="0,8,0,0" HorizontalAlignment="Left" Click="ResetAll_Click"/>
                     <TextBlock x:Name="Status" Margin="0,10,0,0" Foreground="Green"/>
                 </StackPanel>
             </Border>

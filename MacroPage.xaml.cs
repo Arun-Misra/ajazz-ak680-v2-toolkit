@@ -34,7 +34,7 @@ public partial class MacroPage : Page
         _device.Connect();
         ActionGrid.ItemsSource = _rows;
         _recordHook.KeyEvent += OnRecordedKey;
-        for (int i = 0; i < 8; i++) { _macros.Add(new MacroEntry { MacroId = i }); MacroCombo.Items.Add($"Macro {i + 1}"); }
+        for (int i = 0; i < 8; i++) { var m = new MacroEntry { MacroId = i }; _macros.Add(m); MacroCombo.Items.Add(DisplayName(m)); }
         MacroCombo.SelectedIndex = 0;
     }
 
@@ -79,7 +79,9 @@ public partial class MacroPage : Page
         {
             if (!_recording || _current is null) return;
             int now = Environment.TickCount;
-            int delay = _lastTick == 0 ? 0 : Math.Max(0, now - _lastTick);
+            int delay = IntervalNone.IsChecked == true ? 0
+                      : IntervalFixed.IsChecked == true ? 10
+                      : _lastTick == 0 ? 0 : Math.Max(0, now - _lastTick);
             _lastTick = now;
             var action = new MacroAction
             {
@@ -113,7 +115,7 @@ public partial class MacroPage : Page
     {
         _current = new MacroEntry { MacroId = _macros.Count };
         _macros.Add(_current);
-        MacroCombo.Items.Add($"Macro {_current.MacroId + 1}");
+        MacroCombo.Items.Add(DisplayName(_current));
         MacroCombo.SelectedIndex = MacroCombo.Items.Count - 1;
         _rows.Clear();
     }
@@ -125,6 +127,39 @@ public partial class MacroPage : Page
         MacroCombo.Items.RemoveAt(MacroCombo.SelectedIndex);
         _rows.Clear();
     }
+
+    private void Copy_Click(object sender, RoutedEventArgs e)
+    {
+        if (_current is null) { Status.Text = "Select a macro to copy"; return; }
+        var copy = new MacroEntry
+        {
+            MacroId = _macros.Count,
+            Name = string.IsNullOrWhiteSpace(MacroName.Text)
+                ? (string.IsNullOrWhiteSpace(_current.Name) ? $"M{_current.MacroId + 1}" : _current.Name) + " copy"
+                : MacroName.Text.Trim(),
+            Actions = _current.Actions.Select(a => new MacroAction
+            {
+                KeyCode = a.KeyCode, Delay = a.Delay, ActionType = a.ActionType, IsPress = a.IsPress
+            }).ToList()
+        };
+        _macros.Add(copy);
+        MacroCombo.Items.Add(DisplayName(copy));
+        MacroCombo.SelectedIndex = MacroCombo.Items.Count - 1;
+        Status.Text = $"Copied to {copy.Name}";
+    }
+
+    private void Rename_Click(object sender, RoutedEventArgs e)
+    {
+        if (_current is null) { Status.Text = "Select a macro to rename"; return; }
+        string name = MacroName.Text.Trim();
+        if (name.Length == 0) { Status.Text = "Enter a name first"; return; }
+        _current.Name = name;
+        MacroCombo.Items[MacroCombo.SelectedIndex] = DisplayName(_current);
+        Status.Text = $"Renamed to {name}";
+    }
+
+    private static string DisplayName(MacroEntry m) =>
+        string.IsNullOrWhiteSpace(m.Name) ? $"M{m.MacroId + 1}" : m.Name;
 
     private void Insert_Click(object sender, RoutedEventArgs e)
     {
@@ -160,7 +195,7 @@ public partial class MacroPage : Page
             _macros.Clear();
             _macros.AddRange(loaded);
             MacroCombo.Items.Clear();
-            foreach (var m in _macros) MacroCombo.Items.Add($"Macro {m.MacroId + 1}");
+            foreach (var m in _macros) MacroCombo.Items.Add(DisplayName(m));
             if (MacroCombo.Items.Count > 0) MacroCombo.SelectedIndex = 0;
             Status.Text = $"Imported {_macros.Count} macro(s) from {Path.GetFileName(dlg.FileName)}";
         }
