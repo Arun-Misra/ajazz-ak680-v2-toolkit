@@ -142,6 +142,29 @@ public class DeviceService
     public Task<bool> FactoryResetAsync(byte type = FactoryResetType.ResetAll) =>
         SendCommandAsync(Cmd.SetFactoryReset, new[] { type }, 1, otherHeader: new[] { type });
 
+    /// <summary>SET_CALIBRATION_ON (100) — enter Hall switch calibration mode.</summary>
+    public Task<bool> StartCalibrationAsync() => SendCommandAsync(
+        Cmd.SetCalibrationOn, Array.Empty<byte>(), 0,
+        customHeader: new byte[] { 0xAA, Cmd.SetCalibrationOn, 0, 0, 0, 0, 0, 0 }, timeoutMs: 1000);
+
+    /// <summary>SET_CALIBRATION_OFF (101) — leave calibration mode.</summary>
+    public Task<bool> StopCalibrationAsync() => SendCommandAsync(
+        Cmd.SetCalibrationOff, Array.Empty<byte>(), 0,
+        customHeader: new byte[] { 0xAA, Cmd.SetCalibrationOff, 0, 0, 0, 0, 0, 0 }, timeoutMs: 1000);
+
+    /// <summary>SET_CALIBRATION_ON_V2 (105) — newer firmware calibration entry.</summary>
+    public Task<bool> StartCalibrationV2Async() => SendCommandAsync(
+        Cmd.SetCalibrationOnV2, Array.Empty<byte>(), 24,
+        customHeader: new byte[] { 0xAA, Cmd.SetCalibrationOnV2, 0, 0, 0, 0, 0, 0 }, timeoutMs: 2000);
+
+    /// <summary>SET_CALIBRATION_OFF_V2 (106) — newer firmware calibration exit.</summary>
+    public Task<bool> StopCalibrationV2Async() => SendCommandAsync(
+        Cmd.SetCalibrationOffV2, Array.Empty<byte>(), 24,
+        customHeader: new byte[] { 0xAA, Cmd.SetCalibrationOffV2, 0, 0, 0, 0, 0, 0 }, timeoutMs: 2000);
+
+    /// <summary>Factory reset type 5 — clear stored Hall calibration.</summary>
+    public Task<bool> ClearCalibrationAsync() => FactoryResetAsync(FactoryResetType.ClearCalibration);
+
     public async Task<DeviceInfo?> GetDeviceInfoAsync()
     {
         var responses = await SendCommandWithResponseAsync(Cmd.GetDeviceInfo, Array.Empty<byte>(), 48);

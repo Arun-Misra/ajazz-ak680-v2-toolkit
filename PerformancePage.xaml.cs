@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +32,16 @@ public partial class PerformancePage : Page
         UpdateKeyValues();
 
         _recordHook.KeyPressed += OnRecordedKey;
-        Unloaded += (_, _) => { _recording = false; _recordHook.Dispose(); };
+        Unloaded += (_, _) =>
+        {
+            _recording = false;
+            _recordHook.Dispose();
+            if (_calibration?.IsRunning == true)
+            {
+                _calibration.Stop();
+                _calibration = null;
+            }
+        };
     }
 
     private void UpdateKeyValues()
@@ -159,10 +169,76 @@ public partial class PerformancePage : Page
         Status.Text = ok ? "Settings applied" : "Failed to apply settings";
     }
 
-    private async void Calibrate_Click(object sender, RoutedEventArgs e)
+    private sealed class CalibrationRow
     {
-        if (!_device.IsConnected) { Status.Text = "No device connected"; return; }
-        bool ok = await _device.SendCommandAsync(Cmd.SetCalibrationOn, Array.Empty<byte>(), 0);
-        Status.Text = ok ? "Calibration started" : "Failed to start calibration";
+        public string Key { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string Min { get; set; } = "";
+        public string Max { get; set; } = "";
+        public string Adc { get; set; } = "";
+        public string Travel { get; set; } = "";
+    }
+
+    private readonly ObservableCollection<CalibrationRow> _calibrationRows = new();
+    private CalibrationStream? _calibration;
+    private static readonly Dictionary<int, string> KeyLabels =
+        KeyMap.IdByLabel.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    private void CalibrationStart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_calibration?.IsRunning == true) return;
+        if (!_device.IsConnected && !_device.Connect())
+        {
+            CalibrationStatus.Text = "No device connected";
+            return;
+        }
+        _calibration = new CalibrationStream(_device);
+        if (!_calibration.Start())
+        {
+            CalibrationStatus.Text = "Device refused calibration mode";
+            _calibration = null;
+            return;
+        }
+        _calibration.Report += sample => Dispatcher.BeginInvoke(new Action(() =>
+        {
+            var row = _calibrationRows.FirstOrDefault(r => r.Key == (KeyLabels.TryGetValue(sample.KeyValue, out var k) ? k : sample.KeyValue.ToString()));
+            var label = KeyLabels.TryGetValue(sample.KeyValue, out var key) ? key : sample.KeyValue.ToString();
+            if (row == null)
+            {
+                row = new CalibrationRow { Key = label };
+                _calibrationRows.Add(row);
+            }
+            row.Status = sample.Status.ToString();
+            row.Min = sample.MinValue.ToString();
+            row.Max = sample.MaxValue.ToString();
+            row.Adc = sample.CurrentValue.ToString();
+            row.Travel = $"{sample.KeyStroke / 100.0:0.00} mm";
+            CalibrationGrid.ItemsSource = _calibrationRows;
+        }));
+        _calibrationRows.Clear();
+        CalibrationGrid.ItemsSource = _calibrationRows;
+        CalibrationStatus.Text = "Calibrating — press each key fully, then release it";
+        CalibrationStart.IsEnabled = false;
+        CalibrationStop.IsEnabled = true;
+    }
+
+    private void CalibrationStop_Click(object sender, RoutedEventArgs e)
+    {
+        _calibration?.Stop();
+        _calibration = null;
+        CalibrationStatus.Text = $"Calibration finished — {_calibrationRows.Count} key(s) reported";
+        CalibrationStart.IsEnabled = true;
+        CalibrationStop.IsEnabled = false;
+    }
+
+    private async void CalibrationClear_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_device.IsConnected && !_device.Connect())
+        {
+            CalibrationStatus.Text = "No device connected";
+            return;
+        }
+        bool ok = await _device.ClearCalibrationAsync();
+        CalibrationStatus.Text = ok ? "Calibration data cleared" : "Failed to clear calibration";
     }
 }

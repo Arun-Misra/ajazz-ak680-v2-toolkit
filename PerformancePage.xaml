@@ -66,8 +66,23 @@
                         </TabItem>
                         <TabItem Header="Switch Calibration">
                             <StackPanel Margin="0,8,0,0">
-                                <TextBlock TextWrapping="Wrap" Text="Calibrate the magnetic switches to match your key travel." Margin="0,0,0,12"/>
-                                <Button Style="{StaticResource GhostButton}" Content="Start Calibration" HorizontalAlignment="Left" Click="Calibrate_Click"/>
+                                <TextBlock TextWrapping="Wrap" Text="Press each magnetic key fully and release it while calibration is running." Margin="0,0,0,8"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <Button x:Name="CalibrationStart" Style="{StaticResource GhostButton}" Content="Start Calibration" Click="CalibrationStart_Click"/>
+                                    <Button x:Name="CalibrationStop" Style="{StaticResource GhostButton}" Content="Stop" Margin="8,0,0,0" Click="CalibrationStop_Click" IsEnabled="False"/>
+                                    <Button x:Name="CalibrationClear" Style="{StaticResource GhostButton}" Content="Clear calibration" Margin="8,0,0,0" Click="CalibrationClear_Click"/>
+                                </StackPanel>
+                                <TextBlock x:Name="CalibrationStatus" Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                                <DataGrid x:Name="CalibrationGrid" Height="150" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="90"/>
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="70"/>
+                                        <DataGridTextColumn Header="Min" Binding="{Binding Min}" Width="80"/>
+                                        <DataGridTextColumn Header="Max" Binding="{Binding Max}" Width="80"/>
+                                        <DataGridTextColumn Header="ADC" Binding="{Binding Adc}" Width="80"/>
+                                        <DataGridTextColumn Header="Travel" Binding="{Binding Travel}" Width="90"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
                             </StackPanel>
                         </TabItem>
                     </TabControl>
