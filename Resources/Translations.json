@@ -845,22 +845,22 @@
  "Apply settings": {
   "ar": "يثبت",
   "cs": "nastavit",
-  "de": "Einstellungen",
+  "de": "Einstellungen anwenden",
   "en": "Settings",
-  "es": "Configuración",
-  "fr": "Paramètres",
+  "es": "Aplicar ajustes",
+  "fr": "Appliquer les paramètres",
   "hr": "postaviti",
   "hu": "felállítani",
   "id": "mendirikan",
   "it": "Impostazioni",
-  "ja": "設定",
-  "ko": "설정",
+  "ja": "設定を適用",
+  "ko": "설정 적용",
   "mk": "постави",
   "pl": "organizować coś",
   "pt-BR": "configurar",
   "pt": "Configurações",
   "ro": "înființat",
-  "ru": "Настройки",
+  "ru": "Применить настройки",
   "sl": "postaviti",
   "sq": "ngritur",
   "sr": "поставити",
@@ -869,7 +869,7 @@
   "uk": "Налаштування",
   "vi": "cài đặt",
   "zh-TW": "設定",
-  "zh": "设置"
+  "zh": "应用设置"
  },
  "Apply keyboard settings": {
   "ar": "إعدادات لوحة المفاتيح",
@@ -2020,5 +2020,455 @@
   "vi": "Đặt lại tất cả cài đặt bàn phím",
   "zh-TW": "重置鍵盤所有設定",
   "zh": "重置键盘所有设置"
+ },
+ "Profiles": {
+  "zh": "配置文件",
+  "ja": "プロファイル",
+  "ko": "프로필",
+  "ru": "Профили",
+  "es": "Perfiles",
+  "fr": "Profils",
+  "de": "Profile"
+ },
+ "Animations": {
+  "zh": "动画",
+  "ja": "アニメーション",
+  "ko": "애니메이션",
+  "ru": "Анимации",
+  "es": "Animaciones",
+  "fr": "Animations",
+  "de": "Animationen"
+ },
+ "Hall Gamepad": {
+  "zh": "霍尔手柄",
+  "ja": "Hallゲームパッド",
+  "ko": "홀 게임패드",
+  "ru": "Hall-геймпад",
+  "es": "Gamepad Hall",
+  "fr": "Manette Hall",
+  "de": "Hall-Gamepad"
+ },
+ "Device Inspector": {
+  "zh": "设备检查",
+  "ja": "デバイスインスペクター",
+  "ko": "장치 검사",
+  "ru": "Инспектор устройства",
+  "es": "Inspector de dispositivo",
+  "fr": "Inspecteur de périphérique",
+  "de": "Geräteinspektor"
+ },
+ "Key Map Debug": {
+  "zh": "键位调试",
+  "ja": "キーマップデバッグ",
+  "ko": "키 맵 디버그",
+  "ru": "Отладка раскладки",
+  "es": "Depuración de teclas",
+  "fr": "Débogage des touches",
+  "de": "Tastenbelegung-Debug"
+ },
+ "Refresh device": {
+  "zh": "刷新设备",
+  "ja": "デバイスを更新",
+  "ko": "장치 새로 고침",
+  "ru": "Обновить устройство",
+  "es": "Actualizar dispositivo",
+  "fr": "Actualiser l'appareil",
+  "de": "Gerät aktualisieren"
+ },
+ "Apply to keyboard": {
+  "zh": "应用到键盘",
+  "ja": "キーボードに適用",
+  "ko": "키보드에 적용",
+  "ru": "Применить к клавиатуре",
+  "es": "Aplicar al teclado",
+  "fr": "Appliquer au clavier",
+  "de": "Auf Tastatur anwenden"
+ },
+ "Save from keyboard": {
+  "zh": "从键盘保存",
+  "ja": "キーボードから保存",
+  "ko": "키보드에서 저장",
+  "ru": "Сохранить с клавиатуры",
+  "es": "Guardar desde el teclado",
+  "fr": "Enregistrer depuis le clavier",
+  "de": "Von Tastatur speichern"
+ },
+ "Apply firmware effect": {
+  "zh": "应用固件音效",
+  "ja": "ファームウェア効果を適用",
+  "ko": "펌웨어 효과 적용",
+  "ru": "Применить эффект прошивки",
+  "es": "Aplicar efecto de firmware",
+  "fr": "Appliquer l'effet firmware",
+  "de": "Firmware-Effekt anwenden"
+ },
+ "Start PC rhythm": {
+  "zh": "启动电脑节奏",
+  "ja": "PCリズムを開始",
+  "ko": "PC 리듬 시작",
+  "ru": "Запустить ритм ПК",
+  "es": "Iniciar ritmo de PC",
+  "fr": "Démarrer le rythme PC",
+  "de": "PC-Rhythmus starten"
+ },
+ "Stop": {
+  "zh": "停止",
+  "ja": "停止",
+  "ko": "중지",
+  "ru": "Стоп",
+  "es": "Detener",
+  "fr": "Arrêter",
+  "de": "Stopp"
+ },
+ "Start": {
+  "zh": "开始",
+  "ja": "開始",
+  "ko": "시작",
+  "ru": "Пуск",
+  "es": "Iniciar",
+  "fr": "Démarrer",
+  "de": "Start"
+ },
+ "Play": {
+  "zh": "播放",
+  "ja": "再生",
+  "ko": "재생",
+  "ru": "Воспроизвести",
+  "es": "Reproducir",
+  "fr": "Lire",
+  "de": "Wiedergabe"
+ },
+ "Status": {
+  "zh": "状态",
+  "ja": "ステータス",
+  "ko": "상태",
+  "ru": "Статус",
+  "es": "Estado",
+  "fr": "État",
+  "de": "Status"
+ },
+ "Overview": {
+  "zh": "概览",
+  "ja": "概要",
+  "ko": "개요",
+  "ru": "Обзор",
+  "es": "Resumen",
+  "fr": "Aperçu",
+  "de": "Übersicht"
+ },
+ "Primary colour": {
+  "zh": "主色",
+  "ja": "プライマリカラー",
+  "ko": "기본 색상",
+  "ru": "Основной цвет",
+  "es": "Color principal",
+  "fr": "Couleur principale",
+  "de": "Primärfarbe"
+ },
+ "Secondary colour": {
+  "zh": "次色",
+  "ja": "セカンダリカラー",
+  "ko": "보조 색상",
+  "ru": "Дополнительный цвет",
+  "es": "Color secundario",
+  "fr": "Couleur secondaire",
+  "de": "Sekundärfarbe"
+ },
+ "Calibrate full travel": {
+  "zh": "校准全行程",
+  "ja": "全ストロークを較正",
+  "ko": "전체 이동 거리 보정",
+  "ru": "Калибровать полный ход",
+  "es": "Calibrar recorrido completo",
+  "fr": "Calibrer la course complète",
+  "de": "Vollhub kalibrieren"
+ },
+ "Edit recording file": {
+  "zh": "编辑录制文件",
+  "ja": "記録ファイルを編集",
+  "ko": "녹화 파일 편집",
+  "ru": "Редактировать запись",
+  "es": "Editar archivo de grabación",
+  "fr": "Modifier l'enregistrement",
+  "de": "Aufnahmedatei bearbeiten"
+ },
+ "Record from physical keys": {
+  "zh": "从实体按键录制",
+  "ja": "物理キーから録画",
+  "ko": "물리 키에서 녹화",
+  "ru": "Запись с физических клавиш",
+  "es": "Grabar desde teclas físicas",
+  "fr": "Enregistrer depuis les touches physiques",
+  "de": "Mit physischen Tasten aufnehmen"
+ },
+ "Insert action": {
+  "zh": "插入动作",
+  "ja": "動作を挿入",
+  "ko": "동작 삽입",
+  "ru": "Вставить действие",
+  "es": "Insertar acción",
+  "fr": "Insérer une action",
+  "de": "Aktion einfügen"
+ },
+ "Record interval": {
+  "zh": "记录间隔",
+  "ja": "間隔を記録",
+  "ko": "간격 기록",
+  "ru": "Записывать интервал",
+  "es": "Registrar intervalo",
+  "fr": "Enregistrer l'intervalle",
+  "de": "Intervall aufnehmen"
+ },
+ "Onboard slot": {
+  "zh": "板载槽位",
+  "ja": "オンボードスロット",
+  "ko": "온보드 슬롯",
+  "ru": "Слот на плате",
+  "es": "Ranura integrada",
+  "fr": "Emplacement intégré",
+  "de": "Onboard-Slot"
+ },
+ "Selected key: -": {
+  "zh": "所选按键：-",
+  "ja": "選択中のキー：-",
+  "ko": "선택된 키: -",
+  "ru": "Выбранная клавиша: -",
+  "es": "Tecla seleccionada: -",
+  "fr": "Touche sélectionnée : -",
+  "de": "Ausgewählte Taste: -"
+ },
+ "No keys selected": {
+  "zh": "未选择按键",
+  "ja": "キーが選択されていません",
+  "ko": "선택된 키 없음",
+  "ru": "Клавиши не выбраны",
+  "es": "No hay teclas seleccionadas",
+  "fr": "Aucune touche sélectionnée",
+  "de": "Keine Tasten ausgewählt"
+ },
+ "No data yet.": {
+  "zh": "暂无数据。",
+  "ja": "データがありません。",
+  "ko": "데이터가 없습니다.",
+  "ru": "Нет данных.",
+  "es": "No hay datos.",
+  "fr": "Aucune donnée.",
+  "de": "Noch keine Daten."
+ },
+ "MT - tap / hold (1 key)": {
+  "zh": "MT - 轻触/长按（1键）",
+  "ja": "MT - タップ/ホールド（1キー）",
+  "ko": "MT - 탭/홀드 (1키)",
+  "ru": "MT - нажатие/удержание (1 клавиша)",
+  "es": "MT - toque/mantener (1 tecla)",
+  "fr": "MT - appui/maintenir (1 touche)",
+  "de": "MT - Tippen/Halten (1 Taste)"
+ },
+ "TGL - toggle (1 key)": {
+  "zh": "TGL - 切换（1键）",
+  "ja": "TGL - トグル（1キー）",
+  "ko": "TGL - 토글 (1키)",
+  "ru": "TGL - переключение (1 клавиша)",
+  "es": "TGL - alternar (1 tecla)",
+  "fr": "TGL - bascule (1 touche)",
+  "de": "TGL - Umschalten (1 Taste)"
+ },
+ "RS - Rappy Snappy (2 keys)": {
+  "zh": "RS - 快速响应（2键）",
+  "ja": "RS - ラピッドトリガー（2キー）",
+  "ko": "RS - 래피드 트리거 (2키)",
+  "ru": "RS - быстрый отклик (2 клавиши)",
+  "es": "RS - respuesta rápida (2 teclas)",
+  "fr": "RS - réponse rapide (2 touches)",
+  "de": "RS - Schnellauslösung (2 Tasten)"
+ },
+ "SOCD - priority (2 keys)": {
+  "zh": "SOCD - 优先级（2键）",
+  "ja": "SOCD - 優先度（2キー）",
+  "ko": "SOCD - 우선순위 (2키)",
+  "ru": "SOCD - приоритет (2 клавиши)",
+  "es": "SOCD - prioridad (2 teclas)",
+  "fr": "SOCD - priorité (2 touches)",
+  "de": "SOCD - Priorität (2 Tasten)"
+ },
+ "DKS - dynamic travel (1 key)": {
+  "zh": "DKS - 动态行程（1键）",
+  "ja": "DKS - 動的ストローク（1キー）",
+  "ko": "DKS - 동적 이동 (1키)",
+  "ru": "DKS - динамический ход (1 клавиша)",
+  "es": "DKS - recorrido dinámico (1 tecla)",
+  "fr": "DKS - course dynamique (1 touche)",
+  "de": "DKS - dynamischer Hub (1 Taste)"
+ },
+ "Keys & LEDs": {
+  "zh": "按键与灯光",
+  "ja": "キーとLED",
+  "ko": "키 및 LED",
+  "ru": "Клавиши и подсветка",
+  "es": "Teclas y LED",
+  "fr": "Touches et LED",
+  "de": "Tasten & LEDs"
+ },
+ "Trigger & RT": {
+  "zh": "触发与快速触发",
+  "ja": "トリガーとRT",
+  "ko": "트리거 및 RT",
+  "ru": "Триггер и RT",
+  "es": "Disparador y RT",
+  "fr": "Déclencheur et RT",
+  "de": "Trigger & RT"
+ },
+ "DKS & macros": {
+  "zh": "DKS与宏",
+  "ja": "DKSとマクロ",
+  "ko": "DKS 및 매크로",
+  "ru": "DKS и макросы",
+  "es": "DKS y macros",
+  "fr": "DKS et macros",
+  "de": "DKS & Makros"
+ },
+ "Firmware / Hall probe": {
+  "zh": "固件/霍尔探测",
+  "ja": "ファームウェア/Hallプローブ",
+  "ko": "펌웨어/홀 프로브",
+  "ru": "Прошивка / датчик Холла",
+  "es": "Firmware / sonda Hall",
+  "fr": "Firmware / sonde Hall",
+  "de": "Firmware / Hall-Sonde"
+ },
+ "FW info": {
+  "zh": "固件信息",
+  "ja": "ファームウェア情報",
+  "ko": "펌웨어 정보",
+  "ru": "Информация о прошивке",
+  "es": "Info de firmware",
+  "fr": "Infos firmware",
+  "de": "Firmware-Info"
+ },
+ "Check device": {
+  "zh": "检查设备",
+  "ja": "デバイスを確認",
+  "ko": "장치 확인",
+  "ru": "Проверить устройство",
+  "es": "Comprobar dispositivo",
+  "fr": "Vérifier l'appareil",
+  "de": "Gerät prüfen"
+ },
+ "Choose firmware…": {
+  "zh": "选择固件…",
+  "ja": "ファームウェアを選択…",
+  "ko": "펌웨어 선택…",
+  "ru": "Выбрать прошивку…",
+  "es": "Elegir firmware…",
+  "fr": "Choisir le firmware…",
+  "de": "Firmware wählen…"
+ },
+ "Verify and flash firmware": {
+  "zh": "验证并刷写固件",
+  "ja": "ファームウェアを検証して書き込み",
+  "ko": "펌웨어 검증 및 플래시",
+  "ru": "Проверить и прошить прошивку",
+  "es": "Verificar y grabar firmware",
+  "fr": "Vérifier et flasher le firmware",
+  "de": "Firmware prüfen und flashen"
+ },
+ "No firmware file selected": {
+  "zh": "未选择固件文件",
+  "ja": "ファームウェアファイルが選択されていません",
+  "ko": "펌웨어 파일이 선택되지 않음",
+  "ru": "Файл прошивки не выбран",
+  "es": "No se seleccionó archivo de firmware",
+  "fr": "Aucun fichier firmware sélectionné",
+  "de": "Keine Firmware-Datei ausgewählt"
+ },
+ "Key travel (0-3.4 mm)": {
+  "zh": "按键行程（0-3.4 毫米）",
+  "ja": "キーストローク（0-3.4 mm）",
+  "ko": "키 이동 거리 (0-3.4mm)",
+  "ru": "Ход клавиши (0-3,4 мм)",
+  "es": "Recorrido de tecla (0-3,4 mm)",
+  "fr": "Course de touche (0-3,4 mm)",
+  "de": "Tastenhub (0-3,4 mm)"
+ },
+ "Last clicked": {
+  "zh": "最后按下",
+  "ja": "最後に押したキー",
+  "ko": "마지막으로 누른 키",
+  "ru": "Последнее нажатие",
+  "es": "Última tecla pulsada",
+  "fr": "Dernière touche pressée",
+  "de": "Zuletzt gedrückt"
+ },
+ "Live analog": {
+  "zh": "实时模拟量",
+  "ja": "リアルタイムアナログ",
+  "ko": "실시간 아날로그",
+  "ru": "Аналог в реальном времени",
+  "es": "Analógico en vivo",
+  "fr": "Analogique en direct",
+  "de": "Live-Analog"
+ },
+ "Start monitoring": {
+  "zh": "开始监控",
+  "ja": "監視を開始",
+  "ko": "모니터링 시작",
+  "ru": "Начать мониторинг",
+  "es": "Iniciar monitorización",
+  "fr": "Démarrer la surveillance",
+  "de": "Überwachung starten"
+ },
+ "Hall WASD": {
+  "zh": "霍尔WASD",
+  "ja": "Hall WASD",
+  "ko": "홀 WASD",
+  "ru": "Hall WASD",
+  "es": "Hall WASD",
+  "fr": "Hall WASD",
+  "de": "Hall WASD"
+ },
+ "Read state": {
+  "zh": "读取状态",
+  "ja": "状態を読み取る",
+  "ko": "상태 읽기",
+  "ru": "Считать состояние",
+  "es": "Leer estado",
+  "fr": "Lire l'état",
+  "de": "Zustand lesen"
+ },
+ "Read everything": {
+  "zh": "读取全部",
+  "ja": "すべて読み取る",
+  "ko": "모두 읽기",
+  "ru": "Считать всё",
+  "es": "Leer todo",
+  "fr": "Tout lire",
+  "de": "Alles lesen"
+ },
+ "Raw replies": {
+  "zh": "原始回复",
+  "ja": "生の応答",
+  "ko": "원시 응답",
+  "ru": "Сырые ответы",
+  "es": "Respuestas sin procesar",
+  "fr": "Réponses brutes",
+  "de": "Rohantworten"
+ },
+ "Save report": {
+  "zh": "保存报告",
+  "ja": "レポートを保存",
+  "ko": "보고서 저장",
+  "ru": "Сохранить отчёт",
+  "es": "Guardar informe",
+  "fr": "Enregistrer le rapport",
+  "de": "Bericht speichern"
+ },
+ "More actions": {
+  "zh": "更多动作",
+  "ja": "その他の操作",
+  "ko": "추가 작업",
+  "ru": "Другие действия",
+  "es": "Más acciones",
+  "fr": "Plus d'actions",
+  "de": "Weitere Aktionen"
  }
 }
