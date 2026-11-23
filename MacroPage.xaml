@@ -51,7 +51,12 @@
                         <RadioButton x:Name="IntervalNone" Content="No interval" GroupName="MacroInterval" Margin="0,0,8,0"/>
                         <RadioButton x:Name="IntervalFixed" Content="Fixed 10 ms" GroupName="MacroInterval"/>
                     </StackPanel>
-                    <Button Style="{StaticResource AccentButton}" Content="Insert action" Margin="0,16,0,0" Click="Insert_Click"/>
+                    <TextBlock Text="Insert position" Margin="0,12,0,4"/>
+                    <ComboBox x:Name="InsertPosition" Width="180" SelectedIndex="0">
+                        <ComboBoxItem Content="Append to end"/>
+                        <ComboBoxItem Content="Insert above selected row"/>
+                    </ComboBox>
+                    <Button Style="{StaticResource AccentButton}" Content="Insert action" Margin="0,12,0,0" Click="Insert_Click"/>
                     <TextBlock Text="Record from physical keys" FontWeight="Bold" Margin="0,18,0,4"/>
                     <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextMuted}" Margin="0,0,0,6"
                                Text="Press Start, type the sequence, then Stop. Key codes are the keyboard's HID usages; delays are captured between events."/>
@@ -67,8 +72,16 @@
 
             <Border Grid.Column="1" Style="{StaticResource Card}">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="Action Record List" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
-                    <DataGrid x:Name="ActionGrid" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False">
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <TextBlock Text="Action Record List" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource GhostButton}" Content="Move up" Padding="8,4" Click="MoveUp_Click"/>
+                            <Button Style="{StaticResource GhostButton}" Content="Move down" Padding="8,4" Margin="6,0,0,0" Click="MoveDown_Click"/>
+                            <Button Style="{StaticResource GhostButton}" Content="Delete row" Padding="8,4" Margin="6,0,0,0" Click="DeleteRow_Click"/>
+                            <Button Style="{StaticResource GhostButton}" Content="Clear all" Padding="8,4" Margin="6,0,0,0" Click="ClearRows_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <DataGrid x:Name="ActionGrid" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="50"/>
                             <DataGridTextColumn Header="Key" Binding="{Binding KeyCode}" Width="100"/>

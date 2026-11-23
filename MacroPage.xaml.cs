@@ -171,9 +171,76 @@ public partial class MacroPage : Page
             KeyCode = key, Delay = delay, IsPress = IsPress.IsChecked == true,
             ActionType = ActionType.SelectedIndex == 0 ? 1 : 2
         };
-        _current.Actions.Add(action);
-        _rows.Add(new MacroRow { Index = _rows.Count, KeyCode = key, Action = action.IsPress ? "Press" : "Release", Delay = delay });
-        Status.Text = "Action added";
+        int position = _rows.Count;
+        if (InsertPosition.SelectedIndex == 1 && ActionGrid.SelectedItem is MacroRow selected)
+            position = Math.Max(0, _rows.IndexOf(selected));
+
+        var row = new MacroRow { KeyCode = key, Action = action.IsPress ? "Press" : "Release", Delay = delay };
+        _rows.Insert(position, row);
+        _current.Actions.Insert(position, action);
+        Renumber();
+        Status.Text = $"Action added at position {position + 1}";
+    }
+
+    private void Renumber()
+    {
+        for (int i = 0; i < _rows.Count; i++) _rows[i].Index = i;
+    }
+
+    private void SyncActionsFromRows()
+    {
+        if (_current is null) return;
+        _current.Actions.Clear();
+        foreach (var r in _rows)
+            _current.Actions.Add(new MacroAction
+            {
+                KeyCode = r.KeyCode,
+                Delay = r.Delay,
+                IsPress = r.Action == "Press",
+                ActionType = 1
+            });
+        Renumber();
+    }
+
+    private void MoveUp_Click(object sender, RoutedEventArgs e)
+    {
+        if (ActionGrid.SelectedItem is not MacroRow row) return;
+        int i = _rows.IndexOf(row);
+        if (i <= 0) return;
+        Swap(i, i - 1);
+        ActionGrid.SelectedItem = row;
+    }
+
+    private void MoveDown_Click(object sender, RoutedEventArgs e)
+    {
+        if (ActionGrid.SelectedItem is not MacroRow row) return;
+        int i = _rows.IndexOf(row);
+        if (i < 0 || i >= _rows.Count - 1) return;
+        Swap(i, i + 1);
+        ActionGrid.SelectedItem = row;
+    }
+
+    private void Swap(int a, int b)
+    {
+        (_rows[a], _rows[b]) = (_rows[b], _rows[a]);
+        SyncActionsFromRows();
+    }
+
+    private void DeleteRow_Click(object sender, RoutedEventArgs e)
+    {
+        if (ActionGrid.SelectedItem is not MacroRow row) return;
+        int i = _rows.IndexOf(row);
+        if (i < 0) return;
+        _rows.RemoveAt(i);
+        SyncActionsFromRows();
+        Status.Text = "Row deleted";
+    }
+
+    private void ClearRows_Click(object sender, RoutedEventArgs e)
+    {
+        _rows.Clear();
+        SyncActionsFromRows();
+        Status.Text = "All rows cleared";
     }
 
     private async void Save_Click(object sender, RoutedEventArgs e)
