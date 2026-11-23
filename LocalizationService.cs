@@ -58,6 +58,9 @@ public static class LocalizationService
         ["Meteor"] = "流星", ["Comet"] = "彗星", ["Nova"] = "新星",
         ["Prism Bloom"] = "棱镜绽放", ["Liquid Bloom"] = "流光绽放",
         ["Matrix Rain"] = "矩阵雨", ["KITT Scanner"] = "KITT 扫描",
+        ["Display Mode"] = "显示模式", ["Amplitude"] = "振幅",
+        ["Background Lighting Display Mode"] = "背景灯光显示模式", ["Background Brightness"] = "背景亮度",
+        ["Apply firmware effect"] = "应用固件音效", ["Plugin status: connected — firmware effects ready"] = "插件状态：已连接",
         ["Custom Animations"] = "自定义动画", ["Music Rhythm"] = "音乐节奏",
         ["Musical Rhythm"] = "音乐节奏", ["Typing Trail"] = "打字轨迹",
         // Performance
@@ -142,6 +145,9 @@ public static class LocalizationService
         ["Meteor"] = "流星", ["Comet"] = "彗星", ["Nova"] = "ノヴァ",
         ["Prism Bloom"] = "プリズムブルーム", ["Liquid Bloom"] = "リキッドブルーム",
         ["Matrix Rain"] = "マトリックスレイン", ["KITT Scanner"] = "KITTスキャナー",
+        ["Display Mode"] = "表示モード", ["Amplitude"] = "振幅",
+        ["Background Lighting Display Mode"] = "背景ライティング表示モード", ["Background Brightness"] = "背景の明るさ",
+        ["Apply firmware effect"] = "ファームウェア効果を適用", ["Plugin status: connected — firmware effects ready"] = "プラグイン状態：接続済み",
         ["Custom Animations"] = "カスタムアニメーション", ["Music Rhythm"] = "ミュージックリズム",
         ["Musical Rhythm"] = "ミュージックリズム", ["Typing Trail"] = "タイピングトレイル",
         // Performance
