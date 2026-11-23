@@ -25,7 +25,8 @@
   "uk": "Користувацькі клавіші",
   "vi": "Nút tùy chỉnh",
   "zh-TW": "自定義按鍵",
-  "zh": "自定义按键"
+  "zh": "自定义按键",
+  "en": "Custom Keys"
  },
  "Lighting Settings": {
   "ar": "إعدادات تأثير الإضاءة",
@@ -53,7 +54,8 @@
   "uk": "Налаштування підсвітки",
   "vi": "Cài đặt hiệu ứng ánh sáng",
   "zh-TW": "燈效設定",
-  "zh": "灯效设定"
+  "zh": "灯效设定",
+  "en": "Lighting Settings"
  },
  "Shortcut Command": {
   "ar": "أمر الاختصار",
@@ -110,7 +112,8 @@
   "uk": "Продуктивність",
   "vi": "hiệu suất",
   "zh-TW": "性能",
-  "zh": "性能"
+  "zh": "性能",
+  "en": "Performance"
  },
  "Advanced Keys": {
   "ar": "مفاتيح متقدمة",
@@ -138,7 +141,8 @@
   "uk": "Розширені клавіші",
   "vi": "Phím nâng cao",
   "zh-TW": "高級鍵",
-  "zh": "高级键"
+  "zh": "高级键",
+  "en": "Advanced Keys"
  },
  "Settings": {
   "ar": "يثبت",
@@ -166,35 +170,37 @@
   "uk": "Налаштування",
   "vi": "cài đặt",
   "zh-TW": "設定",
-  "zh": "设置"
+  "zh": "设置",
+  "en": "Settings"
  },
  "Key Test": {
-  "ar": "اختبار رئيسي",
-  "cs": "Klíčový test",
+  "ar": "اختبار المفاتيح",
+  "cs": "Test kláves",
   "de": "Taste testen",
   "es": "Prueba de teclas",
   "fr": "Test de touches",
-  "hr": "Ključni test",
-  "hu": "Kulcs teszt",
-  "id": "Tes kunci",
+  "hr": "Test tipki",
+  "hu": "Billentyűteszt",
+  "id": "Uji tombol",
   "it": "Test dei tasti",
   "ja": "キーテスト",
   "ko": "키 테스트",
-  "mk": "Клучен тест",
-  "pl": "Kluczowy test",
-  "pt-BR": "Teste de chave",
+  "mk": "Тест на копчиња",
+  "pl": "Test klawiszy",
+  "pt-BR": "Teste de teclas",
   "pt": "Teste de teclas",
-  "ro": "Testul cheii",
+  "ro": "Test taste",
   "ru": "Тест клавиш",
-  "sl": "Ključni test",
-  "sq": "Test kyç",
-  "sr": "Кључни тест",
-  "th": "การทดสอบหลัก",
-  "tr": "Anahtar testi",
+  "sl": "Preskus tipk",
+  "sq": "Testimi i tasteve",
+  "sr": "Тест тастера",
+  "th": "ทดสอบปุ่ม",
+  "tr": "Tuş testi",
   "uk": "Тест клавіш",
-  "vi": "Kiểm tra khóa",
+  "vi": "Kiểm tra phím",
   "zh-TW": "按鍵測試",
-  "zh": "按键测试"
+  "zh": "按键测试",
+  "en": "Key Test"
  },
  "Keyboard Config File": {
   "ar": "ملف تكوين لوحة المفاتيح",
@@ -222,7 +228,8 @@
   "uk": "Файл конфігурації клавіатури",
   "vi": "hồ sơ bàn phím",
   "zh-TW": "鍵盤配置檔",
-  "zh": "键盘配置文件"
+  "zh": "键盘配置文件",
+  "en": "Keyboard Config File"
  },
  "Create File": {
   "ar": "إنشاء ملف تكوين",
@@ -250,7 +257,8 @@
   "uk": "Створити профіль",
   "vi": "Tạo tập tin cấu hình",
   "zh-TW": "創建配置檔",
-  "zh": "创建配置文件"
+  "zh": "创建配置文件",
+  "en": "Create File"
  },
  "Import files": {
   "ar": "استيراد الملفات",
@@ -278,7 +286,8 @@
   "uk": "Імпортувати файл",
   "vi": "Nhập tập tin",
   "zh-TW": "導入文件",
-  "zh": "导入文件"
+  "zh": "导入文件",
+  "en": "Import files"
  },
  "Not connected": {
   "ar": "متصل",
@@ -335,7 +344,8 @@
   "uk": "Тема інтерфейсу",
   "vi": "Chủ đề giao diện",
   "zh-TW": "介面主題",
-  "zh": "界面主题"
+  "zh": "界面主题",
+  "en": "Interface Theme"
  },
  "Interface Settings": {
   "ar": "إعدادات الواجهة",
@@ -363,7 +373,8 @@
   "uk": "Налаштування інтерфейсу",
   "vi": "Cài đặt giao diện",
   "zh-TW": "介面設定",
-  "zh": "界面设置"
+  "zh": "界面设置",
+  "en": "Interface Settings"
  },
  "Light Theme": {
   "ar": "موضوع مشرق",
@@ -391,7 +402,8 @@
   "uk": "Світла тема",
   "vi": "Chủ đề tươi sáng",
   "zh-TW": "亮色主題",
-  "zh": "亮色主题"
+  "zh": "亮色主题",
+  "en": "Light Theme"
  },
  "Dark Theme": {
   "ar": "موضوع مظلم",
@@ -419,7 +431,8 @@
   "uk": "Темна тема",
   "vi": "chủ đề tối",
   "zh-TW": "暗色主題",
-  "zh": "暗色主题"
+  "zh": "暗色主题",
+  "en": "Dark Theme"
  },
  "Sync theme with computer": {
   "ar": "مزامنة السمة مع جهاز الكمبيوتر الخاص بك",
@@ -447,7 +460,8 @@
   "uk": "Синхронізувати тему з комп’ютером",
   "vi": "Đồng bộ theme với máy tính",
   "zh-TW": "將主題與電腦同步",
-  "zh": "将主题与电脑同步"
+  "zh": "将主题与电脑同步",
+  "en": "Sync theme with computer"
  },
  "Language": {
   "ar": "لغة",
@@ -475,7 +489,8 @@
   "uk": "Мова",
   "vi": "ngôn ngữ",
   "zh-TW": "語言",
-  "zh": "语言"
+  "zh": "语言",
+  "en": "Language"
  },
  "Update": {
   "ar": "تجديد",
@@ -503,7 +518,8 @@
   "uk": "Оновлення",
   "vi": "gia hạn",
   "zh-TW": "更新",
-  "zh": "更新"
+  "zh": "更新",
+  "en": "Update"
  },
  "Keyboard Settings": {
   "ar": "إعدادات لوحة المفاتيح",
@@ -531,7 +547,8 @@
   "uk": "Налаштування клавіатури",
   "vi": "cài đặt bàn phím",
   "zh-TW": "鍵盤設定",
-  "zh": "键盘设置"
+  "zh": "键盘设置",
+  "en": "Keyboard Settings"
  },
  "New": {
   "ar": "جديد",
@@ -559,7 +576,8 @@
   "uk": "Створити",
   "vi": "Mới",
   "zh-TW": "新建",
-  "zh": "新建"
+  "zh": "新建",
+  "en": "New"
  },
  "Delete": {
   "ar": "يمسح",
@@ -587,7 +605,8 @@
   "uk": "Видалити",
   "vi": "xóa bỏ",
   "zh-TW": "刪除",
-  "zh": "删除"
+  "zh": "删除",
+  "en": "Delete"
  },
  "Import": {
   "ar": "يستورد",
@@ -615,7 +634,8 @@
   "uk": "Імпорт",
   "vi": "nhập khẩu",
   "zh-TW": "導入",
-  "zh": "导入"
+  "zh": "导入",
+  "en": "Import"
  },
  "Export": {
   "ar": "يصدّر",
@@ -641,7 +661,10 @@
   "uk": "Експорт",
   "vi": "Xuất khẩu",
   "zh-TW": "導出",
-  "zh": "导出"
+  "zh": "导出",
+  "hu": "Export",
+  "ro": "Export",
+  "en": "Export"
  },
  "Rename": {
   "ar": "إعادة تسمية",
@@ -669,7 +692,8 @@
   "uk": "Перейменувати",
   "vi": "Đổi tên",
   "zh-TW": "重命名",
-  "zh": "重命名"
+  "zh": "重命名",
+  "en": "Rename"
  },
  "Copy": {
   "ar": "ينسخ",
@@ -697,7 +721,8 @@
   "uk": "Копіювати",
   "vi": "sao chép",
   "zh-TW": "複製",
-  "zh": "复制"
+  "zh": "复制",
+  "en": "Copy"
  },
  "Create": {
   "ar": "إنشاء ملف تكوين",
@@ -754,7 +779,8 @@
   "uk": "Скасувати",
   "vi": "Hủy bỏ",
   "zh-TW": "取消",
-  "zh": "取消"
+  "zh": "取消",
+  "en": "Cancel"
  },
  "Reset": {
   "ar": "إعادة ضبط",
@@ -782,7 +808,8 @@
   "uk": "Скинути",
   "vi": "cài lại",
   "zh-TW": "重置",
-  "zh": "重置"
+  "zh": "重置",
+  "en": "Reset"
  },
  "Configuration": {
   "ar": "التكوين الخاص بي",
@@ -843,32 +870,32 @@
   "zh": "保存到键盘"
  },
  "Apply settings": {
-  "ar": "يثبت",
-  "cs": "nastavit",
+  "ar": "تطبيق الإعدادات",
+  "cs": "Použít nastavení",
   "de": "Einstellungen anwenden",
-  "en": "Settings",
+  "en": "Apply settings",
   "es": "Aplicar ajustes",
   "fr": "Appliquer les paramètres",
-  "hr": "postaviti",
-  "hu": "felállítani",
-  "id": "mendirikan",
-  "it": "Impostazioni",
+  "hr": "Primijeni postavke",
+  "hu": "Beállítások alkalmazása",
+  "id": "Terapkan pengaturan",
+  "it": "Applica impostazioni",
   "ja": "設定を適用",
   "ko": "설정 적용",
-  "mk": "постави",
-  "pl": "organizować coś",
-  "pt-BR": "configurar",
-  "pt": "Configurações",
-  "ro": "înființat",
+  "mk": "Примени поставки",
+  "pl": "Zastosuj ustawienia",
+  "pt-BR": "Aplicar configurações",
+  "pt": "Aplicar configurações",
+  "ro": "Aplică setările",
   "ru": "Применить настройки",
-  "sl": "postaviti",
-  "sq": "ngritur",
-  "sr": "поставити",
-  "th": "ตั้งค่า",
-  "tr": "kurmak",
-  "uk": "Налаштування",
-  "vi": "cài đặt",
-  "zh-TW": "設定",
+  "sl": "Uporabi nastavitve",
+  "sq": "Apliko cilësimet",
+  "sr": "Примени подешавања",
+  "th": "ใช้การตั้งค่า",
+  "tr": "Ayarları uygula",
+  "uk": "Застосувати налаштування",
+  "vi": "Áp dụng cài đặt",
+  "zh-TW": "套用設定",
   "zh": "应用设置"
  },
  "Apply keyboard settings": {
@@ -926,7 +953,8 @@
   "uk": "Вибрати все",
   "vi": "Chọn tất cả",
   "zh-TW": "全選",
-  "zh": "全选"
+  "zh": "全选",
+  "en": "Select All"
  },
  "Lighting Effects": {
   "ar": "آثار الإضاءة",
@@ -954,7 +982,8 @@
   "uk": "Ефекти підсвітки",
   "vi": "Hiệu ứng ánh sáng",
   "zh-TW": "燈光效果",
-  "zh": "灯光效果"
+  "zh": "灯光效果",
+  "en": "Lighting Effects"
  },
  "Lighting Edit": {
   "ar": "تحرير الإضاءة",
@@ -982,7 +1011,8 @@
   "uk": "Редагування підсвітки",
   "vi": "Trình chỉnh sửa ánh sáng",
   "zh-TW": "燈光編輯",
-  "zh": "灯光编辑"
+  "zh": "灯光编辑",
+  "en": "Lighting Edit"
  },
  "Color settings": {
   "ar": "إعدادات اللون",
@@ -1010,7 +1040,8 @@
   "uk": "Налаштування кольору",
   "vi": "Cài đặt màu",
   "zh-TW": "顏色設置",
-  "zh": "颜色设置"
+  "zh": "颜色设置",
+  "en": "Color settings"
  },
  "Lighting Brightness": {
   "ar": "سطوع الضوء",
@@ -1038,7 +1069,8 @@
   "uk": "Яскравість підсвітки",
   "vi": "Độ sáng của ánh sáng",
   "zh-TW": "燈光亮度",
-  "zh": "灯光亮度"
+  "zh": "灯光亮度",
+  "en": "Lighting Brightness"
  },
  "Speed": {
   "ar": "سرعة",
@@ -1066,7 +1098,8 @@
   "uk": "Швидкість",
   "vi": "tốc độ",
   "zh-TW": "速度",
-  "zh": "速度"
+  "zh": "速度",
+  "en": "Speed"
  },
  "Direction": {
   "ar": "اتجاه",
@@ -1123,7 +1156,8 @@
   "uk": "Веселка",
   "vi": "cầu vồng",
   "zh-TW": "彩虹",
-  "zh": "彩虹"
+  "zh": "彩虹",
+  "en": "Rainbow"
  },
  "Aurora": {
   "ar": "أورورا",
@@ -1148,7 +1182,11 @@
   "zh-TW": "極光",
   "zh": "极光",
   "es": "Aurora",
-  "de": "Aurora"
+  "de": "Aurora",
+  "pt": "aurora",
+  "it": "Aurora",
+  "id": "Aurora",
+  "en": "Aurora"
  },
  "Meteor": {
   "ar": "نيزك",
@@ -1205,7 +1243,8 @@
   "uk": "Режим відображення",
   "vi": "chế độ hiển thị",
   "zh-TW": "顯示模式",
-  "zh": "显示模式"
+  "zh": "显示模式",
+  "en": "Display Mode"
  },
  "Amplitude": {
   "ar": "السعة",
@@ -1232,7 +1271,9 @@
   "zh-TW": "振幅",
   "zh": "振幅",
   "fr": "Amplitude",
-  "de": "Amplitude"
+  "de": "Amplitude",
+  "pt": "Amplitude",
+  "en": "Amplitude"
  },
  "Background Lighting Display Mode": {
   "ar": "وضع عرض ضوء الخلفية",
@@ -1260,7 +1301,8 @@
   "uk": "Режим фонової підсвітки",
   "vi": "Chế độ hiển thị đèn nền",
   "zh-TW": "背景燈光顯示模式",
-  "zh": "背景灯光显示模式"
+  "zh": "背景灯光显示模式",
+  "en": "Background Lighting Display Mode"
  },
  "Background Brightness": {
   "ar": "سطوع الخلفية",
@@ -1288,7 +1330,8 @@
   "uk": "Яскравість фону",
   "vi": "độ sáng nền",
   "zh-TW": "背景亮度",
-  "zh": "背景亮度"
+  "zh": "背景亮度",
+  "en": "Background Brightness"
  },
  "Musical Rhythm": {
   "ar": "إيقاع الموسيقى",
@@ -1316,7 +1359,8 @@
   "uk": "Музична ритміка",
   "vi": "rãnh âm nhạc",
   "zh-TW": "音樂律動",
-  "zh": "音乐律动"
+  "zh": "音乐律动",
+  "en": "Musical Rhythm"
  },
  "Stability Mode": {
   "ar": "وضع مستقر",
@@ -1344,7 +1388,8 @@
   "uk": "Режим стабільності",
   "vi": "chế độ ổn định",
   "zh-TW": "穩定模式",
-  "zh": "稳定模式"
+  "zh": "稳定模式",
+  "en": "Stability Mode"
  },
  "Stability mode": {
   "ar": "وضع مستقر",
@@ -1401,7 +1446,8 @@
   "uk": "Адаптивне динамічне калібрування (Beta)",
   "vi": "Hiệu chỉnh động thích ứng (Beta)",
   "zh-TW": "自適應動態校準(Beta)",
-  "zh": "自适应动态校准(Beta)"
+  "zh": "自适应动态校准(Beta)",
+  "en": "Adaptive Dynamic Calibration (Beta)"
  },
  "Adaptive Dynamic Calibration": {
   "ar": "المعايرة الديناميكية التكيفية (بيتا)",
@@ -1516,7 +1562,8 @@
   "uk": "Частота опитування",
   "vi": "tỷ lệ hoàn vốn",
   "zh-TW": "回報率",
-  "zh": "回报率"
+  "zh": "回报率",
+  "en": "Return Rate"
  },
  "Trigger Distance": {
   "ar": "مسار الرحلة الزناد",
@@ -1544,7 +1591,8 @@
   "uk": "Хід спрацювання",
   "vi": "Hành trình kích hoạt",
   "zh-TW": "觸發行程",
-  "zh": "触发行程"
+  "zh": "触发行程",
+  "en": "Trigger Distance"
  },
  "Dead Zone": {
   "ar": "أعلى منطقة ميتة",
@@ -1630,7 +1678,8 @@
   "uk": "Швидке спрацювання",
   "vi": "Kích hoạt nhanh",
   "zh-TW": "快速觸發",
-  "zh": "快速触发"
+  "zh": "快速触发",
+  "en": "Fast Trigger"
  },
  "Switch Calibration": {
   "ar": "معايرة السويتش",
@@ -1658,7 +1707,8 @@
   "uk": "Калібрування свічів",
   "vi": "Hiệu chỉnh switch",
   "zh-TW": "軸體校準",
-  "zh": "轴体校准"
+  "zh": "轴体校准",
+  "en": "Switch Calibration"
  },
  "Game Mode": {
   "ar": "وضع اللعبة",
@@ -1686,7 +1736,8 @@
   "uk": "Ігровий режим",
   "vi": "chế độ trò chơi",
   "zh-TW": "遊戲模式",
-  "zh": "游戏模式"
+  "zh": "游戏模式",
+  "en": "Game Mode"
  },
  "Office Mode": {
   "ar": "وضع المكتب",
@@ -1714,7 +1765,8 @@
   "uk": "Офісний режим",
   "vi": "Chế độ văn phòng",
   "zh-TW": "辦公模式",
-  "zh": "办公模式"
+  "zh": "办公模式",
+  "en": "Office Mode"
  },
  "Beginner Mode": {
   "ar": "وضع مبتدئ",
@@ -1742,7 +1794,8 @@
   "uk": "Режим новачка",
   "vi": "Chế độ người mới",
   "zh-TW": "新手模式",
-  "zh": "新手模式"
+  "zh": "新手模式",
+  "en": "Beginner Mode"
  },
  "Advanced Settings": {
   "ar": "الإعدادات المتقدمة",
@@ -1770,7 +1823,8 @@
   "uk": "Розширені налаштування",
   "vi": "Cài đặt nâng cao",
   "zh-TW": "高級設置",
-  "zh": "高级设置"
+  "zh": "高级设置",
+  "en": "Advanced Settings"
  },
  "Input Record List": {
   "ar": "أدخل قائمة سجلات",
@@ -1798,7 +1852,8 @@
   "uk": "Список запису введення",
   "vi": "Nhập danh sách bản ghi",
   "zh-TW": "輸入記錄列表",
-  "zh": "输入记录列表"
+  "zh": "输入记录列表",
+  "en": "Input Record List"
  },
  "Action Record List": {
   "ar": "قائمة سجلات الإجراء",
@@ -1826,7 +1881,8 @@
   "uk": "Список запису дій",
   "vi": "Danh sách hồ sơ hành động",
   "zh-TW": "動作記錄列表",
-  "zh": "动作记录列表"
+  "zh": "动作记录列表",
+  "en": "Action Record List"
  },
  "Action type": {
   "ar": "فعل",
@@ -1883,7 +1939,8 @@
   "uk": "Затримка (мс)",
   "vi": "Độ trễ (mili giây)",
   "zh-TW": "延遲(毫秒)",
-  "zh": "延时(毫秒)"
+  "zh": "延时(毫秒)",
+  "en": "Delay (ms)"
  },
  "Keyboard Input Action": {
   "ar": "إجراءات إدخال لوحة المفاتيح",
@@ -1911,7 +1968,8 @@
   "uk": "Дія клавіатури",
   "vi": "Hành động nhập bàn phím",
   "zh-TW": "鍵盤輸入動作",
-  "zh": "键盘输入动作"
+  "zh": "键盘输入动作",
+  "en": "Keyboard Input Action"
  },
  "Mouse Input Action": {
   "ar": "عمل إدخال الماوس",
@@ -1939,7 +1997,8 @@
   "uk": "Дія миші",
   "vi": "Hành động nhập chuột",
   "zh-TW": "滑鼠輸入動作",
-  "zh": "鼠标输入动作"
+  "zh": "鼠标输入动作",
+  "en": "Mouse Input Action"
  },
  "Start recording": {
   "ar": "ابدأ التسجيل",
@@ -1996,7 +2055,8 @@
   "uk": "Застосувати",
   "vi": "ứng dụng",
   "zh-TW": "套用",
-  "zh": "应用"
+  "zh": "应用",
+  "en": "Apply"
  },
  "Reset all keyboard settings": {
   "ar": "إعادة تعيين جميع إعدادات لوحة المفاتيح",
@@ -2024,7 +2084,8 @@
   "uk": "Скинути всі налаштування клавіатури",
   "vi": "Đặt lại tất cả cài đặt bàn phím",
   "zh-TW": "重置鍵盤所有設定",
-  "zh": "重置键盘所有设置"
+  "zh": "重置键盘所有设置",
+  "en": "Reset all keyboard settings"
  },
  "Profiles": {
   "zh": "配置文件",
@@ -2033,7 +2094,27 @@
   "ru": "Профили",
   "es": "Perfiles",
   "fr": "Profils",
-  "de": "Profile"
+  "de": "Profile",
+  "zh-TW": "設定檔",
+  "pt": "Perfis",
+  "it": "Profili",
+  "ar": "ملفات التعريف",
+  "vi": "Cấu hình",
+  "id": "Profil",
+  "th": "โปรไฟล์",
+  "pt-BR": "Perfis",
+  "pl": "Profile",
+  "hu": "Profilok",
+  "tr": "Profiller",
+  "sr": "Профили",
+  "hr": "Profili",
+  "sl": "Profili",
+  "mk": "Профили",
+  "sq": "Profile",
+  "ro": "Profiluri",
+  "cs": "Profily",
+  "uk": "Профілі",
+  "en": "Profiles"
  },
  "Animations": {
   "zh": "动画",
@@ -2042,7 +2123,27 @@
   "ru": "Анимации",
   "es": "Animaciones",
   "fr": "Animations",
-  "de": "Animationen"
+  "de": "Animationen",
+  "zh-TW": "動畫",
+  "pt": "Animações",
+  "it": "Animazioni",
+  "ar": "الرسوم المتحركة",
+  "vi": "Hoạt hình",
+  "id": "Animasi",
+  "th": "ภาพเคลื่อนไหว",
+  "pt-BR": "Animações",
+  "pl": "Animacje",
+  "hu": "Animációk",
+  "tr": "Animasyonlar",
+  "sr": "Анимације",
+  "hr": "Animacije",
+  "sl": "Animacije",
+  "mk": "Анимации",
+  "sq": "Animacionet",
+  "ro": "Animații",
+  "cs": "Animace",
+  "uk": "анімації",
+  "en": "Animations"
  },
  "Hall Gamepad": {
   "zh": "霍尔手柄",
@@ -2051,7 +2152,27 @@
   "ru": "Hall-геймпад",
   "es": "Gamepad Hall",
   "fr": "Manette Hall",
-  "de": "Hall-Gamepad"
+  "de": "Hall-Gamepad",
+  "zh-TW": "霍爾遊戲手把",
+  "pt": "Gamepad Hall",
+  "it": "Gamepad Hall",
+  "ar": "يد لعبة هول",
+  "vi": "Tay cầm Hall",
+  "id": "Gamepad Hall",
+  "th": "เกมแพด Hall",
+  "pt-BR": "Gamepad Hall",
+  "pl": "Gamepad Hall",
+  "hu": "Hall gamepad",
+  "tr": "Hall Gamepad",
+  "sr": "Hall гејмпад",
+  "hr": "Hall gamepad",
+  "sl": "Hall igralnik",
+  "mk": "Hall гејмпад",
+  "sq": "Gamepad Hall",
+  "ro": "Gamepad Hall",
+  "cs": "Hall Gamepad",
+  "uk": "Геймпад Холла",
+  "en": "Hall Gamepad"
  },
  "Device Inspector": {
   "zh": "设备检查",
@@ -2060,7 +2181,27 @@
   "ru": "Инспектор устройства",
   "es": "Inspector de dispositivo",
   "fr": "Inspecteur de périphérique",
-  "de": "Geräteinspektor"
+  "de": "Geräteinspektor",
+  "zh-TW": "設備檢驗員",
+  "pt": "Inspetor de dispositivos",
+  "it": "Ispettore dispositivo",
+  "ar": "مفتش الجهاز",
+  "vi": "Trình kiểm tra thiết bị",
+  "id": "Inspektur Perangkat",
+  "th": "ตัวตรวจสอบอุปกรณ์",
+  "pt-BR": "Inspetor de dispositivos",
+  "pl": "Inspektor urządzeń",
+  "hu": "Eszközellenőr",
+  "tr": "Cihaz Denetleyicisi",
+  "sr": "Инспектор уређаја",
+  "hr": "Inspektor uređaja",
+  "sl": "Inšpektor naprav",
+  "mk": "Инспектор за уреди",
+  "sq": "Inspektori i pajisjes",
+  "ro": "Inspector de dispozitiv",
+  "cs": "Inspektor zařízení",
+  "uk": "Інспектор пристроїв",
+  "en": "Device Inspector"
  },
  "Key Map Debug": {
   "zh": "键位调试",
@@ -2069,7 +2210,27 @@
   "ru": "Отладка раскладки",
   "es": "Depuración de teclas",
   "fr": "Débogage des touches",
-  "de": "Tastenbelegung-Debug"
+  "de": "Tastenbelegung-Debug",
+  "zh-TW": "按鍵映射調試",
+  "pt": "Depuração do mapa principal",
+  "it": "Debug della mappa dei tasti",
+  "ar": "تصحيح خريطة المفتاح",
+  "vi": "Gỡ lỗi bản đồ chính",
+  "id": "Debug Peta Kunci",
+  "th": "การแก้ไขข้อบกพร่องของแผนที่คีย์",
+  "pt-BR": "Depuração do mapa principal",
+  "pl": "Debugowanie mapy kluczy",
+  "hu": "Key Map Debug",
+  "tr": "Anahtar Harita Hata Ayıklama",
+  "sr": "Кеи Мап Дебуг",
+  "hr": "Key Map Debug",
+  "sl": "Odpravljanje napak na zemljevidu ključev",
+  "mk": "Отстранување грешки на мапата на клучеви",
+  "sq": "Korrigjimi i hartës kryesore",
+  "ro": "Depanare hărți cheie",
+  "cs": "Ladění mapy klíčů",
+  "uk": "Key Map Debug",
+  "en": "Key Map Debug"
  },
  "Refresh device": {
   "zh": "刷新设备",
@@ -2078,7 +2239,27 @@
   "ru": "Обновить устройство",
   "es": "Actualizar dispositivo",
   "fr": "Actualiser l'appareil",
-  "de": "Gerät aktualisieren"
+  "de": "Gerät aktualisieren",
+  "zh-TW": "重新整理裝置",
+  "pt": "Atualizar dispositivo",
+  "it": "Aggiorna dispositivo",
+  "ar": "تحديث الجهاز",
+  "vi": "Làm mới thiết bị",
+  "id": "Segarkan perangkat",
+  "th": "รีเฟรชอุปกรณ์",
+  "pt-BR": "Atualizar dispositivo",
+  "pl": "Odśwież urządzenie",
+  "hu": "Eszköz frissítése",
+  "tr": "Cihazı yenile",
+  "sr": "Освежите уређај",
+  "hr": "Osvježi uređaj",
+  "sl": "Osveži napravo",
+  "mk": "Освежи го уредот",
+  "sq": "Rifresko pajisjen",
+  "ro": "Actualizează dispozitivul",
+  "cs": "Aktualizovat zařízení",
+  "uk": "Оновити пристрій",
+  "en": "Refresh device"
  },
  "Apply to keyboard": {
   "zh": "应用到键盘",
@@ -2087,7 +2268,27 @@
   "ru": "Применить к клавиатуре",
   "es": "Aplicar al teclado",
   "fr": "Appliquer au clavier",
-  "de": "Auf Tastatur anwenden"
+  "de": "Auf Tastatur anwenden",
+  "zh-TW": "適用於鍵盤",
+  "pt": "Aplicar ao teclado",
+  "it": "Applicare alla tastiera",
+  "ar": "تنطبق على لوحة المفاتيح",
+  "vi": "Áp dụng cho bàn phím",
+  "id": "Terapkan ke papan ketik",
+  "th": "นำไปใช้กับแป้นพิมพ์",
+  "pt-BR": "Aplicar ao teclado",
+  "pl": "Zastosuj do klawiatury",
+  "hu": "Alkalmazás a billentyűzetre",
+  "tr": "Klavyeye uygula",
+  "sr": "Примени на тастатуру",
+  "hr": "Primijeni na tipkovnicu",
+  "sl": "Nanesite na tipkovnico",
+  "mk": "Примени на тастатура",
+  "sq": "Aplikoni në tastierë",
+  "ro": "Aplicați pe tastatură",
+  "cs": "Použít na klávesnici",
+  "uk": "Застосувати до клавіатури",
+  "en": "Apply to keyboard"
  },
  "Save from keyboard": {
   "zh": "从键盘保存",
@@ -2096,7 +2297,27 @@
   "ru": "Сохранить с клавиатуры",
   "es": "Guardar desde el teclado",
   "fr": "Enregistrer depuis le clavier",
-  "de": "Von Tastatur speichern"
+  "de": "Von Tastatur speichern",
+  "zh-TW": "從鍵盤儲存",
+  "pt": "Salvar do teclado",
+  "it": "Salva da tastiera",
+  "ar": "حفظ من لوحة المفاتيح",
+  "vi": "Lưu từ bàn phím",
+  "id": "Simpan dari papan ketik",
+  "th": "บันทึกจากแป้นพิมพ์",
+  "pt-BR": "Salvar do teclado",
+  "pl": "Zapisz z klawiatury",
+  "hu": "Mentés a billentyűzetről",
+  "tr": "Klavyeden kaydet",
+  "sr": "Сачувај са тастатуре",
+  "hr": "Spremi s tipkovnice",
+  "sl": "Shrani s tipkovnice",
+  "mk": "Зачувај од тастатура",
+  "sq": "Ruaj nga tastiera",
+  "ro": "Salvați de la tastatură",
+  "cs": "Uložit z klávesnice",
+  "uk": "Зберегти з клавіатури",
+  "en": "Save from keyboard"
  },
  "Apply firmware effect": {
   "zh": "应用固件音效",
@@ -2105,7 +2326,27 @@
   "ru": "Применить эффект прошивки",
   "es": "Aplicar efecto de firmware",
   "fr": "Appliquer l'effet firmware",
-  "de": "Firmware-Effekt anwenden"
+  "de": "Firmware-Effekt anwenden",
+  "zh-TW": "應用韌體效果",
+  "pt": "Aplicar efeito de firmware",
+  "it": "Applica l'effetto firmware",
+  "ar": "تطبيق تأثير البرامج الثابتة",
+  "vi": "Áp dụng hiệu ứng firmware",
+  "id": "Terapkan efek firmware",
+  "th": "ใช้เอฟเฟกต์เฟิร์มแวร์",
+  "pt-BR": "Aplicar efeito de firmware",
+  "pl": "Zastosuj efekt oprogramowania sprzętowego",
+  "hu": "Firmware effektus alkalmazása",
+  "tr": "Ürün yazılımı efektini uygula",
+  "sr": "Примени ефекат фирмвера",
+  "hr": "Primjena efekta firmvera",
+  "sl": "Uporabi učinek vdelane programske opreme",
+  "mk": "Примени ефект на фирмвер",
+  "sq": "Aplikoni efektin e firmuerit",
+  "ro": "Aplicați efectul de firmware",
+  "cs": "Použít efekt firmwaru",
+  "uk": "Застосувати ефект прошивки",
+  "en": "Apply firmware effect"
  },
  "Start PC rhythm": {
   "zh": "启动电脑节奏",
@@ -2114,7 +2355,27 @@
   "ru": "Запустить ритм ПК",
   "es": "Iniciar ritmo de PC",
   "fr": "Démarrer le rythme PC",
-  "de": "PC-Rhythmus starten"
+  "de": "PC-Rhythmus starten",
+  "zh-TW": "啟動PC節奏",
+  "pt": "Iniciar ritmo do PC",
+  "it": "Avvia il ritmo del PC",
+  "ar": "ابدأ إيقاع الكمبيوتر",
+  "vi": "Khởi động nhịp điệu PC",
+  "id": "Mulai ritme PC",
+  "th": "เริ่มจังหวะพีซี",
+  "pt-BR": "Iniciar ritmo do PC",
+  "pl": "Uruchom rytm komputera",
+  "hu": "Indítsa el a PC ritmust",
+  "tr": "PC ritmini başlat",
+  "sr": "Покрените ПЦ ритам",
+  "hr": "Pokrenite PC ritam",
+  "sl": "Zaženi PC ritem",
+  "mk": "Стартувајте го ритамот на компјутер",
+  "sq": "Filloni ritmin e kompjuterit",
+  "ro": "Porniți ritmul PC-ului",
+  "cs": "Spusťte rytmus PC",
+  "uk": "Запустіть ритм ПК",
+  "en": "Start PC rhythm"
  },
  "Stop": {
   "zh": "停止",
@@ -2123,7 +2384,27 @@
   "ru": "Стоп",
   "es": "Detener",
   "fr": "Arrêter",
-  "de": "Stopp"
+  "de": "Stopp",
+  "zh-TW": "停止",
+  "pt": "Parar",
+  "it": "Fermare",
+  "ar": "قف",
+  "vi": "Dừng lại",
+  "id": "Berhenti",
+  "th": "หยุด",
+  "pt-BR": "Parar",
+  "pl": "Zatrzymywać się",
+  "hu": "Stop",
+  "tr": "Durmak",
+  "sr": "Стани",
+  "hr": "Stop",
+  "sl": "Stop",
+  "mk": "Стоп",
+  "sq": "Ndalo",
+  "ro": "Stop",
+  "cs": "Zastávka",
+  "uk": "СТІЙ",
+  "en": "Stop"
  },
  "Start": {
   "zh": "开始",
@@ -2132,7 +2413,27 @@
   "ru": "Пуск",
   "es": "Iniciar",
   "fr": "Démarrer",
-  "de": "Start"
+  "de": "Start",
+  "zh-TW": "開始",
+  "pt": "Começar",
+  "it": "Inizio",
+  "ar": "يبدأ",
+  "vi": "Bắt đầu",
+  "id": "Awal",
+  "th": "เริ่ม",
+  "pt-BR": "Começar",
+  "pl": "Start",
+  "hu": "Indul",
+  "tr": "Başlangıç",
+  "sr": "Почни",
+  "hr": "Start",
+  "sl": "Začetek",
+  "mk": "Започнете",
+  "sq": "Filloni",
+  "ro": "Început",
+  "cs": "Start",
+  "uk": "Почніть",
+  "en": "Start"
  },
  "Play": {
   "zh": "播放",
@@ -2141,7 +2442,27 @@
   "ru": "Воспроизвести",
   "es": "Reproducir",
   "fr": "Lire",
-  "de": "Wiedergabe"
+  "de": "Wiedergabe",
+  "zh-TW": "玩",
+  "pt": "Jogar",
+  "it": "Giocare",
+  "ar": "يلعب",
+  "vi": "Chơi",
+  "id": "Bermain",
+  "th": "เล่น",
+  "pt-BR": "Jogar",
+  "pl": "Grać",
+  "hu": "Játék",
+  "tr": "Oynamak",
+  "sr": "Играј",
+  "hr": "Igrati",
+  "sl": "Igraj",
+  "mk": "Играј",
+  "sq": "Luaj",
+  "ro": "Juca",
+  "cs": "Hrát",
+  "uk": "грати",
+  "en": "Play"
  },
  "Status": {
   "zh": "状态",
@@ -2150,7 +2471,27 @@
   "ru": "Статус",
   "es": "Estado",
   "fr": "État",
-  "de": "Status"
+  "de": "Status",
+  "zh-TW": "地位",
+  "pt": "Status",
+  "it": "Stato",
+  "ar": "حالة",
+  "vi": "Trạng thái",
+  "id": "Status",
+  "th": "สถานะ",
+  "pt-BR": "Status",
+  "pl": "Status",
+  "hu": "Állapot",
+  "tr": "Durum",
+  "sr": "Статус",
+  "hr": "Status",
+  "sl": "Stanje",
+  "mk": "Статус",
+  "sq": "Statusi",
+  "ro": "Stare",
+  "cs": "Postavení",
+  "uk": "Статус",
+  "en": "Status"
  },
  "Overview": {
   "zh": "概览",
@@ -2159,7 +2500,27 @@
   "ru": "Обзор",
   "es": "Resumen",
   "fr": "Aperçu",
-  "de": "Übersicht"
+  "de": "Übersicht",
+  "zh-TW": "概述",
+  "pt": "Visão geral",
+  "it": "Panoramica",
+  "ar": "ملخص",
+  "vi": "Tổng quan",
+  "id": "Ringkasan",
+  "th": "ภาพรวม",
+  "pt-BR": "Visão geral",
+  "pl": "Przegląd",
+  "hu": "Áttekintés",
+  "tr": "Genel Bakış",
+  "sr": "Преглед",
+  "hr": "Pregled",
+  "sl": "Pregled",
+  "mk": "Преглед",
+  "sq": "Vështrim i përgjithshëm",
+  "ro": "Prezentare generală",
+  "cs": "Přehled",
+  "uk": "Огляд",
+  "en": "Overview"
  },
  "Primary colour": {
   "zh": "主色",
@@ -2168,7 +2529,27 @@
   "ru": "Основной цвет",
   "es": "Color principal",
   "fr": "Couleur principale",
-  "de": "Primärfarbe"
+  "de": "Primärfarbe",
+  "zh-TW": "原色",
+  "pt": "Cor primária",
+  "it": "Colore primario",
+  "ar": "اللون الأساسي",
+  "vi": "Màu cơ bản",
+  "id": "Warna primer",
+  "th": "สีหลัก",
+  "pt-BR": "Cor primária",
+  "pl": "Kolor podstawowy",
+  "hu": "Elsődleges szín",
+  "tr": "Ana renk",
+  "sr": "Примарна боја",
+  "hr": "Primarna boja",
+  "sl": "Primarna barva",
+  "mk": "Примарна боја",
+  "sq": "Ngjyra primare",
+  "ro": "Culoare primară",
+  "cs": "Primární barva",
+  "uk": "Основний колір",
+  "en": "Primary colour"
  },
  "Secondary colour": {
   "zh": "次色",
@@ -2177,7 +2558,27 @@
   "ru": "Дополнительный цвет",
   "es": "Color secundario",
   "fr": "Couleur secondaire",
-  "de": "Sekundärfarbe"
+  "de": "Sekundärfarbe",
+  "zh-TW": "次要顏色",
+  "pt": "Cor secundária",
+  "it": "Colore secondario",
+  "ar": "اللون الثانوي",
+  "vi": "Màu thứ cấp",
+  "id": "Warna sekunder",
+  "th": "สีรอง",
+  "pt-BR": "Cor secundária",
+  "pl": "Kolor wtórny",
+  "hu": "Másodlagos szín",
+  "tr": "İkincil renk",
+  "sr": "Секундарна боја",
+  "hr": "Sekundarna boja",
+  "sl": "Sekundarna barva",
+  "mk": "Секундарна боја",
+  "sq": "Ngjyra dytësore",
+  "ro": "Culoare secundară",
+  "cs": "Sekundární barva",
+  "uk": "Вторинний колір",
+  "en": "Secondary colour"
  },
  "Calibrate full travel": {
   "zh": "校准全行程",
@@ -2186,7 +2587,27 @@
   "ru": "Калибровать полный ход",
   "es": "Calibrar recorrido completo",
   "fr": "Calibrer la course complète",
-  "de": "Vollhub kalibrieren"
+  "de": "Vollhub kalibrieren",
+  "zh-TW": "校準全行程",
+  "pt": "Calibrar viagem completa",
+  "it": "Calibrare la corsa completa",
+  "ar": "معايرة السفر الكامل",
+  "vi": "Hiệu chỉnh hành trình đầy đủ",
+  "id": "Kalibrasi perjalanan penuh",
+  "th": "ปรับเทียบการเดินทางเต็มรูปแบบ",
+  "pt-BR": "Calibrar viagem completa",
+  "pl": "Kalibracja pełnego skoku",
+  "hu": "Teljes út kalibrálása",
+  "tr": "Tam seyahati kalibre edin",
+  "sr": "Калибрирајте пуно путовање",
+  "hr": "Kalibrirajte puni hod",
+  "sl": "Umerite celotno potovanje",
+  "mk": "Калибрирајте го целосното патување",
+  "sq": "Kalibroni udhëtimin e plotë",
+  "ro": "Calibrați călătoria completă",
+  "cs": "Kalibrujte plné cestování",
+  "uk": "Відкалібруйте повний хід",
+  "en": "Calibrate full travel"
  },
  "Edit recording file": {
   "zh": "编辑录制文件",
@@ -2195,7 +2616,27 @@
   "ru": "Редактировать запись",
   "es": "Editar archivo de grabación",
   "fr": "Modifier l'enregistrement",
-  "de": "Aufnahmedatei bearbeiten"
+  "de": "Aufnahmedatei bearbeiten",
+  "zh-TW": "編輯錄音文件",
+  "pt": "Editar arquivo de gravação",
+  "it": "Modifica il file di registrazione",
+  "ar": "تحرير ملف التسجيل",
+  "vi": "Chỉnh sửa tập tin ghi âm",
+  "id": "Edit file rekaman",
+  "th": "แก้ไขไฟล์บันทึก",
+  "pt-BR": "Editar arquivo de gravação",
+  "pl": "Edytuj plik nagrania",
+  "hu": "Felvételi fájl szerkesztése",
+  "tr": "Kayıt dosyasını düzenle",
+  "sr": "Уредите датотеку за снимање",
+  "hr": "Uredi datoteku snimanja",
+  "sl": "Uredi snemalno datoteko",
+  "mk": "Уредете ја датотеката за снимање",
+  "sq": "Redaktoni skedarin e regjistrimit",
+  "ro": "Editați fișierul de înregistrare",
+  "cs": "Upravit soubor záznamu",
+  "uk": "Редагувати файл запису",
+  "en": "Edit recording file"
  },
  "Record from physical keys": {
   "zh": "从实体按键录制",
@@ -2204,7 +2645,27 @@
   "ru": "Запись с физических клавиш",
   "es": "Grabar desde teclas físicas",
   "fr": "Enregistrer depuis les touches physiques",
-  "de": "Mit physischen Tasten aufnehmen"
+  "de": "Mit physischen Tasten aufnehmen",
+  "zh-TW": "從實體按鍵記錄",
+  "pt": "Gravar a partir de chaves físicas",
+  "it": "Registra da tasti fisici",
+  "ar": "سجل من المفاتيح الفعلية",
+  "vi": "Ghi từ phím vật lý",
+  "id": "Rekam dari kunci fisik",
+  "th": "บันทึกจากคีย์กายภาพ",
+  "pt-BR": "Gravar a partir de chaves físicas",
+  "pl": "Nagrywaj z kluczy fizycznych",
+  "hu": "Felvétel fizikai kulcsokról",
+  "tr": "Fiziksel anahtarlardan kayıt yapın",
+  "sr": "Снимање са физичких кључева",
+  "hr": "Snimanje s fizičkih ključeva",
+  "sl": "Snemanje s fizičnih ključev",
+  "mk": "Снимајте од физички клучеви",
+  "sq": "Regjistroni nga çelësat fizikë",
+  "ro": "Înregistrați din cheile fizice",
+  "cs": "Záznam z fyzických klíčů",
+  "uk": "Запис з фізичних ключів",
+  "en": "Record from physical keys"
  },
  "Insert action": {
   "zh": "插入动作",
@@ -2213,7 +2674,27 @@
   "ru": "Вставить действие",
   "es": "Insertar acción",
   "fr": "Insérer une action",
-  "de": "Aktion einfügen"
+  "de": "Aktion einfügen",
+  "zh-TW": "插入動作",
+  "pt": "Inserir ação",
+  "it": "Inserisci azione",
+  "ar": "إدراج الإجراء",
+  "vi": "Chèn hành động",
+  "id": "Sisipkan tindakan",
+  "th": "แทรกการกระทำ",
+  "pt-BR": "Inserir ação",
+  "pl": "Wstaw akcję",
+  "hu": "Művelet beszúrása",
+  "tr": "Eylem ekle",
+  "sr": "Убаци акцију",
+  "hr": "Umetni radnju",
+  "sl": "Vstavi dejanje",
+  "mk": "Вметнете дејство",
+  "sq": "Fut veprim",
+  "ro": "Acțiune de inserare",
+  "cs": "Vložit akci",
+  "uk": "Вставити дію",
+  "en": "Insert action"
  },
  "Record interval": {
   "zh": "记录间隔",
@@ -2222,7 +2703,27 @@
   "ru": "Записывать интервал",
   "es": "Registrar intervalo",
   "fr": "Enregistrer l'intervalle",
-  "de": "Intervall aufnehmen"
+  "de": "Intervall aufnehmen",
+  "zh-TW": "記錄間隔",
+  "pt": "Intervalo de registro",
+  "it": "Intervallo di registrazione",
+  "ar": "الفاصل الزمني للتسجيل",
+  "vi": "Khoảng thời gian ghi",
+  "id": "Interval pencatatan",
+  "th": "ช่วงเวลาบันทึก",
+  "pt-BR": "Intervalo de registro",
+  "pl": "Interwał zapisu",
+  "hu": "Felvételi intervallum",
+  "tr": "Kayıt aralığı",
+  "sr": "Интервал снимања",
+  "hr": "Interval snimanja",
+  "sl": "Snemalni interval",
+  "mk": "Интервал за снимање",
+  "sq": "Intervali i regjistrimit",
+  "ro": "Interval de înregistrare",
+  "cs": "Interval záznamu",
+  "uk": "Інтервал запису",
+  "en": "Record interval"
  },
  "Onboard slot": {
   "zh": "板载槽位",
@@ -2231,7 +2732,27 @@
   "ru": "Слот на плате",
   "es": "Ranura integrada",
   "fr": "Emplacement intégré",
-  "de": "Onboard-Slot"
+  "de": "Onboard-Slot",
+  "zh-TW": "內建插槽",
+  "pt": "Slot integrado",
+  "it": "Slot integrato",
+  "ar": "فتحة مدمجة",
+  "vi": "Khe cắm tích hợp",
+  "id": "Slot bawaan",
+  "th": "สล็อตในตัว",
+  "pt-BR": "Slot integrado",
+  "pl": "Gniazdo wbudowane",
+  "hu": "Beépített nyílás",
+  "tr": "Yerleşik yuva",
+  "sr": "Уграђени слот",
+  "hr": "Ugrađeni utor",
+  "sl": "Vgrajena reža",
+  "mk": "Вграден слот",
+  "sq": "Slot i integruar",
+  "ro": "Slot integrat",
+  "cs": "Vestavěný slot",
+  "uk": "Вбудований слот",
+  "en": "Onboard slot"
  },
  "Selected key: -": {
   "zh": "所选按键：-",
@@ -2240,7 +2761,27 @@
   "ru": "Выбранная клавиша: -",
   "es": "Tecla seleccionada: -",
   "fr": "Touche sélectionnée : -",
-  "de": "Ausgewählte Taste: -"
+  "de": "Ausgewählte Taste: -",
+  "zh-TW": "選定的鍵：-",
+  "pt": "Chave selecionada: -",
+  "it": "Chiave selezionata: -",
+  "ar": "المفتاح المختار:-",
+  "vi": "Khóa đã chọn: -",
+  "id": "Kunci yang dipilih: -",
+  "th": "รหัสที่เลือก: -",
+  "pt-BR": "Chave selecionada: -",
+  "pl": "Wybrany klucz: -",
+  "hu": "Kiválasztott kulcs: -",
+  "tr": "Seçilen anahtar: -",
+  "sr": "Изабрани кључ: -",
+  "hr": "Odabrani ključ: -",
+  "sl": "Izbrani ključ: -",
+  "mk": "Избран клуч: -",
+  "sq": "Çelësi i zgjedhur: -",
+  "ro": "Tasta selectată: -",
+  "cs": "Vybraný klíč: -",
+  "uk": "Вибраний ключ: -",
+  "en": "Selected key: -"
  },
  "No keys selected": {
   "zh": "未选择按键",
@@ -2249,7 +2790,27 @@
   "ru": "Клавиши не выбраны",
   "es": "No hay teclas seleccionadas",
   "fr": "Aucune touche sélectionnée",
-  "de": "Keine Tasten ausgewählt"
+  "de": "Keine Tasten ausgewählt",
+  "zh-TW": "未選擇任何鍵",
+  "pt": "Nenhuma chave selecionada",
+  "it": "Nessun tasto selezionato",
+  "ar": "لم يتم تحديد أي مفاتيح",
+  "vi": "Không có phím nào được chọn",
+  "id": "Tidak ada kunci yang dipilih",
+  "th": "ไม่ได้เลือกคีย์",
+  "pt-BR": "Nenhuma chave selecionada",
+  "pl": "Nie wybrano żadnych kluczy",
+  "hu": "Nincsenek kiválasztva gombok",
+  "tr": "Anahtar seçilmedi",
+  "sr": "Није изабран ниједан тастер",
+  "hr": "Nema odabranih ključeva",
+  "sl": "Ni izbranih ključev",
+  "mk": "Нема избрани копчиња",
+  "sq": "Asnjë çelës i zgjedhur",
+  "ro": "Nu au fost selectate taste",
+  "cs": "Nejsou vybrány žádné klíče",
+  "uk": "Ключі не вибрано",
+  "en": "No keys selected"
  },
  "No data yet.": {
   "zh": "暂无数据。",
@@ -2258,7 +2819,27 @@
   "ru": "Нет данных.",
   "es": "No hay datos.",
   "fr": "Aucune donnée.",
-  "de": "Noch keine Daten."
+  "de": "Noch keine Daten.",
+  "zh-TW": "還沒有數據。",
+  "pt": "Ainda não há dados.",
+  "it": "Nessun dato ancora.",
+  "ar": "لا توجد بيانات حتى الآن.",
+  "vi": "Chưa có dữ liệu.",
+  "id": "Belum ada datanya.",
+  "th": "ยังไม่มีข้อมูล",
+  "pt-BR": "Ainda não há dados.",
+  "pl": "Brak danych.",
+  "hu": "Még nincsenek adatok.",
+  "tr": "Henüz veri yok.",
+  "sr": "Још нема података.",
+  "hr": "Još nema podataka.",
+  "sl": "Podatkov še ni.",
+  "mk": "Сè уште нема податоци.",
+  "sq": "Nuk ka ende të dhëna.",
+  "ro": "Nu există date încă.",
+  "cs": "Zatím žádná data.",
+  "uk": "Даних ще немає.",
+  "en": "No data yet."
  },
  "MT - tap / hold (1 key)": {
   "zh": "MT - 轻触/长按（1键）",
@@ -2267,7 +2848,27 @@
   "ru": "MT - нажатие/удержание (1 клавиша)",
   "es": "MT - toque/mantener (1 tecla)",
   "fr": "MT - appui/maintenir (1 touche)",
-  "de": "MT - Tippen/Halten (1 Taste)"
+  "de": "MT - Tippen/Halten (1 Taste)",
+  "zh-TW": "MT - 點擊/按住（1 個按鍵）",
+  "pt": "MT - tocar / segurar (1 tecla)",
+  "it": "MT: tocca/tieni premuto (1 tasto)",
+  "ar": "MT - اضغط مع الاستمرار (مفتاح واحد)",
+  "vi": "MT - chạm/giữ (1 phím)",
+  "id": "MT - ketuk / tahan (1 tombol)",
+  "th": "MT - แตะ / ค้างไว้ (1 ปุ่ม)",
+  "pt-BR": "MT - tocar / segurar (1 tecla)",
+  "pl": "MT - dotknij / przytrzymaj (1 klawisz)",
+  "hu": "MT - érintse meg / tartsa lenyomva (1 gomb)",
+  "tr": "MT - dokun / basılı tut (1 tuş)",
+  "sr": "МТ - додирните / држите (1 тастер)",
+  "hr": "MT - dodirnite / držite (1 tipka)",
+  "sl": "MT - tapnite / zadržite (1 tipka)",
+  "mk": "MT - допрете / задржете (1 копче)",
+  "sq": "MT - prekni / mbani (1 çelës)",
+  "ro": "MT - atingeți / mențineți apăsat (1 tastă)",
+  "cs": "MT - klepněte / podržte (1 klávesa)",
+  "uk": "MT - тап / утримання (1 клавіша)",
+  "en": "MT - tap / hold (1 key)"
  },
  "TGL - toggle (1 key)": {
   "zh": "TGL - 切换（1键）",
@@ -2276,7 +2877,27 @@
   "ru": "TGL - переключение (1 клавиша)",
   "es": "TGL - alternar (1 tecla)",
   "fr": "TGL - bascule (1 touche)",
-  "de": "TGL - Umschalten (1 Taste)"
+  "de": "TGL - Umschalten (1 Taste)",
+  "zh-TW": "TGL - 切換（1 鍵）",
+  "pt": "TGL - alternar (1 tecla)",
+  "it": "TGL - alterna (1 tasto)",
+  "ar": "TGL - تبديل (مفتاح واحد)",
+  "vi": "TGL - chuyển đổi (1 phím)",
+  "id": "TGL - beralih (1 tombol)",
+  "th": "TGL - สลับ (1 ปุ่ม)",
+  "pt-BR": "TGL - alternar (1 tecla)",
+  "pl": "TGL - przełącznik (1 klawisz)",
+  "hu": "TGL – kapcsoló (1 gomb)",
+  "tr": "TGL - geçiş (1 tuş)",
+  "sr": "ТГЛ - прекидач (1 тастер)",
+  "hr": "TGL - prebacivanje (1 tipka)",
+  "sl": "TGL - preklop (1 tipka)",
+  "mk": "TGL - вклучи (1 копче)",
+  "sq": "TGL - ndërrimi (1 çelës)",
+  "ro": "TGL - comutare (1 tastă)",
+  "cs": "TGL - přepínání (1 klávesa)",
+  "uk": "TGL - тумблер (1 клавіша)",
+  "en": "TGL - toggle (1 key)"
  },
  "RS - Rappy Snappy (2 keys)": {
   "zh": "RS - 快速响应（2键）",
@@ -2285,7 +2906,27 @@
   "ru": "RS - быстрый отклик (2 клавиши)",
   "es": "RS - respuesta rápida (2 teclas)",
   "fr": "RS - réponse rapide (2 touches)",
-  "de": "RS - Schnellauslösung (2 Tasten)"
+  "de": "RS - Schnellauslösung (2 Tasten)",
+  "zh-TW": "RS - Rappy Snappy（2 鍵）",
+  "pt": "RS - Rappy Snappy (2 teclas)",
+  "it": "RS - Rappy Snappy (2 tasti)",
+  "ar": "RS - رابي سنابي (مفتاحان)",
+  "vi": "RS - Rappy Snappy (2 phím)",
+  "id": "RS - Rappy Snappy (2 tombol)",
+  "th": "RS - Rappy Snappy (2 คีย์)",
+  "pt-BR": "RS - Rappy Snappy (2 teclas)",
+  "pl": "RS - Rappy Snappy (2 klawisze)",
+  "hu": "RS – Rappy Snappy (2 kulcs)",
+  "tr": "RS - Rappy Snappy (2 tuş)",
+  "sr": "РС - Раппи Снаппи (2 кључа)",
+  "hr": "RS - Rappy Snappy (2 tipke)",
+  "sl": "RS - Rappy Snappy (2 tipki)",
+  "mk": "RS - Rappy Snappy (2 копчиња)",
+  "sq": "RS - Rappy Snappy (2 çelësa)",
+  "ro": "RS - Rappy Snappy (2 taste)",
+  "cs": "RS - Rappy Snappy (2 klávesy)",
+  "uk": "RS - Rappy Snappy (2 клавіші)",
+  "en": "RS - Rappy Snappy (2 keys)"
  },
  "SOCD - priority (2 keys)": {
   "zh": "SOCD - 优先级（2键）",
@@ -2294,7 +2935,27 @@
   "ru": "SOCD - приоритет (2 клавиши)",
   "es": "SOCD - prioridad (2 teclas)",
   "fr": "SOCD - priorité (2 touches)",
-  "de": "SOCD - Priorität (2 Tasten)"
+  "de": "SOCD - Priorität (2 Tasten)",
+  "zh-TW": "SOCD - 優先權（2 個按鍵）",
+  "pt": "SOCD - prioridade (2 teclas)",
+  "it": "SOCD - priorità (2 chiavi)",
+  "ar": "SOCD - الأولوية (مفتاحان)",
+  "vi": "SOCD - ưu tiên (2 phím)",
+  "id": "SOCD - prioritas (2 tombol)",
+  "th": "SOCD - ลำดับความสำคัญ (2 ปุ่ม)",
+  "pt-BR": "SOCD - prioridade (2 teclas)",
+  "pl": "SOCD - priorytet (2 klawisze)",
+  "hu": "SOCD - prioritás (2 kulcs)",
+  "tr": "SOCD - öncelik (2 tuş)",
+  "sr": "СОЦД - приоритет (2 кључа)",
+  "hr": "SOCD - prioritet (2 tipke)",
+  "sl": "SOCD - prioriteta (2 ključa)",
+  "mk": "SOCD - приоритет (2 клучеви)",
+  "sq": "SOCD - prioritet (2 çelësa)",
+  "ro": "SOCD - prioritate (2 taste)",
+  "cs": "SOCD - priorita (2 klíče)",
+  "uk": "SOCD - пріоритет (2 клавіші)",
+  "en": "SOCD - priority (2 keys)"
  },
  "DKS - dynamic travel (1 key)": {
   "zh": "DKS - 动态行程（1键）",
@@ -2303,7 +2964,27 @@
   "ru": "DKS - динамический ход (1 клавиша)",
   "es": "DKS - recorrido dinámico (1 tecla)",
   "fr": "DKS - course dynamique (1 touche)",
-  "de": "DKS - dynamischer Hub (1 Taste)"
+  "de": "DKS - dynamischer Hub (1 Taste)",
+  "zh-TW": "DKS - 動態行程（1鍵）",
+  "pt": "DKS - viagem dinâmica (1 tecla)",
+  "it": "DKS - corsa dinamica (1 chiave)",
+  "ar": "DKS - السفر الديناميكي (مفتاح واحد)",
+  "vi": "DKS - hành trình năng động (1 phím)",
+  "id": "DKS - perjalanan dinamis (1 kunci)",
+  "th": "DKS - การเดินทางแบบไดนามิก (1 คีย์)",
+  "pt-BR": "DKS - viagem dinâmica (1 tecla)",
+  "pl": "DKS - jazda dynamiczna (1 klucz)",
+  "hu": "DKS - dinamikus mozgás (1 kulcs)",
+  "tr": "DKS - dinamik sürüş (1 anahtar)",
+  "sr": "ДКС - динамичко путовање (1 кључ)",
+  "hr": "DKS - dinamičko putovanje (1 ključ)",
+  "sl": "DKS - dinamični hod (1 ključ)",
+  "mk": "DKS - динамично патување (1 клуч)",
+  "sq": "DKS - udhëtim dinamik (1 çelës)",
+  "ro": "DKS - deplasare dinamică (1 cheie)",
+  "cs": "DKS - dynamický pojezd (1 klíč)",
+  "uk": "DKS - динамічний хід (1 ключ)",
+  "en": "DKS - dynamic travel (1 key)"
  },
  "Keys & LEDs": {
   "zh": "按键与灯光",
@@ -2312,7 +2993,27 @@
   "ru": "Клавиши и подсветка",
   "es": "Teclas y LED",
   "fr": "Touches et LED",
-  "de": "Tasten & LEDs"
+  "de": "Tasten & LEDs",
+  "zh-TW": "按鍵和 LED",
+  "pt": "Teclas e LEDs",
+  "it": "Tasti e LED",
+  "ar": "المفاتيح والمصابيح",
+  "vi": "Phím & đèn LED",
+  "id": "Kunci & LED",
+  "th": "กุญแจและไฟ LED",
+  "pt-BR": "Teclas e LEDs",
+  "pl": "Klawisze i diody LED",
+  "hu": "Billentyűk és LED-ek",
+  "tr": "Tuşlar ve LED'ler",
+  "sr": "Тастери и ЛЕД диоде",
+  "hr": "Tipke i LED diode",
+  "sl": "Tipke in LED",
+  "mk": "Клучеви и LED диоди",
+  "sq": "Çelësat & LED",
+  "ro": "Taste și LED-uri",
+  "cs": "Klávesy a LED diody",
+  "uk": "Ключі та світлодіоди",
+  "en": "Keys & LEDs"
  },
  "Trigger & RT": {
   "zh": "触发与快速触发",
@@ -2321,7 +3022,27 @@
   "ru": "Триггер и RT",
   "es": "Disparador y RT",
   "fr": "Déclencheur et RT",
-  "de": "Trigger & RT"
+  "de": "Trigger & RT",
+  "zh-TW": "觸發&RT",
+  "pt": "Gatilho e RT",
+  "it": "Trigger e RT",
+  "ar": "الزناد وRT",
+  "vi": "Kích hoạt & RT",
+  "id": "Pemicu & RT",
+  "th": "ทริกเกอร์ & RT",
+  "pt-BR": "Gatilho e RT",
+  "pl": "Wyzwalanie i czas RT",
+  "hu": "Trigger és RT",
+  "tr": "Tetikle ve RT",
+  "sr": "Триггер & РТ",
+  "hr": "Okidač & RT",
+  "sl": "Sprožilec & RT",
+  "mk": "Активирање и RT",
+  "sq": "Kthesë & RT",
+  "ro": "Trigger și RT",
+  "cs": "Spoušť a RT",
+  "uk": "Тригер і RT",
+  "en": "Trigger & RT"
  },
  "DKS & macros": {
   "zh": "DKS与宏",
@@ -2330,7 +3051,27 @@
   "ru": "DKS и макросы",
   "es": "DKS y macros",
   "fr": "DKS et macros",
-  "de": "DKS & Makros"
+  "de": "DKS & Makros",
+  "zh-TW": "DKS 和巨集",
+  "pt": "DKS e macros",
+  "it": "DKS e macro",
+  "ar": "DKS ووحدات الماكرو",
+  "vi": "DKS & macro",
+  "id": "DKS & makro",
+  "th": "DKS และมาโคร",
+  "pt-BR": "DKS e macros",
+  "pl": "DKS i makra",
+  "hu": "DKS és makrók",
+  "tr": "DKS ve makrolar",
+  "sr": "ДКС и макрои",
+  "hr": "DKS i makronaredbe",
+  "sl": "DKS in makri",
+  "mk": "DKS и макроа",
+  "sq": "DKS & makro",
+  "ro": "DKS și macrocomenzi",
+  "cs": "DKS a makra",
+  "uk": "DKS і макроси",
+  "en": "DKS & macros"
  },
  "Firmware / Hall probe": {
   "zh": "固件/霍尔探测",
@@ -2339,7 +3080,27 @@
   "ru": "Прошивка / датчик Холла",
   "es": "Firmware / sonda Hall",
   "fr": "Firmware / sonde Hall",
-  "de": "Firmware / Hall-Sonde"
+  "de": "Firmware / Hall-Sonde",
+  "zh-TW": "韌體/霍爾探頭",
+  "pt": "Firmware/sonda Hall",
+  "it": "Firmware/sonda Hall",
+  "ar": "البرامج الثابتة / مسبار القاعة",
+  "vi": "Phần mềm/đầu dò Hall",
+  "id": "Pemeriksaan Firmware / Aula",
+  "th": "เฟิร์มแวร์ / โพรบฮอลล์",
+  "pt-BR": "Firmware/sonda Hall",
+  "pl": "Oprogramowanie sprzętowe / sonda Halla",
+  "hu": "Firmware / Hall szonda",
+  "tr": "Firmware / Salon probu",
+  "sr": "Фирмвер / Хол сонда",
+  "hr": "Firmware / Hallova sonda",
+  "sl": "Vdelana programska oprema / Hallova sonda",
+  "mk": "Фирмвер / Сонда за сала",
+  "sq": "Firmware / Sonda e sallës",
+  "ro": "Firmware/sondă Hall",
+  "cs": "Firmware / Hallova sonda",
+  "uk": "Прошивка / зонд Холла",
+  "en": "Firmware / Hall probe"
  },
  "FW info": {
   "zh": "固件信息",
@@ -2348,7 +3109,27 @@
   "ru": "Информация о прошивке",
   "es": "Info de firmware",
   "fr": "Infos firmware",
-  "de": "Firmware-Info"
+  "de": "Firmware-Info",
+  "zh-TW": "韌體資訊",
+  "pt": "Informações de firmware",
+  "it": "Informazioni sul firmware",
+  "ar": "معلومات مهاجم",
+  "vi": "thông tin FW",
+  "id": "info FW",
+  "th": "ข้อมูลเอฟดับบลิว",
+  "pt-BR": "Informações de firmware",
+  "pl": "Informacje o FW",
+  "hu": "FW infó",
+  "tr": "Yazılım bilgisi",
+  "sr": "ФВ инфо",
+  "hr": "FW info",
+  "sl": "FW info",
+  "mk": "Информации за FW",
+  "sq": "Informacione FW",
+  "ro": "Informații FW",
+  "cs": "Informace o FW",
+  "uk": "Інформація про FW",
+  "en": "FW info"
  },
  "Check device": {
   "zh": "检查设备",
@@ -2357,7 +3138,27 @@
   "ru": "Проверить устройство",
   "es": "Comprobar dispositivo",
   "fr": "Vérifier l'appareil",
-  "de": "Gerät prüfen"
+  "de": "Gerät prüfen",
+  "zh-TW": "檢查裝置",
+  "pt": "Verifique o dispositivo",
+  "it": "Controlla il dispositivo",
+  "ar": "فحص الجهاز",
+  "vi": "Kiểm tra thiết bị",
+  "id": "Periksa perangkat",
+  "th": "ตรวจสอบอุปกรณ์",
+  "pt-BR": "Verifique o dispositivo",
+  "pl": "Sprawdź urządzenie",
+  "hu": "Ellenőrizze a készüléket",
+  "tr": "Cihazı kontrol et",
+  "sr": "Проверите уређај",
+  "hr": "Provjerite uređaj",
+  "sl": "Preverite napravo",
+  "mk": "Проверете го уредот",
+  "sq": "Kontrolloni pajisjen",
+  "ro": "Verificați dispozitivul",
+  "cs": "Zkontrolujte zařízení",
+  "uk": "Перевірте пристрій",
+  "en": "Check device"
  },
  "Choose firmware…": {
   "zh": "选择固件…",
@@ -2366,7 +3167,27 @@
   "ru": "Выбрать прошивку…",
   "es": "Elegir firmware…",
   "fr": "Choisir le firmware…",
-  "de": "Firmware wählen…"
+  "de": "Firmware wählen…",
+  "zh-TW": "選擇韌體...",
+  "pt": "Escolha o firmware…",
+  "it": "Scegli il firmware...",
+  "ar": "اختر البرامج الثابتة...",
+  "vi": "Chọn chương trình cơ sở…",
+  "id": "Pilih firmware…",
+  "th": "เลือกเฟิร์มแวร์...",
+  "pt-BR": "Escolha o firmware…",
+  "pl": "Wybierz oprogramowanie…",
+  "hu": "Válassz firmware-t…",
+  "tr": "Ürün yazılımını seçin…",
+  "sr": "Изаберите фирмвер…",
+  "hr": "Odaberite firmware…",
+  "sl": "Izberite vdelano programsko opremo …",
+  "mk": "Изберете фирмвер…",
+  "sq": "Zgjidhni firmware…",
+  "ro": "Alegeți firmware-ul...",
+  "cs": "Vyberte firmware…",
+  "uk": "Виберіть прошивку…",
+  "en": "Choose firmware…"
  },
  "Verify and flash firmware": {
   "zh": "验证并刷写固件",
@@ -2375,7 +3196,27 @@
   "ru": "Проверить и прошить прошивку",
   "es": "Verificar y grabar firmware",
   "fr": "Vérifier et flasher le firmware",
-  "de": "Firmware prüfen und flashen"
+  "de": "Firmware prüfen und flashen",
+  "zh-TW": "驗證並刷新韌體",
+  "pt": "Verifique e atualize o firmware",
+  "it": "Verificare e aggiornare il firmware",
+  "ar": "التحقق من البرامج الثابتة وفلاشها",
+  "vi": "Xác minh và flash firmware",
+  "id": "Verifikasi dan flash firmware",
+  "th": "ตรวจสอบและแฟลชเฟิร์มแวร์",
+  "pt-BR": "Verifique e atualize o firmware",
+  "pl": "Sprawdź i zaktualizuj oprogramowanie sprzętowe",
+  "hu": "Ellenőrizze és frissítse a firmware-t",
+  "tr": "Firmware'i doğrulayın ve flashlayın",
+  "sr": "Проверите и флешујте фирмвер",
+  "hr": "Provjerite i flash firmware",
+  "sl": "Preverite in posodobite vdelano programsko opremo",
+  "mk": "Потврдете и блицирајте го фирмверот",
+  "sq": "Verifikoni dhe ndizni firmware-in",
+  "ro": "Verificați și flashizați firmware-ul",
+  "cs": "Ověřte a aktualizujte firmware",
+  "uk": "Перевірте та прошивіть прошивку",
+  "en": "Verify and flash firmware"
  },
  "No firmware file selected": {
   "zh": "未选择固件文件",
@@ -2384,7 +3225,27 @@
   "ru": "Файл прошивки не выбран",
   "es": "No se seleccionó archivo de firmware",
   "fr": "Aucun fichier firmware sélectionné",
-  "de": "Keine Firmware-Datei ausgewählt"
+  "de": "Keine Firmware-Datei ausgewählt",
+  "zh-TW": "未選擇韌體文件",
+  "pt": "Nenhum arquivo de firmware selecionado",
+  "it": "Nessun file firmware selezionato",
+  "ar": "لم يتم تحديد ملف البرنامج الثابت",
+  "vi": "Không có tập tin chương trình cơ sở nào được chọn",
+  "id": "Tidak ada file firmware yang dipilih",
+  "th": "ไม่ได้เลือกไฟล์เฟิร์มแวร์",
+  "pt-BR": "Nenhum arquivo de firmware selecionado",
+  "pl": "Nie wybrano pliku oprogramowania sprzętowego",
+  "hu": "Nincs kiválasztva firmware fájl",
+  "tr": "Firmware dosyası seçilmedi",
+  "sr": "Није изабрана ниједна датотека фирмвера",
+  "hr": "Nije odabrana datoteka firmvera",
+  "sl": "Izbrana ni nobena datoteka vdelane programske opreme",
+  "mk": "Не е избрана датотека на фирмверот",
+  "sq": "Nuk është zgjedhur asnjë skedar firmware",
+  "ro": "Niciun fișier firmware selectat",
+  "cs": "Nebyl vybrán žádný soubor firmwaru",
+  "uk": "Файл мікропрограми не вибрано",
+  "en": "No firmware file selected"
  },
  "Key travel (0-3.4 mm)": {
   "zh": "按键行程（0-3.4 毫米）",
@@ -2393,7 +3254,27 @@
   "ru": "Ход клавиши (0-3,4 мм)",
   "es": "Recorrido de tecla (0-3,4 mm)",
   "fr": "Course de touche (0-3,4 mm)",
-  "de": "Tastenhub (0-3,4 mm)"
+  "de": "Tastenhub (0-3,4 mm)",
+  "zh-TW": "鍵程（0-3.4 毫米）",
+  "pt": "Curso da chave (0-3,4 mm)",
+  "it": "Corsa chiave (0-3,4 mm)",
+  "ar": "انتقال المفتاح (0-3.4 ملم)",
+  "vi": "Hành trình phím (0-3,4 mm)",
+  "id": "Perjalanan kunci (0-3,4 mm)",
+  "th": "ระยะกุญแจ (0-3.4 มม.)",
+  "pt-BR": "Curso da chave (0-3,4 mm)",
+  "pl": "Skok klucza (0-3,4 mm)",
+  "hu": "Kulcsút (0-3,4 mm)",
+  "tr": "Anahtar mesafesi (0-3,4 mm)",
+  "sr": "Ход кључа (0-3,4 мм)",
+  "hr": "Hod tipke (0-3,4 mm)",
+  "sl": "Hod tipk (0-3,4 mm)",
+  "mk": "Патување на клучот (0-3,4 mm)",
+  "sq": "Udhëtimi i çelësit (0-3,4 mm)",
+  "ro": "Cursă cheie (0-3,4 mm)",
+  "cs": "Zdvih klíče (0-3,4 mm)",
+  "uk": "Хід клавіші (0-3,4 мм)",
+  "en": "Key travel (0-3.4 mm)"
  },
  "Last clicked": {
   "zh": "最后按下",
@@ -2402,7 +3283,27 @@
   "ru": "Последнее нажатие",
   "es": "Última tecla pulsada",
   "fr": "Dernière touche pressée",
-  "de": "Zuletzt gedrückt"
+  "de": "Zuletzt gedrückt",
+  "zh-TW": "最後點擊",
+  "pt": "Último clique",
+  "it": "Ultimo clic",
+  "ar": "تم النقر عليه أخيرًا",
+  "vi": "Lần nhấp cuối cùng",
+  "id": "Terakhir diklik",
+  "th": "คลิกครั้งล่าสุด",
+  "pt-BR": "Último clique",
+  "pl": "Ostatnio kliknięte",
+  "hu": "Utoljára kattintott",
+  "tr": "Son tıklanma",
+  "sr": "Последњи клик",
+  "hr": "Zadnji klik",
+  "sl": "Zadnji klik",
+  "mk": "Последен клик",
+  "sq": "Klikuar së fundi",
+  "ro": "Ultimul clic",
+  "cs": "Poslední kliknutí",
+  "uk": "Останній клік",
+  "en": "Last clicked"
  },
  "Live analog": {
   "zh": "实时模拟量",
@@ -2411,7 +3312,27 @@
   "ru": "Аналог в реальном времени",
   "es": "Analógico en vivo",
   "fr": "Analogique en direct",
-  "de": "Live-Analog"
+  "de": "Live-Analog",
+  "zh-TW": "現場模擬",
+  "pt": "Analógico ao vivo",
+  "it": "Analogico dal vivo",
+  "ar": "التناظرية الحية",
+  "vi": "Tương tự trực tiếp",
+  "id": "Analog langsung",
+  "th": "อะนาล็อกสด",
+  "pt-BR": "Analógico ao vivo",
+  "pl": "Na żywo, analogowo",
+  "hu": "Élő analóg",
+  "tr": "Canlı analog",
+  "sr": "Живи аналогни",
+  "hr": "Analogno uživo",
+  "sl": "Analogno v živo",
+  "mk": "Жив аналог",
+  "sq": "Analog i drejtpërdrejtë",
+  "ro": "Analog live",
+  "cs": "Živý analog",
+  "uk": "Живий аналог",
+  "en": "Live analog"
  },
  "Start monitoring": {
   "zh": "开始监控",
@@ -2420,7 +3341,27 @@
   "ru": "Начать мониторинг",
   "es": "Iniciar monitorización",
   "fr": "Démarrer la surveillance",
-  "de": "Überwachung starten"
+  "de": "Überwachung starten",
+  "zh-TW": "開始監控",
+  "pt": "Iniciar monitoramento",
+  "it": "Inizia il monitoraggio",
+  "ar": "ابدأ بالمراقبة",
+  "vi": "Bắt đầu theo dõi",
+  "id": "Mulai memantau",
+  "th": "เริ่มการตรวจสอบ",
+  "pt-BR": "Iniciar monitoramento",
+  "pl": "Rozpocznij monitorowanie",
+  "hu": "Kezdje el a megfigyelést",
+  "tr": "İzlemeye başla",
+  "sr": "Започните праћење",
+  "hr": "Započnite praćenje",
+  "sl": "Začni spremljati",
+  "mk": "Започнете со следење",
+  "sq": "Filloni monitorimin",
+  "ro": "Începeți monitorizarea",
+  "cs": "Začněte sledovat",
+  "uk": "Почніть моніторинг",
+  "en": "Start monitoring"
  },
  "Hall WASD": {
   "zh": "霍尔WASD",
@@ -2429,7 +3370,27 @@
   "ru": "Hall WASD",
   "es": "Hall WASD",
   "fr": "Hall WASD",
-  "de": "Hall WASD"
+  "de": "Hall WASD",
+  "zh-TW": "大廳WASD",
+  "pt": "Salão WASD",
+  "it": "Sala WASD",
+  "ar": "قاعة WASD",
+  "vi": "Hội trường WASD",
+  "id": "Aula WASD",
+  "th": "ฮอลล์ WASD",
+  "pt-BR": "Salão WASD",
+  "pl": "Sala WASD",
+  "hu": "Hall WASD",
+  "tr": "Salon WASD",
+  "sr": "Халл ВАСД",
+  "hr": "Dvorana WASD",
+  "sl": "Dvorana WASD",
+  "mk": "Сала WASD",
+  "sq": "Salla WASD",
+  "ro": "Sala WASD",
+  "cs": "Hala WASD",
+  "uk": "Зал WASD",
+  "en": "Hall WASD"
  },
  "Read state": {
   "zh": "读取状态",
@@ -2438,7 +3399,27 @@
   "ru": "Считать состояние",
   "es": "Leer estado",
   "fr": "Lire l'état",
-  "de": "Zustand lesen"
+  "de": "Zustand lesen",
+  "zh-TW": "讀取狀態",
+  "pt": "Ler estado",
+  "it": "Leggi lo stato",
+  "ar": "قراءة الدولة",
+  "vi": "Trạng thái đọc",
+  "id": "Baca negara bagian",
+  "th": "อ่านสถานะ",
+  "pt-BR": "Ler estado",
+  "pl": "Przeczytaj stan",
+  "hu": "Olvasási állapot",
+  "tr": "Durumu oku",
+  "sr": "Реад стате",
+  "hr": "Čitaj stanje",
+  "sl": "Preberi stanje",
+  "mk": "Прочитана состојба",
+  "sq": "Gjendja e leximit",
+  "ro": "Starea de citire",
+  "cs": "Stav čtení",
+  "uk": "Прочитати стан",
+  "en": "Read state"
  },
  "Read everything": {
   "zh": "读取全部",
@@ -2447,7 +3428,27 @@
   "ru": "Считать всё",
   "es": "Leer todo",
   "fr": "Tout lire",
-  "de": "Alles lesen"
+  "de": "Alles lesen",
+  "zh-TW": "閱讀所有內容",
+  "pt": "Leia tudo",
+  "it": "Leggi tutto",
+  "ar": "اقرأ كل شيء",
+  "vi": "Đọc mọi thứ",
+  "id": "Baca semuanya",
+  "th": "อ่านทุกอย่าง",
+  "pt-BR": "Leia tudo",
+  "pl": "Przeczytaj wszystko",
+  "hu": "Olvass el mindent",
+  "tr": "Her şeyi okuyun",
+  "sr": "Прочитајте све",
+  "hr": "Čitaj sve",
+  "sl": "Preberi vse",
+  "mk": "Прочитајте сè",
+  "sq": "Lexoni gjithçka",
+  "ro": "Citiți totul",
+  "cs": "Přečtěte si vše",
+  "uk": "Читайте все",
+  "en": "Read everything"
  },
  "Raw replies": {
   "zh": "原始回复",
@@ -2456,7 +3457,27 @@
   "ru": "Сырые ответы",
   "es": "Respuestas sin procesar",
   "fr": "Réponses brutes",
-  "de": "Rohantworten"
+  "de": "Rohantworten",
+  "zh-TW": "原始回覆",
+  "pt": "Respostas brutas",
+  "it": "Risposte grezze",
+  "ar": "ردود خام",
+  "vi": "Câu trả lời thô",
+  "id": "Balasan mentah",
+  "th": "คำตอบดิบ",
+  "pt-BR": "Respostas brutas",
+  "pl": "Surowe odpowiedzi",
+  "hu": "Nyers válaszok",
+  "tr": "Ham yanıtlar",
+  "sr": "Сирови одговори",
+  "hr": "Sirovi odgovori",
+  "sl": "Surovi odgovori",
+  "mk": "Необработени одговори",
+  "sq": "Përgjigje të papërpunuara",
+  "ro": "Răspunsuri brute",
+  "cs": "Syrové odpovědi",
+  "uk": "Необроблені відповіді",
+  "en": "Raw replies"
  },
  "Save report": {
   "zh": "保存报告",
@@ -2465,7 +3486,27 @@
   "ru": "Сохранить отчёт",
   "es": "Guardar informe",
   "fr": "Enregistrer le rapport",
-  "de": "Bericht speichern"
+  "de": "Bericht speichern",
+  "zh-TW": "儲存報告",
+  "pt": "Salvar relatório",
+  "it": "Salva rapporto",
+  "ar": "حفظ التقرير",
+  "vi": "Lưu báo cáo",
+  "id": "Simpan laporan",
+  "th": "บันทึกรายงาน",
+  "pt-BR": "Salvar relatório",
+  "pl": "Zapisz raport",
+  "hu": "Jelentés mentése",
+  "tr": "Raporu kaydet",
+  "sr": "Сачувај извештај",
+  "hr": "Spremi izvješće",
+  "sl": "Shrani poročilo",
+  "mk": "Зачувај извештај",
+  "sq": "Ruaj raportin",
+  "ro": "Salvați raportul",
+  "cs": "Uložit zprávu",
+  "uk": "Зберегти звіт",
+  "en": "Save report"
  },
  "More actions": {
   "zh": "更多动作",
@@ -2474,6 +3515,26 @@
   "ru": "Другие действия",
   "es": "Más acciones",
   "fr": "Plus d'actions",
-  "de": "Weitere Aktionen"
+  "de": "Weitere Aktionen",
+  "zh-TW": "更多行動",
+  "pt": "Mais ações",
+  "it": "Più azioni",
+  "ar": "المزيد من الإجراءات",
+  "vi": "Thêm hành động",
+  "id": "Lebih banyak tindakan",
+  "th": "การดำเนินการเพิ่มเติม",
+  "pt-BR": "Mais ações",
+  "pl": "Więcej akcji",
+  "hu": "További műveletek",
+  "tr": "Daha fazla işlem",
+  "sr": "Више акција",
+  "hr": "Više akcija",
+  "sl": "Več dejanj",
+  "mk": "Повеќе акции",
+  "sq": "Më shumë veprime",
+  "ro": "Mai multe acțiuni",
+  "cs": "Více akcí",
+  "uk": "Більше дій",
+  "en": "More actions"
  }
 }
