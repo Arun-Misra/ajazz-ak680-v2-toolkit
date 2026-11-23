@@ -24,6 +24,7 @@ public partial class CustomKeysPage : Page
         AddChars(BasicChars, basic.Select(c => c.ToString()));
         AddChars(ExtendedChars, extended.Select(c => c.ToString()));
         AddChars(SpecialChars, special.Split(' '));
+        for (int i = 0; i < 100; i++) MacroId.Items.Add($"M{i + 1}");
         _ = LoadBindingsAsync();
     }
 
@@ -63,21 +64,42 @@ public partial class CustomKeysPage : Page
         SelectedKey.Text = $"Selected key: {key}";
     }
 
+    private void BindingType_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        if (MacroPanel is null) return;
+        MacroPanel.Visibility = BindingType.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     private async void Apply_Click(object sender, RoutedEventArgs e)
     {
-        if (_selectedKey is null || _chosen is null) { Status.Text = "Select a key and a character first"; return; }
+        if (_selectedKey is null) { Status.Text = "Select a key first"; return; }
         if (!KeyMap.IdByLabel.TryGetValue(_selectedKey, out int ledId)) { Status.Text = "Unknown key"; return; }
         if (!_device.IsConnected) { Status.Text = "No device connected"; return; }
 
+        KeyBinding? binding;
+        string description;
+        if (BindingType.SelectedIndex == 1)
+        {
+            int id = MacroId.SelectedIndex;
+            binding = new KeyBinding { Page = "MACRO", Param1 = id, Param2 = 1, Param3 = 0, Value = id };
+            description = $"M{id + 1}";
+        }
+        else
+        {
+            if (_chosen is null) { Status.Text = "Choose a character first"; return; }
+            binding = _chosen;
+            description = _chosen.Page;
+        }
+
         bool fn = FnLayerCheck.IsChecked == true;
-        (fn ? _fnBindings : _bindings)[ledId] = _chosen;
+        (fn ? _fnBindings : _bindings)[ledId] = binding;
 
         var normal = _bindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
         var fnKeys = _fnBindings.Select(kv => new KeySlot { Value = kv.Key, Binding = kv.Value }).ToList();
         bool ok = await _device.SetKeyDataAsync(normal);
         if (ok && _fnLoaded) ok = await _device.SetFnKeyDataAsync(fnKeys);
         Status.Text = ok
-            ? $"Mapped {_selectedKey} → {_chosen.Page} ({(fn ? "FN layer" : "normal")})"
+            ? $"Mapped {_selectedKey} → {description} ({(fn ? "FN layer" : "normal")})"
             : "Failed to write key data";
     }
 

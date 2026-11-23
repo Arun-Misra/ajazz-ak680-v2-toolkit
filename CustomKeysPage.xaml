@@ -24,6 +24,15 @@
                         <Button Style="{StaticResource AccentButton}" Content="Apply remap" Click="Apply_Click"/>
                         <Button Style="{StaticResource GhostButton}" Content="Reset" Margin="8,0,0,0" Click="Reset_Click"/>
                     </StackPanel>
+                    <TextBlock Text="Action type" FontWeight="Bold" Margin="0,12,0,4"/>
+                    <ComboBox x:Name="BindingType" SelectedIndex="0" SelectionChanged="BindingType_Changed" Width="180">
+                        <ComboBoxItem Content="Character"/>
+                        <ComboBoxItem Content="Macro"/>
+                    </ComboBox>
+                    <StackPanel x:Name="MacroPanel" Visibility="Collapsed" Margin="0,8,0,0">
+                        <TextBlock Text="Macro (M1–M100)" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="MacroId" Width="180" SelectedIndex="0"/>
+                    </StackPanel>
                     <CheckBox x:Name="FnLayerCheck" Content="Edit FN layer (Fn + key)" Margin="0,10,0,0"/>
                     <TextBlock x:Name="Status" Margin="0,12,0,0" Foreground="Green"/>
                 </StackPanel>

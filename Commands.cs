@@ -73,7 +73,7 @@ public static class Commands
                 PageMouse => new KeyBinding { Page = "MOUSE", Param1 = data[o + 1], Value = data[o + 2] },
                 PageKeyboard => new KeyBinding { Page = "KEYBOARD", Value = data[o + 2] },
                 PageConsumer => new KeyBinding { Page = "CONSUMER_KEY", Value = data[o + 1] | (data[o + 2] << 8) },
-                PageMacro => new KeyBinding { Page = "MACRO", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
+                PageMacro => new KeyBinding { Page = "MACRO", Value = data[o + 1], Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
                 PageMt => new KeyBinding { Page = "MT", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
                 PageSocd => new KeyBinding { Page = "SOCD", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },
                 PageRs => new KeyBinding { Page = "RS", Param1 = data[o + 1], Param2 = data[o + 2], Param3 = data[o + 3] },

@@ -62,7 +62,7 @@ This is the feature that makes the AK680 V2's Hall-effect hardware useful beyond
 
 ### Key remapping, macros, and advanced keys
 
-- **Custom Keys:** remap keys to characters or functions
+- **Custom Keys:** remap keys (normal or FN layer) to characters or to macros M1–M100
 - **Shortcut Command:** create, store, import, and export macros
 - **Advanced Keys:** RS, SOCD, DKS, MT, and TGL behaviours
 - **Profiles:** create, rename, copy, export, and switch keyboard profiles
@@ -168,7 +168,7 @@ Because both the browser WebHID driver and this app try to open the same HID int
 
 ## Web-driver feature parity
 
-- Custom keys: key remapping, FN-layer remapping, reset
+- Custom keys: key remapping, FN-layer remapping, macro-to-key/FN binding, reset
 - Lighting: 20 built-in effects, per-key colours, colour mode/brightness/speed, and web-driver-equivalent **Musical Rhythm** (13 display modes, amplitude, 10 background styles, background brightness, driven through the AJAZZ music plugin's local API) plus a plugin-free PC-audio rhythm fallback
 - Shortcut command / macros: create, edit, **record from physical keys**, save to keyboard, JSON import/export
 - Performance: mode presets, per-key trigger distance, selectable axes, Fast Trigger, live Hall switch calibration (start/stop/clear with per-key min/max/ADC/travel readback), keyboard settings, configurable top/bottom dead zone
